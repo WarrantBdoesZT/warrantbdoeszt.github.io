@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarrantBdoesZT — Zero Trust Cybersecurity Tools</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0e14;
+            --card: #131820;
+            --border: #1e2530;
+            --accent: #00d9a3;
+            --accent-dim: #00a87e;
+            --text: #e0e6ed;
+            --text-dim: #7d8a9c;
+            --danger: #ff4757;
+            --warn: #ffa502;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, #0d1218 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero .shield {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent) 0%, #4fc3f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1.15rem;
+            margin-top: 12px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .badge strong { color: var(--accent); }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 217, 163, 0.1);
+        }
+
+        .tool-card .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .tool-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .tool-card .status {
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--warn);
+        }
+
+        .tool-card.live .status { color: var(--accent); }
+
+        .pillars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .pillar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .pillar .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .pillar .label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="shield">🛡️</div>
+    <h1>WarrantBdoesZT</h1>
+    <p>Interactive Zero Trust cybersecurity tools, visualizers, and training resources for DoD security professionals.</p>
+    <div class="badges">
+        <span class="badge">🏛️ <strong>DoD</strong> Zero Trust</span>
+        <span class="badge">📊 <strong>NIST 800-207</strong></span>
+        <span class="badge">🎯 <strong>CISA ZTMM 2.0</strong></span>
+        <span class="badge">🤖 <strong>AI Security</strong></span>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">🛠️ Interactive Tools</h2>
+    <div class="tools-grid">
+
+        <a href="#" class="tool-card">
+            <div class="icon">🏗️</div>
+            <h3>ZT Pillar Explorer</h3>
+            <p>Interactive walkthrough of the DoD Zero Trust 7 Pillars. Click each pillar to see requirements, implementation patterns, and common gaps.</p>
+            <div class="status">Coming Soon</div>
+        </a>
+
+        <a href="#" class="tool-card">
+            <div class="icon">📊</div>
+            <h3>Maturity Calculator</h3>
+            <p>Self-assessment tool based on CISA Zero Trust Maturity Model 2.0. Score your org across 5 pillars and visualize gaps.</p>
+            <div class="status">Coming Soon</div>
+        </a>
+
+        <a href="#" class="tool-card">
+            <div class="icon">🎯</div>
+            <h3>Threat Mapper</h3>
+            <p>Map adversary TTPs from MITRE ATT&CK to Zero Trust controls. See which pillars defend against which techniques.</p>
+            <div class="status">Coming Soon</div>
+        </a>
+
+        <a href="#" class="tool-card">
+            <div class="icon">🌐</div>
+            <h3>Network Segmentation Planner</h3>
+            <p>Drag-and-drop micro-segmentation designer. Visualize trust boundaries, data flows, and policy enforcement points.</p>
+            <div class="divs"></div>
+            <div class="status">Coming Soon</div>
+        </a>
+
+        <a href="#" class="tool-card">
+            <div class="icon">🔐</div>
+            <h3>Crypto Visualizer</h3>
+            <p>Interactive encryption and hashing demos. Compare algorithms, visualize TLS handshakes, understand certificate chains.</p>
+            <div class="status">Coming Soon</div>
+        </a>
+
+        <a href="#" class="tool-card">
+            <div class="icon">🤖</div>
+            <h3>AI Threat Simulator</h3>
+            <p>Educational module on AI-powered attacks and defenses. OWASP LLM Top 10, adversarial ML, prompt injection scenarios.</p>
+            <div class="status">Coming Soon</div>
+        </a>
+
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">🏛️ DoD Zero Trust — 7 Pillars</h2>
+    <div class="pillars">
+        <div class="pillar">
+            <div class="num">1</div>
+            <div class="label">User</div>
+        </div>
+        <div class="pillar">
+            <div class="num">2</div>
+            <div class="label">Device</div>
+        </div>
+        <div class="pillar">
+            <div class="num">3</div>
+            <div class="label">Application</div>
+        </div>
+        <div class="pillar">
+            <div class="num">4</div>
+            <div class="label">Workload</div>
+        </div>
+        <div class="pillar">
+            <div class="num">5</div>
+            <div class="label">Network</div>
+        </div>
+        <div class="pillar">
+            <div class="num">6</div>
+            <div class="label">Data</div>
+        </div>
+        <div class="pillar">
+            <div class="num">7</div>
+            <div class="label">Visibility<br>& Analytics</div>
+        </div>
+    </div>
+    <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 16px; text-align: center;">
+        Based on the DoD Zero Trust Reference Architecture v2.0
+    </p>
+</div>
+
+<footer>
+    <p>Built by <a href="https://github.com/WarrantBdoesZT">WarrantBdoesZT</a> · Zero Trust cybersecurity tooling · <span id="year"></span></p>
+</footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
