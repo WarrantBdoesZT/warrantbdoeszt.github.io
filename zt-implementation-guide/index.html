@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Trust Implementation Guide | WarrantBdoesZT</title>
+    <meta name="description" content="Interactive guide to implementing a Zero Trust Architecture following DoD ZT Reference Architecture v2.0, DoD ZT Strategy, and NIST SP 1800-35.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0e14;
+            --bg-2: #0d1218;
+            --card: #131820;
+            --card-hover: #171e28;
+            --border: #1e2530;
+            --border-bright: #2a3442;
+            --accent: #00d9a3;
+            --accent-dim: #00a87e;
+            --accent-glow: rgba(0, 217, 163, 0.15);
+            --blue: #4fc3f7;
+            --blue-dim: #2d9be0;
+            --text: #e0e6ed;
+            --text-dim: #7d8a9c;
+            --text-faint: #4a5567;
+            --danger: #ff4757;
+            --warn: #ffa502;
+            --purple: #a78bfa;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== NAV ===== */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .nav-logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--accent); background: var(--card); }
+        .nav-home {
+            color: var(--accent) !important;
+            font-weight: 600;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 100%);
+        }
+        .hero-shield { font-size: 48px; margin-bottom: 12px; }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            margin-top: 12px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero-sources {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .source-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 5px 14px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+        .source-badge strong { color: var(--accent); }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-sub {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+        }
+
+        /* ===== PRINCIPLES ===== */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 14px;
+        }
+        .principle-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        .principle-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+        .principle-card .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-glow);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .principle-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        .principle-card p {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            line-height: 1.45;
+        }
+
+        /* ===== PILLAR EXPLORER ===== */
+        .pillar-layout {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+        .pillar-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 240px;
+            flex-shrink: 0;
+        }
+        .pillar-tab {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 3px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            color: var(--text-dim);
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+        .pillar-tab:hover {
+            background: var(--card-hover);
+            border-left-color: var(--border-bright);
+            color: var(--text);
+        }
+        .pillar-tab.active {
+            background: var(--card-hover);
+            border-left-color: var(--accent);
+            color: var(--text);
+        }
+        .pillar-tab .pt-icon { font-size: 1.4rem; }
+        .pillar-tab .pt-info { flex: 1; }
+        .pillar-tab .pt-name { font-weight: 600; font-size: 0.9rem; }
+        .pillar-tab .pt-num { font-size: 0.75rem; color: var(--text-faint); }
+        .pillar-tab.active .pt-num { color: var(--accent-dim); }
+
+        .pillar-detail {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            min-height: 400px;
+        }
+        .pillar-detail .pd-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .pillar-detail .pd-icon { font-size: 2.5rem; }
+        .pillar-detail .pd-title h3 { font-size: 1.3rem; }
+        .pillar-detail .pd-title .pd-sub { color: var(--text-dim); font-size: 0.85rem; }
+        .pillar-detail .pd-desc {
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+        .pillar-detail .pd-section {
+            margin-bottom: 20px;
+        }
+        .pillar-detail .pd-section h5 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .pillar-detail .pd-section ul {
+            list-style: none;
+        }
+        .pillar-detail .pd-section li {
+            padding: 4px 0 4px 22px;
+            position: relative;
+            font-size: 0.88rem;
+            color: var(--text-dim);
+        }
+        .pillar-detail .pd-section li::before {
+            content: '▸';
+            position: absolute;
+            left: 4px;
+            color: var(--accent-dim);
+        }
+        .pillar-detail .pd-nist {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .pillar-detail .pd-nist strong { color: var(--blue); }
+
+        /* ===== ROADMAP ===== */
+        .roadmap-container {
+            position: relative;
+            padding-left: 28px;
+        }
+        .roadmap-container::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--blue) 50%, var(--border) 100%);
+        }
+        .roadmap-phase {
+            position: relative;
+            margin-bottom: 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px 24px;
+        }
+        .roadmap-phase::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 24px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        .roadmap-phase.rp-target::before { background: var(--blue); box-shadow: 0 0 10px rgba(79,195,247,0.3); }
+        .roadmap-phase.rp-future::before { background: var(--purple); box-shadow: 0 0 10px rgba(167,139,250,0.3); }
+        .roadmap-phase .rp-timeline {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .roadmap-phase.rp-target .rp-timeline { color: var(--blue); }
+        .roadmap-phase.rp-future .rp-timeline { color: var(--purple); }
+        .roadmap-phase .rp-title { font-size: 1.05rem; margin-bottom: 8px; }
+        .roadmap-phase .rp-desc { font-size: 0.88rem; color: var(--text-dim); }
+        .roadmap-phase ul { margin-top: 8px; list-style: none; }
+        .roadmap-phase li {
+            padding: 3px 0 3px 18px;
+            position: relative;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .roadmap-phase li::before { content: '○'; position: absolute; left: 0; color: var(--accent-dim); }
+
+        /* ===== MATURITY MODEL ===== */
+        .maturity-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        .maturity-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: var(--bg-2);
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-bright);
+        }
+        .maturity-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        .maturity-table td:first-child { color: var(--text); font-weight: 600; }
+        .maturity-table tr:hover td { background: var(--card-hover); }
+        .maturity-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .mb-traditional { background: rgba(255,71,87,0.15); color: var(--danger); }
+        .mb-initial { background: rgba(255,165,2,0.15); color: var(--warn); }
+        .mb-advanced { background: rgba(0,217,163,0.15); color: var(--accent); }
+        .mb-optimal { background: rgba(79,195,247,0.15); color: var(--blue); }
+
+        /* ===== IMPLEMENTATION PHASES ===== */
+        .impl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .impl-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+        }
+        .impl-card .ic-phase {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .impl-card .ic-phase.p1 { background: rgba(255,165,2,0.15); color: var(--warn); }
+        .impl-card .ic-phase.p2 { background: rgba(0,217,163,0.15); color: var(--accent); }
+        .impl-card .ic-phase.p3 { background: rgba(79,195,247,0.15); color: var(--blue); }
+        .impl-card .ic-phase.p4 { background: rgba(167,139,250,0.15); color: var(--purple); }
+        .impl-card h4 { font-size: 1rem; margin-bottom: 6px; }
+        .impl-card .ic-time { font-size: 0.8rem; color: var(--text-faint); margin-bottom: 10px; }
+        .impl-card ul { list-style: none; }
+        .impl-card li {
+            padding: 3px 0 3px 18px;
+            position: relative;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .impl-card li::before { content: '▸'; position: absolute; left: 0; color: var(--accent-dim); }
+
+        /* ===== NIST 1800-35 ===== */
+        .nist-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+        }
+        .nist-box h4 { color: var(--blue); margin-bottom: 10px; }
+        .nist-box p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 16px; }
+        .nist-approaches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .nist-approach {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .nist-approach .na-name { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+        .nist-approach .na-desc { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ===== CHECKLIST ===== */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .checklist-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .checklist-card h4 {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .check-item:hover { color: var(--text); }
+        .check-item .ci-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-bright);
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: transparent;
+        }
+        .check-item.checked .ci-box {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+        }
+        .check-item.checked { color: var(--text-faint); text-decoration: line-through; }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 32px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.82rem;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        .ref-list {
+            max-width: 700px;
+            margin: 12px auto;
+            text-align: left;
+            font-size: 0.78rem;
+            color: var(--text-faint);
+        }
+        .ref-list div { padding: 2px 0; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .pillar-layout { flex-direction: column; }
+            .pillar-selector { flex-direction: row; overflow-x: auto; min-width: 100%; gap: 6px; }
+            .pillar-tab { min-width: 160px; }
+            .nav { padding: 10px 16px; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 1.8rem; }
+            .section { padding: 30px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+    <div class="nav-left">
+        <a href="/index.html" class="nav-home">← Back to Hub</a>
+        <a href="/" class="nav-logo">WarrantB<span>doesZT</span></a>
+    </div>
+    <div class="nav-links">
+        <a href="#principles">Principles</a>
+        <a href="#pillars">7 Pillars</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#maturity">Maturity Model</a>
+        <a href="#implementation">Implementation</a>
+        <a href="#nist">NIST SP 1800-35</a>
+        <a href="#checklist">Checklist</a>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+    <div class="hero-shield">🛡️</div>
+    <h1>Zero Trust Implementation Guide</h1>
+    <p>An interactive resource for DoD practitioners implementing a Zero Trust Architecture (ZTA). Aligned with the DoD ZT Reference Architecture v2.0, DoD ZT Strategy (2022), and NIST SP 1800-35.</p>
+    <div class="hero-sources">
+        <span class="source-badge">🏛️ <strong>DoD ZT RA v2.0</strong> — July 2022</span>
+        <span class="source-badge">📋 <strong>DoD ZT Strategy</strong> — Nov 2022</span>
+        <span class="source-badge">📊 <strong>NIST SP 1800-35</strong> — June 2025 (Final)</span>
+        <span class="source-badge">📘 <strong>NIST SP 800-207</strong> — Aug 2020</span>
+    </div>
+</div>
+
+<!-- ===== FOUNDATIONAL PRINCIPLES ===== -->
+<div class="section" id="principles">
+    <h2 class="section-title">📐 Foundational Principles</h2>
+    <p class="section-sub">The DoD Zero Trust Reference Architecture defines five core tenets that govern every architectural decision.</p>
+    <div class="principles-grid">
+        <div class="principle-card">
+            <div class="num">1</div>
+            <h4>Assume Hostile Environment</h4>
+            <p>Malicious actors exist both inside and outside the network. All users, devices, and environments are treated as untrusted.</p>
+        </div>
+        <div class="principle-card">
+            <div class="num">2</div>
+            <h4>Presume Breach</h4>
+            <p>Operate with the assumption an adversary already has presence. Enhanced scrutiny of all access and authorization decisions.</p>
+        </div>
+        <div class="principle-card">
+            <div class="num">3</div>
+            <h4>Never Trust, Always Verify</h4>
+            <p>Deny by default. Every user, device, application/workload, and data flow is authenticated and explicitly authorized using least privilege.</p>
+        </div>
+        <div class="principle-card">
+            <div class="num">4</div>
+            <h4>Scrutinize Explicitly</h4>
+            <p>All resources accessed securely using multiple dynamic and static attributes to derive confidence levels for contextual access.</p>
+        </div>
+        <div class="principle-card">
+            <div class="num">5</div>
+            <h4>Apply Unified Analytics</h4>
+            <p>Unified analytics for DAAS (Data, Applications, Assets, Services) including behavioral analysis and logging of every transaction.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 7 PILLARS EXPLORER ===== -->
+<div class="section" id="pillars">
+    <h2 class="section-title">🏛️ The 7 Pillars of DoD Zero Trust</h2>
+    <p class="section-sub">The DoD ZT RA v2.0 defines 152 Zero Trust activities across seven interconnected pillars. Click each pillar to explore capabilities, implementation guidance, and NIST alignment.</p>
+
+    <div class="pillar-layout">
+        <!-- Pillar Selector -->
+        <div class="pillar-selector" id="pillarSelector">
+            <!-- Filled by JS -->
+        </div>
+        <!-- Pillar Detail -->
+        <div class="pillar-detail" id="pillarDetail">
+            <!-- Filled by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ===== ROADMAP ===== -->
+<div class="section" id="roadmap">
+    <h2 class="section-title">🗺️ DoD Zero Trust Capability Execution Roadmap</h2>
+    <p class="section-sub">The DoD ZT Strategy mandates all components reach Target Level maturity by FY2027. This roadmap outlines the phased approach defined in the Capability Execution Roadmap (COA 1).</p>
+
+    <div class="roadmap-container">
+        <div class="roadmap-phase">
+            <div class="rp-timeline">FY2022–FY2023 · Phase 0: Foundation</div>
+            <div class="rp-title">Establish Governance & Baseline</div>
+            <div class="rp-desc">Stand up ZT program management, conduct capability gap assessments against the 7 pillars, and establish the enterprise identity foundation.</div>
+            <ul>
+                <li>Appoint Zero Trust lead and governance body</li>
+                <li>Complete pillar-level gap assessment (152 activities)</li>
+                <li>Deploy enterprise MFA and ICAM foundation</li>
+                <li>Establish baseline network visibility and logging</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-phase">
+            <div class="rp-timeline">FY2024–FY2025 · Phase 1: Initial ZT Capabilities</div>
+            <div class="rp-title">Deploy Core ZT Controls</div>
+            <div class="rp-desc">Implement continuous authentication, device posture assessment, initial micro-segmentation, and automated policy enforcement.</div>
+            <ul>
+                <li>Continuous multi-factor authentication (CMFA)</li>
+                <li>Device compliance and health attestation (Comply-to-Connect)</li>
+                <li>Macro-segmentation of network enclaves</li>
+                <li>Initial data tagging and classification automation</li>
+                <li>SIEM integration for cross-pillar visibility</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-phase rp-target">
+            <div class="rp-timeline">FY2026–FY2027 · Phase 2: Target Level (Goal)</div>
+            <div class="rp-title">Achieve Target Level Maturity</div>
+            <div class="rp-desc">All DoD components expected to reach Target Level ZT capability across all 7 pillars by end of FY2027.</div>
+            <ul>
+                <li>Dynamic, risk-based access decisions in real time</li>
+                <li>Full micro-segmentation with software-defined perimeters</li>
+                <li>Automated SOAR response across the enterprise</li>
+                <li>Comprehensive data-at-rest, in-transit, and in-use protection</li>
+                <li>Behavioral analytics with AI/ML threat detection</li>
+            </ul>
+        </div>
+
+        <div class="roadmap-phase rp-future">
+            <div class="rp-timeline">FY2028+ · Phase 3: Advanced / Optimal</div>
+            <div class="rp-title">Advance to Optimal Maturity</div>
+            <div class="rp-desc">Beyond FY2027 Target Level, components advance toward Optimal maturity with fully autonomous ZT operations and AI-driven policy.</div>
+            <ul>
+                <li>Fully automated, self-healing ZT environment</li>
+                <li>AI/ML-driven dynamic policy generation</li>
+                <li>Full data lineage and automated rights management</li>
+                <li>Continuous compliance and automated remediation</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MATURITY MODEL ===== -->
+<div class="section" id="maturity">
+    <h2 class="section-title">📊 Zero Trust Maturity Model</h2>
+    <p class="section-sub">The DoD ZT Strategy defines maturity across four levels per pillar. "Target Level" is the FY2027 requirement for all DoD components.</p>
+
+    <div style="overflow-x: auto;">
+    <table class="maturity-table">
+        <thead>
+            <tr>
+                <th>Level</th>
+                <th>Description</th>
+                <th>Key Characteristics</th>
+                <th>DoD Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Level 1<br><span class="maturity-badge mb-traditional">Traditional</span></td>
+                <td>Perimeter-based security with implicit trust. Minimal automation.</td>
+                <td>Static policies, network-location trust, manual access reviews</td>
+                <td>Starting point for most components</td>
+            </tr>
+            <tr>
+                <td>Level 2<br><span class="maturity-badge mb-initial">Initial</span></td>
+                <td>Basic ZT principles introduced. Some automation. Identity-aware.</td>
+                <td>MFA deployed, initial segmentation, device inventory started</td>
+                <td>Where most components are today</td>
+            </tr>
+            <tr>
+                <td>Level 3<br><span class="maturity-badge mb-advanced">Advanced / Target</span></td>
+                <td>Dynamic, risk-based access. Automated policy enforcement. Continuous verification.</td>
+                <td>CMFA, micro-segmentation, SOAR, behavioral analytics, data tagging</td>
+                <td><strong>DoD Target by FY2027</strong></td>
+            </tr>
+            <tr>
+                <td>Level 4<br><span class="maturity-badge mb-optimal">Optimal</span></td>
+                <td>Fully automated, AI-driven ZT. Self-healing. Complete data-centric protection.</td>
+                <td>Autonomous response, AI policy generation, full data lineage</td>
+                <td>Aspirational — beyond FY2027</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-faint); margin-top: 12px;">
+        Note: The DoD ZT Strategy maturity model builds upon and extends CISA's ZTMM 2.0 (which uses 5 pillars and Traditional/Initial/Advanced/Optimal maturity). DoD's model uses 7 pillars to address mission-specific requirements.
+    </p>
+</div>
+
+<!-- ===== IMPLEMENTATION PHASES ===== -->
+<div class="section" id="implementation">
+    <h2 class="section-title">🔧 Implementation Phases</h2>
+    <p class="section-sub">A practitioner's phased approach to ZTA implementation, drawn from NIST SP 1800-35 and DoD ZT guidance.</p>
+
+    <div class="impl-grid">
+        <div class="impl-card">
+            <span class="ic-phase p1">Phase 1</span>
+            <h4>Assess & Plan</h4>
+            <div class="ic-time">Months 1–3</div>
+            <ul>
+                <li>Inventory all assets (DAAS: Data, Apps, Assets, Services)</li>
+                <li>Map data flows and identify crown-jewel data</li>
+                <li>Conduct gap assessment against 7 pillars</li>
+                <li>Define protect surfaces (NIST SP 800-207)</li>
+                <li>Establish governance and stakeholder alignment</li>
+                <li>Develop ZT implementation roadmap with milestones</li>
+            </ul>
+        </div>
+
+        <div class="impl-card">
+            <span class="ic-phase p2">Phase 2</span>
+            <h4>Foundation Building</h4>
+            <div class="ic-time">Months 4–9</div>
+            <ul>
+                <li>Deploy/upgrade IAM and ICAM foundation</li>
+                <li>Implement MFA across all user access paths</li>
+                <li>Deploy device compliance and posture assessment</li>
+                <li>Establish baseline network macro-segmentation</li>
+                <li>Deploy enterprise logging and SIEM visibility</li>
+                <li>Begin data classification and tagging</li>
+            </ul>
+        </div>
+
+        <div class="impl-card">
+            <span class="ic-phase p3">Phase 3</span>
+            <h4>Advanced Capabilities</h4>
+            <div class="ic-time">Months 10–18</div>
+            <ul>
+                <li>Implement continuous multi-factor auth (CMFA)</li>
+                <li>Deploy micro-segmentation and SDP</li>
+                <li>Automate policy enforcement (SOAR)</li>
+                <li>Integrate behavioral analytics</li>
+                <li>Implement data-at-rest encryption and DRM</li>
+                <li>Establish transaction-level logging</li>
+            </ul>
+        </div>
+
+        <div class="impl-card">
+            <span class="ic-phase p4">Phase 4</span>
+            <h4>Optimize & Sustain</h4>
+            <div class="ic-time">Months 19+</div>
+            <ul>
+                <li>AI/ML-driven dynamic policy decisions</li>
+                <li>Continuous compliance monitoring</li>
+                <li>Automated remediation workflows</li>
+                <li>Regular red-team validation of ZT controls</li>
+                <li>Advance pillar maturity toward Optimal</li>
+                <li>Expand ZT to all environments (cloud, tactical edge)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ===== NIST SP 1800-35 ===== -->
+<div class="section" id="nist">
+    <h2 class="section-title">📘 NIST SP 1800-35 Alignment</h2>
+    <p class="section-sub">NIST SP 1800-35 "Implementing a Zero Trust Architecture" (Final, June 2025) demonstrates 19 ZTA implementations using commercially available technology, aligned to NIST SP 800-207.</p>
+
+    <div class="nist-box">
+        <h4>📐 ZTA Implementation Approaches</h4>
+        <p>The NCCoE worked with 24 industry collaborators to build and document real ZTA implementations. These approaches represent validated deployment patterns DoD practitioners can emulate:</p>
+
+        <div class="nist-approaches">
+            <div class="nist-approach">
+                <div class="na-name">SDP / ZTNA</div>
+                <div class="na-desc">Software-Defined Perimeter and Zero Trust Network Access — identity-aware, per-application access broker</div>
+            </div>
+            <div class="nist-approach">
+                <div class="na-name">Enhanced Identity Governance</div>
+                <div class="na-desc">Identity-driven access model where identity is the primary policy enforcement point (EIG)</div>
+            </div>
+            <div class="nist-approach">
+                <div class="na-name">Microsegmentation</div>
+                <div class="na-desc">Granular network segmentation down to individual workloads with per-flow policy</div>
+            </div>
+            <div class="nist-approach">
+                <div class="na-name">Network Infrastructure</div>
+                <div class="na-desc">SDN-based overlays, inline CASB, and SWG integrated with identity-aware policy</div>
+            </div>
+        </div>
+
+        <h4 style="margin-top: 24px;">🔗 Key Mappings: DoD ZT RA ↔ NIST SP 800-207 ↔ NIST SP 1800-35</h4>
+        <div style="overflow-x: auto; margin-top: 12px;">
+        <table class="maturity-table">
+            <thead>
+                <tr>
+                    <th>DoD ZT RA Pillar</th>
+                    <th>NIST SP 800-207 Concept</th>
+                    <th>NIST SP 1800-35 Implementation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>User</td>
+                    <td>Policy Engine (PE) identity inputs</td>
+                    <td>EIG, ICAM, MFA, conditional access policies</td>
+                </tr>
+                <tr>
+                    <td>Device</td>
+                    <td>Device health posture feeds</td>
+                    <td>MDM, Comply-to-Connect, endpoint detection</td>
+                </tr>
+                <tr>
+                    <td>Network/Environment</td>
+                    <td>Protect surface, SDP</td>
+                    <td>Microsegmentation, ZTNA, SDN overlays</td>
+                </tr>
+                <tr>
+                    <td>Application & Workload</td>
+                    <td>Resource access via policy administrator</td>
+                    <td>Secure API gateways, CI/CD security, container security</td>
+                </tr>
+                <tr>
+                    <td>Data</td>
+                    <td>Data-centric protection (SP 800-207 §3.2)</td>
+                    <td>Classification, encryption, DRM, DLP</td>
+                </tr>
+                <tr>
+                    <td>Visibility & Analytics</td>
+                    <td>Trust algorithm inputs, continuous evaluation</td>
+                    <td>SIEM, UEBA, telemetry correlation</td>
+                </tr>
+                <tr>
+                    <td>Automation & Orchestration</td>
+                    <td>Policy Engine automated decisions</td>
+                    <td>SOAR, automated response, policy-as-code</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<!-- ===== INTERACTIVE CHECKLIST ===== -->
+<div class="section" id="checklist">
+    <h2 class="section-title">✅ ZT Readiness Checklist</h2>
+    <p class="section-sub">Click items to track your progress. This checklist covers the foundational requirements across all 7 pillars for Target Level maturity.</p>
+
+    <div class="checklist-grid">
+        <div class="checklist-card">
+            <h4>👤 User Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>MFA deployed for all person and non-person entities</div>
+            <div class="check-item"><span class="ci-box">✓</span>Continuous multi-factor authentication (CMFA) implemented</div>
+            <div class="check-item"><span class="ci-box">✓</span>RBAC and ABAC policies defined and enforced</div>
+            <div class="check-item"><span class="ci-box">✓</span>Federated identity established for partner orgs</div>
+            <div class="check-item"><span class="ci-box">✓</span>Activity patterns continuously monitored</div>
+        </div>
+        <div class="checklist-card">
+            <h4>💻 Device Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>All devices inventoried and authenticated</div>
+            <div class="check-item"><span class="ci-box">✓</span>Comply-to-Connect or MDM deployed</div>
+            <div class="check-item"><span class="ci-box">✓</span>Real-time device posture assessment at access time</div>
+            <div class="check-item"><span class="ci-box">✓</span>Automated remediation for non-compliant devices</div>
+            <div class="check-item"><span class="ci-box">✓</span>Device health feeds into access policy decisions</div>
+        </div>
+        <div class="checklist-card">
+            <h4>🌐 Network/Environment Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>Macro-segmentation completed across enclaves</div>
+            <div class="check-item"><span class="ci-box">✓</span>Micro-segmentation deployed for critical workloads</div>
+            <div class="check-item"><span class="ci-box">✓</span>Software-defined perimeter (SDP) operational</div>
+            <div class="check-item"><span class="ci-box">✓</span>Internal and external data flows mapped and controlled</div>
+            <div class="check-item"><span class="ci-box">✓</span>Lateral movement paths identified and restricted</div>
+        </div>
+        <div class="checklist-card">
+            <h4>📦 Application & Workload Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>Application inventory and classification complete</div>
+            <div class="check-item"><span class="ci-box">✓</span>Secure CI/CD pipeline with security scanning</div>
+            <div class="check-item"><span class="ci-box">✓</span>Container and VM security controls deployed</div>
+            <div class="check-item"><span class="ci-box">✓</span>Runtime workload protection active</div>
+            <div class="check-item"><span class="ci-box">✓</span>API gateway with identity-aware policy enforcement</div>
+        </div>
+        <div class="checklist-card">
+            <h4>🔒 Data Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>Data classification and tagging scheme operational</div>
+            <div class="check-item"><span class="ci-box">✓</span>Encryption at-rest for all sensitive data</div>
+            <div class="check-item"><span class="ci-box">✓</span>Encryption in-transit (TLS) enforced enterprise-wide</div>
+            <div class="check-item"><span class="ci-box">✓</span>Digital Rights Management (DRM) for controlled data</div>
+            <div class="check-item"><span class="ci-box">✓</span>Data Loss Prevention (DLP) deployed</div>
+        </div>
+        <div class="checklist-card">
+            <h4>👁️ Visibility & Analytics Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>Enterprise SIEM with cross-pillar telemetry</div>
+            <div class="check-item"><span class="ci-box">✓</span>UEBA (User & Entity Behavior Analytics) deployed</div>
+            <div class="check-item"><span class="ci-box">✓</span>Transaction-level logging for all access events</div>
+            <div class="check-item"><span class="ci-box">✓</span>Anomaly detection with alerting</div>
+            <div class="check-item"><span class="ci-box">✓</span>Real-time dashboards for ZT posture monitoring</div>
+        </div>
+        <div class="checklist-card">
+            <h4>⚙️ Automation & Orchestration Pillar</h4>
+            <div class="check-item"><span class="ci-box">✓</span>SOAR platform deployed and integrated with SIEM</div>
+            <div class="check-item"><span class="ci-box">✓</span>Automated incident response playbooks defined</div>
+            <div class="check-item"><span class="ci-box">✓</span>Policy-as-code for consistent enforcement</div>
+            <div class="check-item"><span class="ci-box">✓</span>Automated provisioning/deprovisioning of access</div>
+            <div class="check-item"><span class="ci-box">✓</span>Continuous compliance monitoring with auto-remediation</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p>Built by <a href="https://github.com/WarrantBdoesZT">WarrantBdoesZT</a> · Zero Trust Implementation Guide</p>
+    <div class="ref-list">
+        <div>[1] DoD Zero Trust Reference Architecture v2.0, July 2022 — DISA/NSA</div>
+        <div>[2] DoD Zero Trust Strategy, November 2022 — DoD CIO</div>
+        <div>[3] NIST SP 1800-35, "Implementing a Zero Trust Architecture," June 2025 — NCCoE</div>
+        <div>[4] NIST SP 800-207, "Zero Trust Architecture," August 2020</div>
+        <div>[5] DoD ZT Capability Execution Roadmap v1.1 — DoD CIO</div>
+        <div>[6] CISA Zero Trust Maturity Model 2.0 — CISA</div>
+        <div>[7] DTM 25-003, "Implementing the DoD Zero Trust Strategy," July 2025</div>
+    </div>
+    <p style="margin-top: 8px;">UNCLASSIFIED · Educational resource · Always verify against current official guidance</p>
+</footer>
+
+<script>
+// ===== PILLAR DATA =====
+const pillars = [
+    {
+        num: 1,
+        name: 'User',
+        icon: '👤',
+        sub: 'Identity, Credential, and Access Management',
+        desc: 'Secure, limit, and enforce access for person, non-person, and federated entities to DAAS (Data, Applications, Assets, Services). The User pillar is the gatekeeper — it authenticates and authorizes every entity requesting access.',
+        capabilities: [
+            'Continuous multi-factor authentication (CMFA) for all entities',
+            'Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC)',
+            'Federated identity for cross-organization collaboration',
+            'Continuous monitoring of user activity patterns and behaviors',
+            'Just-In-Time (JIT) access provisioning and deprovisioning',
+            'Privileged access management (PAM) for admin accounts'
+        ],
+        technologies: [
+            'ICAM / Identity Provider (IdP)',
+            'PKI and CAC/PIV credential systems',
+            'Privileged Access Management (PAM)',
+            'Single Sign-On (SSO) with SAML/OIDC'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> Identity is a primary input to the Policy Engine (PE). Subject identity and attributes feed the trust algorithm for every access decision. NIST SP 1800-35 demonstrates EIG (Enhanced Identity Governance) as a core ZTA approach.'
+    },
+    {
+        num: 2,
+        name: 'Device',
+        icon: '💻',
+        sub: 'Endpoint Posture and Compliance',
+        desc: 'Identify, authenticate, authorize, inventory, isolate, secure, remediate, and control all devices. Real-time attestation ensures devices are healthy before they are granted access to any resource.',
+        capabilities: [
+            'Complete device inventory and authentication',
+            'Real-time device health and compliance attestation',
+            'Automated remediation for non-compliant devices',
+            'Device posture feeds into access policy decisions',
+            'Hardware trust roots (TPM, secure boot)',
+            'Mobile device management and Comply-to-Connect'
+        ],
+        technologies: [
+            'Mobile Device Management (MDM) / UEM',
+            'Comply-to-Connect (C2C) programs',
+            'Endpoint Detection and Response (EDR)',
+            'TPM 2.0 and hardware attestation'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> Device posture is a required input to the trust algorithm. The PE must know device health before granting access. NIST SP 1800-35 implementations use MDM and endpoint security platforms to provide this telemetry.'
+    },
+    {
+        num: 3,
+        name: 'Network/Environment',
+        icon: '🌐',
+        sub: 'Segmentation and Data Flow Control',
+        desc: 'Segment (both logically and physically), isolate, and control the network/environment with granular access and policy restrictions. Macro-segmentation evolves into micro-segmentation for greater protection of DAAS.',
+        capabilities: [
+            'Macro-segmentation of network enclaves',
+            'Micro-segmentation down to individual workloads',
+            'Software-Defined Perimeter (SDP) deployment',
+            'Internal and external data flow management',
+            'Prevention of lateral movement between segments',
+            'Software-Defined Networking (SDN) infrastructure'
+        ],
+        technologies: [
+            'Software-Defined Perimeter (SDP) / ZTNA',
+            'Network microsegmentation platforms',
+            'SDN controllers (e.g., Cisco ACI, VMware NSX)',
+            'Next-gen firewalls with identity-aware policy'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> The protect surface concept defines what needs protecting — data, applications, assets, and services. Networks become implicit — location no longer grants trust. NIST SP 1800-35 demonstrates SDP and microsegmentation as key implementation patterns.'
+    },
+    {
+        num: 4,
+        name: 'Application & Workload',
+        icon: '📦',
+        sub: 'Secure Application Lifecycle',
+        desc: 'Applications and workloads include tasks on systems or services on-premises and in the cloud. Zero Trust spans the complete application stack from the application layer to the hypervisor — including compute containers and virtual machines.',
+        capabilities: [
+            'Application inventory, classification, and discovery',
+            'Secure CI/CD pipeline with automated security testing',
+            'Container and VM runtime security',
+            'API security gateway with identity-aware policy',
+            'Application proxy technologies for additional protection',
+            'Workload identity and service mesh integration'
+        ],
+        technologies: [
+            'API Gateways (Kong, Apigee, AWS API Gateway)',
+            'Container security (Kubernetes, Docker)',
+            'Web Application Firewalls (WAF)',
+            'Service Mesh (Istio, Linkerd)'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> Applications and workloads are resources protected by the ZTA. Access must be mediated by the Policy Enforcement Point (PEP). NIST SP 1800-35 demonstrates application-level access brokers and API gateways as PEPs.'
+    },
+    {
+        num: 5,
+        name: 'Data',
+        icon: '🔒',
+        sub: 'Data-Centric Protection',
+        desc: 'Data is at the center of the Zero Trust model — all pillars exist to protect it. Data tagging ensures proper classification for all data to prevent spillage. ML/AI will automate tagging at DoD scale.',
+        capabilities: [
+            'Automated data classification and tagging',
+            'Encryption at-rest, in-transit, and in-use',
+            'Digital Rights Management (DRM) for controlled sharing',
+            'Data Loss Prevention (DLP) across all channels',
+            'Data lineage tracking and audit trails',
+            'Data rights and access expiration policies'
+        ],
+        technologies: [
+            'DLP platforms (forcepoint, Symantec, Microsoft Purview)',
+            'DRM systems (Azure Information Protection)',
+            'Data discovery and classification tools',
+            'Encryption (FIPS 140-2/3 validated)'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> Data-centric security is the core principle — "protect the data, not the perimeter." Data sensitivity determines the trust algorithm risk threshold. NIST SP 1800-35 shows DLP, DRM, and encryption integrated into ZTA deployments.'
+    },
+    {
+        num: 6,
+        name: 'Visibility & Analytics',
+        icon: '👁️',
+        sub: 'Continuous Monitoring and Threat Detection',
+        desc: 'Vital, contextual details provide greater understanding of performance, behavior, and activity baselines across all other pillars. This visibility improves detection of anomalous behavior and enables dynamic changes to security policy in real time.',
+        capabilities: [
+            'Enterprise SIEM aggregating logs from all pillars',
+            'User & Entity Behavior Analytics (UEBA)',
+            'Transaction-level logging for every access event',
+            'Real-time anomaly detection with alerting',
+            'Sensor data and telemetry correlation',
+            'Dashboards for ZT posture and compliance monitoring'
+        ],
+        technologies: [
+            'SIEM (Splunk, Microsoft Sentinel, Elastic)',
+            'UEBA platforms',
+            'Network Detection and Response (NDR)',
+            'Security analytics and threat intelligence platforms'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> The trust algorithm requires continuous input — the PE and Policy Administrator (PA) need real-time telemetry to make and maintain access decisions. NIST SP 1800-35 integrates SIEM and analytics platforms as core ZTA components.'
+    },
+    {
+        num: 7,
+        name: 'Automation & Orchestration',
+        icon: '⚙️',
+        sub: 'Automated Security Operations',
+        desc: 'Automate manual security processes to take policy-based actions across the enterprise with speed and at scale. SOAR integrates SIEM with automated response tools. Consistent security policy enforcement across all environments.',
+        capabilities: [
+            'SOAR platform with automated playbooks',
+            'Policy-as-code for consistent enforcement',
+            'Automated incident response and containment',
+            'Automated provisioning/deprovisioning of access',
+            'Continuous compliance monitoring and auto-remediation',
+            'Integration of disparate security systems'
+        ],
+        technologies: [
+            'SOAR (Splunk SOAR, Palo Alto XSOAR, Microsoft Sentinel)',
+            'Infrastructure-as-Code (Terraform, Ansible)',
+            'Policy engines (OPA, Kyverno)',
+            'API orchestration and webhooks'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> The Policy Engine automates access decisions based on inputs from all pillars. The PA enforces those decisions through PEPs. NIST SP 1800-35 demonstrates SOAR-integrated ZTA implementations with automated response workflows.'
+    }
+];
+
+// ===== RENDER PILLAR SELECTOR =====
+const selector = document.getElementById('pillarSelector');
+const detail = document.getElementById('pillarDetail');
+let activePillar = 0;
+
+function renderSelector() {
+    selector.innerHTML = pillars.map((p, i) => `
+        <button class="pillar-tab ${i === activePillar ? 'active' : ''}" onclick="selectPillar(${i})">
+            <span class="pt-icon">${p.icon}</span>
+            <span class="pt-info">
+                <div class="pt-name">${p.name}</div>
+                <div class="pt-num">Pillar ${p.num}</div>
+            </span>
+        </button>
+    `).join('');
+}
+
+function renderDetail() {
+    const p = pillars[activePillar];
+    detail.innerHTML = `
+        <div class="pd-header">
+            <span class="pd-icon">${p.icon}</span>
+            <div class="pd-title">
+                <h3>Pillar ${p.num}: ${p.name}</h3>
+                <div class="pd-sub">${p.sub}</div>
+            </div>
+        </div>
+        <div class="pd-desc">${p.desc}</div>
+        <div class="pd-section">
+            <h5>Key Capabilities</h5>
+            <ul>${p.capabilities.map(c => `<li>${c}</li>`).join('')}</ul>
+        </div>
+        <div class="pd-section">
+            <h5>Representative Technologies</h5>
+            <ul>${p.technologies.map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+        <div class="pd-nist">${p.nist}</div>
+    `;
+}
+
+function selectPillar(idx) {
+    activePillar = idx;
+    renderSelector();
+    renderDetail();
+}
+
+renderSelector();
+renderDetail();
+
+// ===== CHECKLIST INTERACTIVITY =====
+document.querySelectorAll('.check-item').forEach(item => {
+    item.addEventListener('click', () => {
+        item.classList.toggle('checked');
+        saveChecklist();
+    });
+});
+
+function saveChecklist() {
+    const items = document.querySelectorAll('.check-item');
+    const state = [];
+    items.forEach((item, i) => state.push(item.classList.contains('checked')));
+    try {
+        localStorage.setItem('zt-checklist-v1', JSON.stringify(state));
+    } catch(e) {}
+}
+
+function loadChecklist() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('zt-checklist-v1') || '[]');
+        const items = document.querySelectorAll('.check-item');
+        items.forEach((item, i) => {
+            if (saved[i]) item.classList.add('checked');
+        });
+    } catch(e) {}
+}
+
+loadChecklist();
+</script>
+
+</body>
+</html>
