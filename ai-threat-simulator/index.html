@@ -190,6 +190,25 @@ a:hover{text-decoration:underline}
 .owasp-inner .owasp-defense{font-size:.78rem;color:var(--accent);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .owasp-inner .owasp-defense strong{color:var(--accent)}
 
+/* ===== MATURITY ASSESSMENT ===== */
+.maturity-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;display:grid;grid-template-columns:220px 1fr;gap:24px}
+@media(max-width:768px){.maturity-box{grid-template-columns:1fr}}
+.maturity-score{text-align:center}
+.maturity-value{font-size:2.5rem;font-weight:700;color:var(--accent)}
+.maturity-label{font-size:.85rem;color:var(--text-dim);margin-bottom:12px}
+.maturity-progress{height:10px;background:var(--bg-2);border-radius:5px;overflow:hidden;border:1px solid var(--border)}
+.maturity-fill{height:100%;background:var(--accent);border-radius:5px;transition:width .4s ease}
+.maturity-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;align-content:start}
+.maturity-item{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s}
+.maturity-item:hover{border-color:var(--border-bright)}
+.maturity-item.checked{border-color:var(--accent);background:rgba(0,217,163,.05)}
+.maturity-item .mi-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border-bright);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:transparent;transition:all .2s;margin-top:1px}
+.maturity-item.checked .mi-box{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.maturity-item .mi-text{font-size:.78rem;color:var(--text-dim);line-height:1.4}
+.maturity-item .mi-text strong{color:var(--blue);font-size:.68rem}
+.maturity-reset{margin-top:16px;padding:8px 20px;background:var(--bg-2);color:var(--text-dim);border:1px solid var(--border);border-radius:8px;font-size:.8rem;cursor:pointer;transition:all .2s}
+.maturity-reset:hover{border-color:var(--border-bright);color:var(--text)}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:900px){
   .sim-canvas-wrap{min-height:320px}
@@ -494,6 +513,23 @@ footer .ref-list div{font-size:.7rem;color:var(--text-faint);padding:2px 0}
   <h2 class="section-title">📘 OWASP Top 10 for LLM Applications (2025)</h2>
   <p class="section-sub">The definitive list of risks when deploying LLMs. Click any item to expand the attack example and defense.</p>
   <div class="owasp-list" id="owaspList"></div>
+</div>
+
+<!-- ===== SECTION 8: MATURITY SELF-ASSESSMENT ===== -->
+<div class="section">
+  <h2 class="section-title">📊 AI Threat Readiness Self-Assessment</h2>
+  <p class="section-sub">How ready is your organization for AI-augmented attacks? This covers both Zero Trust readiness and AI defense preparedness. Check what you have in place.</p>
+  <div class="maturity-box">
+    <div class="maturity-score">
+      <div class="maturity-value" id="matValue">0%</div>
+      <div class="maturity-label" id="matLabel">Getting Started</div>
+      <div class="maturity-progress"><div class="maturity-fill" id="matFill"></div></div>
+    </div>
+    <div>
+      <div class="maturity-checks" id="matChecks"></div>
+      <button class="maturity-reset" onclick="resetMaturity()">↻ Reset Assessment</button>
+    </div>
+  </div>
 </div>
 
 <footer>
@@ -959,11 +995,70 @@ function runFuzzDemo(){
   addLine();
 }
 
+// ===================== DATA: MATURITY ASSESSMENT =====================
+const MATURITY_ITEMS = [
+  {cat:'ZT',text:'Zero Trust architecture in progress — deny-by-default networking with microsegmentation'},
+  {cat:'ZT',text:'Continuous verification enforced — device posture checks at every access decision'},
+  {cat:'ZT',text:'PAM solution brokers all privileged access with session recording and JIT elevation'},
+  {cat:'ZT',text:'Data classification and DLP policies enforced at enforcement points (PEPs)'},
+  {cat:'ZT',text:'All 7 DoD Zero Trust pillars have at least Target Level coverage'},
+  {cat:'AI-Def',text:'EDR/XDR with behavioral ML detection deployed across all endpoints'},
+  {cat:'AI-Def',text:'AI-powered continuous fuzzing running on internally-developed code (PatchWarden pattern)'},
+  {cat:'AI-Def',text:'Deception technology deployed — honeytokens, canary endpoints, fake services'},
+  {cat:'AI-Def',text:'Network traffic analysis with AI-based C2 beacon detection (BeaconHunter pattern)'},
+  {cat:'AI-Def',text:'SOAR platform with AI-assisted incident response and automated containment'},
+  {cat:'AI-Def',text:'Defensive AI orchestrator correlating signals across all security tools (Aegis pattern)'},
+  {cat:'AI-Risk',text:'OWASP LLM Top 10 risks assessed for all AI/ML systems in production'},
+  {cat:'AI-Risk',text:'Prompt injection defenses deployed — input sanitization, output filtering, instruction hierarchy'},
+  {cat:'AI-Risk',text:'LLM agents scoped with least-privilege tools, action allowlists, and human-in-the-loop for destructive actions'},
+  {cat:'AI-Risk',text:'Model supply chain secured — signing, verification, sandboxed execution for all third-party models'},
+  {cat:'AI-Risk',text:'Red team exercises conducted against AI systems including adversarial ML and prompt injection scenarios'},
+];
+
+let maturityState = {};
+function renderMaturity(){
+  document.getElementById('matChecks').innerHTML = MATURITY_ITEMS.map((m,i)=>`
+    <div class="maturity-item" id="mat-${i}" onclick="toggleMaturity(${i})">
+      <span class="mi-box">✓</span>
+      <span class="mi-text"><strong>${m.cat}</strong> ${m.text}</span>
+    </div>
+  `).join('');
+  MATURITY_ITEMS.forEach((m,i)=>maturityState[i]=false);
+  updateMaturity();
+}
+function toggleMaturity(i){
+  maturityState[i] = !maturityState[i];
+  document.getElementById('mat-'+i).classList.toggle('checked',maturityState[i]);
+  updateMaturity();
+}
+function updateMaturity(){
+  const checked = Object.values(maturityState).filter(v=>v).length;
+  const total = MATURITY_ITEMS.length;
+  const pct = Math.round(checked/total*100);
+  document.getElementById('matValue').textContent = pct + '%';
+  document.getElementById('matFill').style.width = pct + '%';
+  let label;
+  if(pct<20)label='Getting Started';
+  else if(pct<40)label='Foundational';
+  else if(pct<60)label='Developing';
+  else if(pct<80)label='Advanced';
+  else label='Optimal — AI-Threat Ready';
+  document.getElementById('matLabel').textContent = label;
+}
+function resetMaturity(){
+  MATURITY_ITEMS.forEach((m,i)=>{
+    maturityState[i]=false;
+    document.getElementById('mat-'+i).classList.remove('checked');
+  });
+  updateMaturity();
+}
+
 // ===================== INIT =====================
 renderOffensive();
 renderDefensive();
 renderZTMatrix();
 renderOWASP();
+renderMaturity();
 resetSimulation();
 </script>
 
