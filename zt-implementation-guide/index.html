@@ -336,42 +336,6 @@
         }
         .roadmap-phase li::before { content: '○'; position: absolute; left: 0; color: var(--accent-dim); }
 
-        /* ===== MATURITY MODEL ===== */
-        .maturity-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.88rem;
-        }
-        .maturity-table th {
-            text-align: left;
-            padding: 12px 14px;
-            background: var(--bg-2);
-            color: var(--text-dim);
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border-bright);
-        }
-        .maturity-table td {
-            padding: 12px 14px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-dim);
-        }
-        .maturity-table td:first-child { color: var(--text); font-weight: 600; }
-        .maturity-table tr:hover td { background: var(--card-hover); }
-        .maturity-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .mb-traditional { background: rgba(255,71,87,0.15); color: var(--danger); }
-        .mb-initial { background: rgba(255,165,2,0.15); color: var(--warn); }
-        .mb-advanced { background: rgba(0,217,163,0.15); color: var(--accent); }
-        .mb-optimal { background: rgba(79,195,247,0.15); color: var(--blue); }
-
         /* ===== IMPLEMENTATION PHASES ===== */
         .impl-grid {
             display: grid;
@@ -521,7 +485,6 @@
         <a href="#principles">Principles</a>
         <a href="#pillars">7 Pillars</a>
         <a href="#roadmap">Roadmap</a>
-        <a href="#maturity">Maturity Model</a>
         <a href="#implementation">Implementation</a>
         <a href="#nist">NIST SP 1800-35</a>
         <a href="#checklist">Checklist</a>
@@ -649,54 +612,6 @@
     </div>
 </div>
 
-<!-- ===== MATURITY MODEL ===== -->
-<div class="section" id="maturity">
-    <h2 class="section-title">📊 Zero Trust Maturity Model</h2>
-    <p class="section-sub">The DoD ZT Strategy defines maturity across four levels per pillar. "Target Level" is the FY2027 requirement for all DoD components.</p>
-
-    <div style="overflow-x: auto;">
-    <table class="maturity-table">
-        <thead>
-            <tr>
-                <th>Level</th>
-                <th>Description</th>
-                <th>Key Characteristics</th>
-                <th>DoD Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Level 1<br><span class="maturity-badge mb-traditional">Traditional</span></td>
-                <td>Perimeter-based security with implicit trust. Minimal automation.</td>
-                <td>Static policies, network-location trust, manual access reviews</td>
-                <td>Starting point for most components</td>
-            </tr>
-            <tr>
-                <td>Level 2<br><span class="maturity-badge mb-initial">Initial</span></td>
-                <td>Basic ZT principles introduced. Some automation. Identity-aware.</td>
-                <td>MFA deployed, initial segmentation, device inventory started</td>
-                <td>Where most components are today</td>
-            </tr>
-            <tr>
-                <td>Level 3<br><span class="maturity-badge mb-advanced">Advanced / Target</span></td>
-                <td>Dynamic, risk-based access. Automated policy enforcement. Continuous verification.</td>
-                <td>CMFA, micro-segmentation, SOAR, behavioral analytics, data tagging</td>
-                <td><strong>DoD Target by FY2027</strong></td>
-            </tr>
-            <tr>
-                <td>Level 4<br><span class="maturity-badge mb-optimal">Optimal</span></td>
-                <td>Fully automated, AI-driven ZT. Self-healing. Complete data-centric protection.</td>
-                <td>Autonomous response, AI policy generation, full data lineage</td>
-                <td>Aspirational — beyond FY2027</td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
-    <p style="font-size: 0.8rem; color: var(--text-faint); margin-top: 12px;">
-        Note: The DoD ZT Strategy maturity model builds upon and extends CISA's ZTMM 2.0 (which uses 5 pillars and Traditional/Initial/Advanced/Optimal maturity). DoD's model uses 7 pillars to address mission-specific requirements.
-    </p>
-</div>
-
 <!-- ===== IMPLEMENTATION PHASES ===== -->
 <div class="section" id="implementation">
     <h2 class="section-title">🔧 Implementation Phases</h2>
@@ -791,7 +706,7 @@
 
         <h4 style="margin-top: 24px;">🔗 Key Mappings: DoD ZT RA ↔ NIST SP 800-207 ↔ NIST SP 1800-35</h4>
         <div style="overflow-x: auto; margin-top: 12px;">
-        <table class="maturity-table">
+        <table class="mapping-table" style="width:100%;border-collapse:collapse;font-size:.88rem;">
             <thead>
                 <tr>
                     <th>DoD ZT RA Pillar</th>
@@ -915,8 +830,7 @@
         <div>[3] NIST SP 1800-35, "Implementing a Zero Trust Architecture," June 2025 — NCCoE</div>
         <div>[4] NIST SP 800-207, "Zero Trust Architecture," August 2020</div>
         <div>[5] DoD ZT Capability Execution Roadmap v1.1 — DoD CIO</div>
-        <div>[6] CISA Zero Trust Maturity Model 2.0 — CISA</div>
-        <div>[7] DTM 25-003, "Implementing the DoD Zero Trust Strategy," July 2025</div>
+        <div>[6] DTM 25-003, "Implementing the DoD Zero Trust Strategy," July 2025</div>
     </div>
     <p style="margin-top: 8px;">UNCLASSIFIED · Educational resource · Always verify against current official guidance</p>
 </footer>
