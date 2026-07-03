@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZT Architect — Vendor to Capability Mapper | WarrantBdoesZT</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --void: #080B14; --panel: #0F1524; --panel-2: #0C111D; --raise: #161E30;
+            --line: rgba(125,145,185,.14); --line-strong: rgba(125,145,185,.28);
+            --text: #E7ECF6; --muted: #8590A8; --faint: #5B6478;
+            --accent: #00d9a3; --accent-dim: #00a87e; --accent-glow: rgba(0,217,163,.15);
+            --blue: #4fc3f7; --blue-dim: #2d9be0;
+            --pe: #F2A65A;    /* Policy Engine - orange */
+            --pep: #3FD0C9;   /* Policy Enforcement Point - teal */
+            --pip: #B98CFF;   /* Policy Information Point - purple */
+            --warn: #ffa502; --danger: #ff4757;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--void); color: var(--text);
+            line-height: 1.6; min-height: 100vh;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* ===== NAV ===== */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(8,11,20,.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line); padding: 10px 24px;
+            display: flex; justify-content: space-between; align-items: center; gap: 16px;
+        }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
+        .nav-home { color: var(--accent); font-weight: 600; font-size: .85rem; }
+        .nav-title { font-weight: 700; font-size: 1rem; }
+        .nav-title span { color: var(--accent); }
+
+        /* ===== LAYOUT ===== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
+        .hero { text-align: center; padding: 40px 20px 20px; }
+        .hero h1 {
+            font-size: 2rem; font-weight: 700; letter-spacing: -.5px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--muted); font-size: 1rem; margin-top: 10px; max-width: 650px; margin-inline: auto; }
+
+        /* ===== MAIN GRID ===== */
+        .main-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 32px; }
+
+        /* ===== VENDOR PANEL ===== */
+        .vendor-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; height: fit-content; }
+        .vendor-panel h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }
+        .search-box {
+            width: 100%; padding: 10px 14px; background: var(--panel-2);
+            border: 1px solid var(--line); border-radius: 8px; color: var(--text);
+            font-size: .9rem; font-family: inherit; margin-bottom: 16px;
+        }
+        .search-box:focus { outline: none; border-color: var(--accent-dim); }
+        .vendor-list { display: flex; flex-direction: column; gap: 8px; max-height: 600px; overflow-y: auto; }
+        .vendor-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid transparent;
+            border-radius: 8px; cursor: pointer; transition: all .2s;
+        }
+        .vendor-item:hover { background: var(--raise); border-left-color: var(--line-strong); }
+        .vendor-item.selected { background: var(--raise); border-left-color: var(--accent); }
+        .vendor-item .vi-icon { font-size: 1.4rem; flex-shrink: 0; }
+        .vendor-item .vi-info { flex: 1; min-width: 0; }
+        .vendor-item .vi-name { font-size: .88rem; font-weight: 600; }
+        .vendor-item .vi-product { font-size: .78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .vendor-item .vi-pillar { font-size: .7rem; color: var(--faint); margin-top: 2px; }
+        .vendor-item .vi-check {
+            width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line-strong);
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; color: transparent; transition: all .2s;
+        }
+        .vendor-item.selected .vi-check { background: var(--accent); border-color: var(--accent); color: var(--void); }
+
+        /* ===== DIAGRAM PANEL ===== */
+        .diagram-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 24px; min-height: 500px; }
+        .diagram-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .diagram-header h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+
+        /* ZT Logical Architecture Diagram */
+        .zt-diagram { position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; }
+        .zt-layer {
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            transition: all .3s;
+        }
+        .zt-node {
+            background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; text-align: center; min-width: 120px; transition: all .3s;
+            position: relative;
+        }
+        .zt-node .zn-label { font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--faint); }
+        .zt-node .zn-name { font-size: .9rem; font-weight: 600; margin-top: 4px; }
+        .zt-node .zn-desc { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+
+        /* PE/PEP/PIP nodes */
+        .zt-node.role-pe { border-color: var(--pe); background: rgba(242,166,90,.08); }
+        .zt-node.role-pep { border-color: var(--pep); background: rgba(63,208,201,.08); }
+        .zt-node.role-pip { border-color: var(--pip); background: rgba(185,140,255,.08); }
+        .zt-node .zn-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 10px;
+            font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+        }
+        .role-pe .zn-badge { background: rgba(242,166,90,.2); color: var(--pe); }
+        .role-pep .zn-badge { background: rgba(63,208,201,.2); color: var(--pep); }
+        .role-pip .zn-badge { background: rgba(185,140,255,.2); color: var(--pip); }
+
+        .zt-connector {
+            width: 2px; height: 30px; background: var(--line-strong);
+            position: relative;
+        }
+        .zt-connector::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 8px; height: 8px; border-right: 2px solid var(--line-strong);
+            border-bottom: 2px solid var(--line-strong); transform: translateX(-50%) rotate(45deg);
+        }
+
+        .zt-empty { text-align: center; color: var(--faint); padding: 60px 20px; }
+        .zt-empty .zt-empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: .4; }
+        .zt-empty p { font-size: .9rem; }
+
+        /* ===== MAPPING TABLE ===== */
+        .mapping-section { margin-top: 32px; }
+        .mapping-section h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }
+
+        .pillar-fan { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+        .pillar-card {
+            background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px;
+        }
+        .pillar-card.has-coverage { border-color: var(--accent-dim); box-shadow: 0 0 12px var(--accent-glow); }
+        .pillar-card .pc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+        .pillar-card .pc-icon { font-size: 1.2rem; }
+        .pillar-card .pc-name { font-size: .88rem; font-weight: 600; }
+        .pillar-card .pc-count { font-size: .7rem; color: var(--faint); margin-left: auto; }
+        .pillar-card .pc-count .covered { color: var(--accent); font-weight: 700; }
+
+        .cap-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: .8rem; }
+        .cap-row .cap-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+            background: var(--line-strong); transition: all .3s;
+        }
+        .cap-row.covered .cap-dot { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+        .cap-row.covered .cap-name { color: var(--text); }
+        .cap-row:not(.covered) .cap-name { color: var(--faint); }
+        .cap-row .cap-vendors {
+            font-size: .68rem; color: var(--muted); margin-left: auto;
+            max-width: 140px; text-align: right;
+        }
+
+        /* ===== LEGEND ===== */
+        .legend { display: flex; gap: 16px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 4px; }
+        .legend-dot.pe { background: var(--pe); }
+        .legend-dot.pep { background: var(--pep); }
+        .legend-dot.pip { background: var(--pip); }
+
+        /* ===== SUMMARY STATS ===== */
+        .stats-bar { display: flex; gap: 16px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .stat-box {
+            background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+            padding: 12px 20px; text-align: center; min-width: 120px;
+        }
+        .stat-box .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+        .stat-box .stat-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .nav-title { display: none; }
+            .hero h1 { font-size: 1.5rem; }
+        }
+        footer { text-align: center; padding: 32px 20px; border-top: 1px solid var(--line); color: var(--faint); font-size: .8rem; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-left">
+        <a href="/" class="nav-home">← Hub</a>
+        <a href="/zt-implementation-guide/" class="nav-home" style="color: var(--blue);">← ZT Guide</a>
+    </div>
+    <div class="nav-title">ZT <span>Architect</span></div>
+</nav>
+
+<div class="hero">
+    <h1>ZT Architect</h1>
+    <p>Select your vendor tools to build a Zero Trust architecture. See how they map to PE/PEP/PIP logical components and DoD ZT capabilities across all 7 pillars.</p>
+</div>
+
+<div class="container">
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item"><span class="legend-dot pe"></span> Policy Engine (PE)</div>
+        <div class="legend-item"><span class="legend-dot pep"></span> Policy Enforcement Point (PEP)</div>
+        <div class="legend-item"><span class="legend-dot pip"></span> Policy Information Point (PIP)</div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-box"><div class="stat-val" id="statVendors">0</div><div class="stat-label">Vendors Selected</div></div>
+        <div class="stat-box"><div class="stat-val" id="statCaps">0</div><div class="stat-label">Capabilities Covered</div></div>
+        <div class="stat-box"><div class="stat-val" id="statPillars">0</div><div class="stat-label">Pillars Covered</div></div>
+        <div class="stat-box"><div class="stat-val" id="statCoverage">0%</div><div class="stat-label">Total Coverage</div></div>
+    </div>
+
+    <div class="main-grid">
+        <!-- Vendor Selection Panel -->
+        <div class="vendor-panel">
+            <h3>🛠️ Select Vendor Tools</h3>
+            <input type="text" class="search-box" id="vendorSearch" placeholder="Search vendors, products, categories...">
+            <div class="vendor-list" id="vendorList"></div>
+        </div>
+
+        <!-- ZT Architecture Diagram Panel -->
+        <div class="diagram-panel">
+            <div class="diagram-header">
+                <h3>📐 Zero Trust Logical Architecture</h3>
+                <span style="font-size: .78rem; color: var(--faint);">NIST SP 800-207 Model</span>
+            </div>
+            <div class="zt-diagram" id="ztDiagram">
+                <div class="zt-empty">
+                    <div class="zt-empty-icon">🛡️</div>
+                    <p>Select vendor tools from the left to build your architecture.<br>Components will populate into PE / PEP / PIP layers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Capability Mapping -->
+    <div class="mapping-section">
+        <h3>🎯 DoD ZT Capability Coverage — Fan Chart Mapping</h3>
+        <div class="pillar-fan" id="pillarFan"></div>
+    </div>
+</div>
+
+<footer>
+    <p>Built by <a href="https://github.com/WarrantBdoesZT">WarrantBdoesZT</a> · ZT Architect · Vendor mappings from NIST SP 1800-35 & DoD ZT RA v2.0</p>
+    <p style="margin-top: 4px; font-size: .72rem;">UNCLASSIFIED · Educational resource · Verify mappings against current vendor documentation</p>
+</footer>
+
+<script src="data.js"></script>
+<script>
+const selectedVendors = new Set();
+
+// ===== RENDER VENDOR LIST =====
+function renderVendorList(filter = '') {
+    const list = document.getElementById('vendorList');
+    const filtered = ZT_DATA.vendors.filter(v => {
+        if (!filter) return true;
+        const q = filter.toLowerCase();
+        return v.name.toLowerCase().includes(q) ||
+               v.product.toLowerCase().includes(q) ||
+               v.category.toLowerCase().includes(q) ||
+               v.pillar.toLowerCase().includes(q);
+    });
+
+    list.innerHTML = filtered.map(v => `
+        <div class="vendor-item ${selectedVendors.has(v.id) ? 'selected' : ''}" onclick="toggleVendor('${v.id}')">
+            <span class="vi-icon">${v.icon}</span>
+            <div class="vi-info">
+                <div class="vi-name">${v.name}</div>
+                <div class="vi-product">${v.product}</div>
+                <div class="vi-pillar">${v.pillar} · ${v.roles.join('/')}</div>
+            </div>
+            <div class="vi-check">✓</div>
+        </div>
+    `).join('');
+}
+
+function toggleVendor(id) {
+    if (selectedVendors.has(id)) selectedVendors.delete(id);
+    else selectedVendors.add(id);
+    renderVendorList(document.getElementById('vendorSearch').value);
+    renderDiagram();
+    renderCapabilityMap();
+    renderStats();
+}
+
+// ===== RENDER ARCHITECTURE DIAGRAM =====
+function renderDiagram() {
+    const diag = document.getElementById('ztDiagram');
+    const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
+
+    if (selected.length === 0) {
+        diag.innerHTML = `
+            <div class="zt-empty">
+                <div class="zt-empty-icon">🛡️</div>
+                <p>Select vendor tools from the left to build your architecture.<br>Components will populate into PE / PEP / PIP layers.</p>
+            </div>`;
+        return;
+    }
+
+    // Group by role
+    const peVendors = selected.filter(v => v.roles.includes('PE'));
+    const pepVendors = selected.filter(v => v.roles.includes('PEP'));
+    const pipVendors = selected.filter(v => v.roles.includes('PIP'));
+
+    function renderNodeGroup(roleClass, badge, label, desc, vendors) {
+        if (vendors.length === 0) return '';
+        const vendorTags = vendors.map(v => `
+            <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding:4px 8px;background:var(--panel);border-radius:6px;font-size:.75rem;">
+                <span>${v.icon}</span>
+                <span style="font-weight:600;">${v.name}</span>
+                <span style="color:var(--muted);font-size:.7rem;">${v.product}</span>
+            </div>
+        `).join('');
+        return `
+            <div class="zt-node ${roleClass}">
+                <span class="zn-badge">${badge}</span>
+                <div class="zn-name">${label}</div>
+                <div class="zn-desc">${desc}</div>
+                <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">${vendorTags}</div>
+            </div>`;
+    }
+
+    diag.innerHTML = `
+        <div style="display:flex;align-items:stretch;gap:20px;width:100%;">
+            <!-- PIP Layer -->
+            <div class="zt-layer" style="flex:1;">
+                <div class="zt-node role-pip" style="min-width:160px;">
+                    <span class="zn-badge">PIP</span>
+                    <div class="zn-name">Policy Information Points</div>
+                    <div class="zn-desc">Identity, posture, telemetry sources</div>
+                </div>
+                ${pipVendors.map(v => `
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
+                        <span style="font-size:1.1rem;">${v.icon}</span>
+                        <div>
+                            <div style="font-weight:600;">${v.name}</div>
+                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- Arrows -->
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;">
+                <span style="color:var(--faint);font-size:.7rem;writing-mode:vertical-lr;letter-spacing:1px;">FEEDS</span>
+                <span style="font-size:1.2rem;color:var(--faint);margin:8px 0;">→</span>
+            </div>
+
+            <!-- PE Layer -->
+            <div class="zt-layer" style="flex:1.2;">
+                <div class="zt-node role-pe" style="min-width:180px;border-width:2px;">
+                    <span class="zn-badge">PE</span>
+                    <div class="zn-name">Policy Engine</div>
+                    <div class="zn-desc">Evaluates context, makes access decisions</div>
+                </div>
+                ${peVendors.map(v => `
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
+                        <span style="font-size:1.1rem;">${v.icon}</span>
+                        <div>
+                            <div style="font-weight:600;">${v.name}</div>
+                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- Arrows -->
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;">
+                <span style="color:var(--faint);font-size:.7rem;writing-mode:vertical-lr;letter-spacing:1px;">ENFORCES</span>
+                <span style="font-size:1.2rem;color:var(--faint);margin:8px 0;">→</span>
+            </div>
+
+            <!-- PEP Layer -->
+            <div class="zt-layer" style="flex:1;">
+                <div class="zt-node role-pep" style="min-width:160px;">
+                    <span class="zn-badge">PEP</span>
+                    <div class="zn-name">Policy Enforcement Points</div>
+                    <div class="zn-desc">Gateways, proxies, firewalls, agents</div>
+                </div>
+                ${pepVendors.map(v => `
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
+                        <span style="font-size:1.1rem;">${v.icon}</span>
+                        <div>
+                            <div style="font-weight:600;">${v.name}</div>
+                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <!-- Selected vendor details -->
+        <div style="margin-top:24px;width:100%;">
+            <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Selected Tool Details</div>
+            ${selected.map(v => `
+                <div style="display:flex;align-items:flex-start;gap:12px;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;">
+                    <span style="font-size:1.5rem;">${v.icon}</span>
+                    <div style="flex:1;">
+                        <div style="font-weight:600;font-size:.88rem;">${v.name} — ${v.product}</div>
+                        <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">${v.description}</div>
+                        <div style="font-size:.75rem;color:var(--accent-dim);margin-top:4px;">ZT Role: ${v.zt_role}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// ===== RENDER CAPABILITY MAP =====
+function renderCapabilityMap() {
+    const fan = document.getElementById('pillarFan');
+    const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
+    const coveredCaps = new Set();
+    selected.forEach(v => v.capabilities.forEach(c => coveredCaps.add(c)));
+
+    const pillarIcons = {
+        'User': '👤', 'Device': '💻', 'Network/Environment': '🌐',
+        'Application & Workload': '📦', 'Data': '🔒',
+        'Visibility & Analytics': '👁️', 'Automation & Orchestration': '⚙️'
+    };
+
+    fan.innerHTML = Object.entries(ZT_DATA.capabilities).map(([pillar, caps]) => {
+        const covered = caps.filter(c => coveredCaps.has(c));
+        const hasCoverage = covered.length > 0;
+
+        const capRows = caps.map(cap => {
+            const isCovered = coveredCaps.has(cap);
+            const capVendors = selected.filter(v => v.capabilities.includes(cap));
+            const vendorNames = capVendors.map(v => v.name).join(', ');
+            return `
+                <div class="cap-row ${isCovered ? 'covered' : ''}">
+                    <span class="cap-dot"></span>
+                    <span class="cap-name">${cap}</span>
+                    <span class="cap-vendors">${vendorNames}</span>
+                </div>`;
+        }).join('');
+
+        return `
+            <div class="pillar-card ${hasCoverage ? 'has-coverage' : ''}">
+                <div class="pc-header">
+                    <span class="pc-icon">${pillarIcons[pillar]}</span>
+                    <span class="pc-name">${pillar}</span>
+                    <span class="pc-count"><span class="covered">${covered.length}</span>/${caps.length}</span>
+                </div>
+                ${capRows}
+            </div>`;
+    }).join('');
+}
+
+// ===== RENDER STATS =====
+function renderStats() {
+    const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
+    const coveredCaps = new Set();
+    selected.forEach(v => v.capabilities.forEach(c => coveredCaps.add(c)));
+    const totalCaps = Object.values(ZT_DATA.capabilities).flat().length;
+    const coveredPillars = new Set();
+
+    Object.entries(ZT_DATA.capabilities).forEach(([pillar, caps]) => {
+        const hasAny = caps.some(c => coveredCaps.has(c));
+        if (hasAny) coveredPillars.add(pillar);
+    });
+
+    document.getElementById('statVendors').textContent = selected.length;
+    document.getElementById('statCaps').textContent = coveredCaps.size;
+    document.getElementById('statPillars').textContent = `${coveredPillars.size}/7`;
+    document.getElementById('statCoverage').textContent = `${Math.round((coveredCaps.size / totalCaps) * 100)}%`;
+}
+
+// ===== SEARCH =====
+document.getElementById('vendorSearch').addEventListener('input', (e) => {
+    renderVendorList(e.target.value);
+});
+
+// ===== INIT =====
+renderVendorList();
+renderCapabilityMap();
+renderStats();
+</script>
+
+</body>
+</html>
