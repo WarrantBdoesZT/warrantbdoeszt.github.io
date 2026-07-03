@@ -196,7 +196,7 @@
 
 <div class="hero">
     <h1>ZT Architect</h1>
-    <p>Select your vendor tools to build a Zero Trust architecture. See how they map to PE/PEP/PIP logical components and DoD ZT capabilities across all 7 pillars.</p>
+    <p>Select your vendor tools to build a Zero Trust architecture. See how they map to PE/PEP/PIP logical components and all <strong>45 DoD ZT capabilities</strong> across 7 pillars.</p>
 </div>
 
 <div class="container">
@@ -405,7 +405,13 @@ function renderDiagram() {
                         <div style="font-weight:600;font-size:.88rem;">${v.name} — ${v.product} ${v.nist_1800_35 ? '<span style="font-size:.65rem;background:rgba(0,217,163,.15);color:var(--accent);padding:2px 6px;border-radius:4px;">SP 1800-35</span>' : ''}</div>
                         <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">${v.description}</div>
                         <div style="font-size:.75rem;color:var(--accent-dim);margin-top:4px;">ZT Role: ${v.zt_role}</div>
-                        ${v.builds && v.builds !== 'N/A' ? `<div style="font-size:.72rem;color:var(--faint);margin-top:2px;">NIST SP 1800-35 Builds: ${v.builds}</div>` : ''}
+                        <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
+                            ${(v.capabilities || []).map(cid => {
+                                const cap = CAP_BY_ID[cid];
+                                return cap ? `<span style="font-size:.62rem;padding:2px 6px;background:rgba(125,145,185,.1);border:1px solid var(--line);border-radius:4px;color:var(--muted);"><strong style="color:var(--faint);">${cap.id}</strong> ${cap.name}</span>` : '';
+                            }).join('')}
+                        </div>
+                        ${v.builds && v.builds !== 'N/A' ? `<div style="font-size:.72rem;color:var(--faint);margin-top:4px;">NIST SP 1800-35 Builds: ${v.builds}</div>` : ''}
                     </div>
                 </div>
             `).join('')}
@@ -413,35 +419,43 @@ function renderDiagram() {
     `;
 }
 
+// ===== HELPER: Build capability ID→object lookup =====
+const CAP_BY_ID = {};
+if (ZT_DATA.capabilities) {
+    Object.values(ZT_DATA.capabilities).forEach(capList => {
+        capList.forEach(c => { CAP_BY_ID[c.id] = c; });
+    });
+}
+
+const PILLAR_ICONS = {
+    'User': '👤', 'Device': '💻', 'Network/Environment': '🌐',
+    'Application & Workload': '📦', 'Data': '🔒',
+    'Visibility & Analytics': '👁️', 'Automation & Orchestration': '⚙️'
+};
+
 // ===== RENDER CAPABILITY MAP =====
 function renderCapabilityMap() {
     const fan = document.getElementById('pillarFan');
     const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
+
+    // Collect covered capability IDs from selected vendors
     const coveredCaps = new Set();
-    selected.forEach(v => v.capabilities.forEach(c => coveredCaps.add(c)));
+    selected.forEach(v => (v.capabilities || []).forEach(c => coveredCaps.add(c)));
 
-    const pillarIcons = {
-        'User': '👤', 'Device': '💻', 'Network/Environment': '🌐',
-        'Application & Workload': '📦', 'Data': '🔒',
-        'Visibility & Analytics': '👁️', 'Automation & Orchestration': '⚙️'
-    };
-
-    const capsData = ZT_DATA.capabilities || ZT_DATA.capabilities_simple;
+    const capsData = ZT_DATA.capabilities;
 
     fan.innerHTML = Object.entries(capsData).map(([pillar, caps]) => {
-        // Handle both rich objects and simple strings
-        const capList = caps.map(c => typeof c === 'string' ? {name: c} : c);
-        const covered = capList.filter(c => coveredCaps.has(c.name));
+        const covered = caps.filter(c => coveredCaps.has(c.id));
         const hasCoverage = covered.length > 0;
 
-        const capRows = capList.map(cap => {
-            const isCovered = coveredCaps.has(cap.name);
-            const capVendors = selected.filter(v => v.capabilities.includes(cap.name));
-            const vendorNames = capVendors.map(v => v.icon + v.name).join(' ');
+        const capRows = caps.map(cap => {
+            const isCovered = coveredCaps.has(cap.id);
+            const capVendors = selected.filter(v => (v.capabilities || []).includes(cap.id));
+            const vendorNames = capVendors.map(v => v.icon + ' ' + v.name).join(' · ');
             return `
                 <div class="cap-row ${isCovered ? 'covered' : ''}" title="${cap.desc || cap.name}">
                     <span class="cap-dot"></span>
-                    <span class="cap-name">${cap.id ? '<span style="color:var(--faint);font-size:.68rem">' + cap.id + '</span> ' : ''}${cap.name}</span>
+                    <span class="cap-name"><span style="color:var(--faint);font-size:.68rem;font-weight:600;">${cap.id}</span> ${cap.name}</span>
                     <span class="cap-vendors">${vendorNames}</span>
                 </div>`;
         }).join('');
@@ -449,9 +463,9 @@ function renderCapabilityMap() {
         return `
             <div class="pillar-card ${hasCoverage ? 'has-coverage' : ''}">
                 <div class="pc-header">
-                    <span class="pc-icon">${pillarIcons[pillar]}</span>
+                    <span class="pc-icon">${PILLAR_ICONS[pillar] || '🔹'}</span>
                     <span class="pc-name">${pillar}</span>
-                    <span class="pc-count"><span class="covered">${covered.length}</span>/${capList.length}</span>
+                    <span class="pc-count"><span class="covered">${covered.length}</span>/${caps.length}</span>
                 </div>
                 ${capRows}
             </div>`;
@@ -462,21 +476,22 @@ function renderCapabilityMap() {
 function renderStats() {
     const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
     const coveredCaps = new Set();
-    selected.forEach(v => v.capabilities.forEach(c => coveredCaps.add(c)));
-    const capsData = ZT_DATA.capabilities || ZT_DATA.capabilities_simple;
-    const totalCaps = Object.values(capsData).flat().map(c => typeof c === 'string' ? c : c.name).length;
+    selected.forEach(v => (v.capabilities || []).forEach(c => coveredCaps.add(c)));
+
+    const capsData = ZT_DATA.capabilities;
+    let totalCaps = 0;
     const coveredPillars = new Set();
 
     Object.entries(capsData).forEach(([pillar, caps]) => {
-        const capNames = caps.map(c => typeof c === 'string' ? c : c.name);
-        const hasAny = capNames.some(c => coveredCaps.has(c));
+        totalCaps += caps.length;
+        const hasAny = caps.some(c => coveredCaps.has(c.id));
         if (hasAny) coveredPillars.add(pillar);
     });
 
     document.getElementById('statVendors').textContent = selected.length;
     document.getElementById('statCaps').textContent = `${coveredCaps.size}/${totalCaps}`;
     document.getElementById('statPillars').textContent = `${coveredPillars.size}/7`;
-    document.getElementById('statCoverage').textContent = `${Math.round((coveredCaps.size / totalCaps) * 100)}%`;
+    document.getElementById('statCoverage').textContent = `${totalCaps > 0 ? Math.round((coveredCaps.size / totalCaps) * 100) : 0}%`;
 }
 
 // ===== SEARCH =====
