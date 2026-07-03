@@ -313,7 +313,7 @@ function renderVendorList(filter = '') {
             <div class="vi-info">
                 <div class="vi-name">${v.name}</div>
                 <div class="vi-product">${v.product}</div>
-                <div class="vi-pillar">${v.pillar} · ${v.roles.join('/')}</div>
+                <div class="vi-pillar">${v.pillar} · ${v.roles.map(r => r === 'PE' ? 'PDP' : r).join('/')}</div>
                 ${v.nist_1800_35 ? '<span class="vi-badge-nist">✓ NIST SP 1800-35</span>' : ''}
             </div>
             <div class="vi-check">✓</div>
@@ -402,7 +402,7 @@ function renderDiagram() {
                         ${v.nist_1800_35 ? '<span style="font-size:.58rem;background:rgba(0,217,163,.15);color:var(--accent);padding:2px 5px;border-radius:4px;">SP 1800-35</span>' : ''}
                     </div>
                     <div class="vd-desc">${v.description}</div>
-                    <div class="vd-role">ZT Role: ${v.zt_role} · ${v.roles.join('/')}</div>
+                    <div class="vd-role">ZT Role: ${v.zt_role} · ${v.roles.map(r => r === 'PE' ? 'PDP' : r).join('/')}</div>
                     <div class="vd-caps">
                         ${(v.capabilities || []).map(cid => {
                             const cap = CAP_BY_ID[cid];

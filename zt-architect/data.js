@@ -279,7 +279,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1B1, E1B2, E1B3",
       "description": "Cloud-native identity provider with SSO, adaptive MFA, lifecycle management, and universal directory.",
-      "zt_role": "PE/PDP for identity decisions. PIP providing identity attributes to other PEPs. Lifecycle management for user inventory and provisioning."
+      "zt_role": "PDP for identity decisions. PIP providing identity attributes to other PEPs. Lifecycle management for user inventory and provisioning."
     },
     {
       "id": "ms-entra",
@@ -304,8 +304,8 @@ const ZT_DATA = {
       ],
       "nist_1800_35": true,
       "builds": "E3B1, E3B2, E3B3, E3B5",
-      "description": "Broadest PE coverage in SP 1800-35 — PE/PDP in 4 builds. Conditional Access with risk-based policies, Identity Protection for UEBA.",
-      "zt_role": "PE/PDP via Conditional Access. PIP through Identity Protection risk scoring and continuous authentication."
+      "description": "Broadest PDP coverage in SP 1800-35 — PDP in 4 builds. Conditional Access with risk-based policies, Identity Protection for UEBA.",
+      "zt_role": "PDP via Conditional Access. PIP through Identity Protection risk scoring and continuous authentication."
     },
     {
       "id": "ms-entra-gov",
@@ -325,7 +325,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B1-B5",
       "description": "Identity governance, access reviews, entitlement management, and Privileged Identity Management (PIM) for JIT/JEA.",
-      "zt_role": "PIP for access certifications and governance data. PIM provides JIT elevation to the PE."
+      "zt_role": "PIP for access certifications and governance data. PIM provides JIT elevation to the PDP."
     },
     {
       "id": "ping",
@@ -349,8 +349,8 @@ const ZT_DATA = {
       ],
       "nist_1800_35": true,
       "builds": "E2B1",
-      "description": "PE/PA (PDP) in Enterprise 2 EIG Crawl build. Federation, MFA, and intelligent identity platform.",
-      "zt_role": "PE/PA making identity-driven access decisions via federation. PingID for MFA."
+      "description": "PDP/PA (PDP) in Enterprise 2 EIG Crawl build. Federation, MFA, and intelligent identity platform.",
+      "zt_role": "PDP/PA making identity-driven access decisions via federation. PingID for MFA."
     },
     {
       "id": "ibm-verify",
@@ -372,8 +372,8 @@ const ZT_DATA = {
       ],
       "nist_1800_35": true,
       "builds": "E4B3",
-      "description": "PE/PDP for IAM in Enterprise 4 EIG Run build. Federation, adaptive access, and risk-based authentication.",
-      "zt_role": "PE/PDP for identity and access decisions in IBM-centric architecture."
+      "description": "PDP for IAM in Enterprise 4 EIG Run build. Federation, adaptive access, and risk-based authentication.",
+      "zt_role": "PDP for identity and access decisions in IBM-centric architecture."
     },
     {
       "id": "sailpoint",
@@ -393,7 +393,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1B1-B6, E2B1-B6, E3B1-B5 (all)",
       "description": "Identity governance PIP in nearly every build. Access certification, segregation of duties, least-privilege enforcement.",
-      "zt_role": "PIP providing identity governance and access certification data to the PE."
+      "zt_role": "PIP providing identity governance and access certification data to the PDP."
     },
     {
       "id": "radiant",
@@ -413,7 +413,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1, E2, E3 (all)",
       "description": "Identity data aggregation PIP across nearly all builds. Virtual directory unifying identity from AD, LDAP, HR systems.",
-      "zt_role": "PIP aggregating identity data from multiple directories into a unified virtual view for the PE."
+      "zt_role": "PIP aggregating identity data from multiple directories into a unified virtual view for the PDP."
     },
     {
       "id": "cyberark",
@@ -435,7 +435,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Industry-leading PAM — JIT/JEA access, credential vaulting, session isolation, continuous monitoring of privileged sessions.",
-      "zt_role": "PEP for privileged sessions (brokering, recording). PE for privileged access decisions with JIT elevation workflows."
+      "zt_role": "PEP for privileged sessions (brokering, recording). PDP for privileged access decisions with JIT elevation workflows."
     },
     {
       "id": "beyondtrust",
@@ -457,7 +457,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "PAM with JIT access, credential management, session monitoring, and least-privilege enforcement.",
-      "zt_role": "PEP for privileged session brokering. PE for JIT privileged access decisions."
+      "zt_role": "PEP for privileged session brokering. PDP for JIT privileged access decisions."
     },
     {
       "id": "delinea",
@@ -478,7 +478,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "PAM with secret management, JIT access, and API-driven credential brokering.",
-      "zt_role": "PEP for credential vaulting and session brokering. PE for JIT privileged access decisions."
+      "zt_role": "PEP for credential vaulting and session brokering. PDP for JIT privileged access decisions."
     },
     {
       "id": "yubico",
@@ -518,7 +518,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E2B1",
       "description": "MFA PEP in E2B1. Device health checks, push-based MFA, risk-based authentication with UAM capabilities.",
-      "zt_role": "PEP for MFA enforcement. PIP for device health and behavioral signals feeding the PE."
+      "zt_role": "PEP for MFA enforcement. PIP for device health and behavioral signals feeding the PDP."
     },
     {
       "id": "ivanti-iam",
@@ -538,9 +538,9 @@ const ZT_DATA = {
         "1.8"
       ],
       "nist_1800_35": true,
-      "builds": "E1B1 (ZSO PE), E1B2-B6 (UEM PIP)",
-      "description": "PE/PDP in E1B1 (Zero Sign-On), PIP for endpoint management in later builds. Device-bound SSO and MFA.",
-      "zt_role": "PE for device-based ZSO auth. PIP for endpoint compliance. PEP via Ivanti Tunnel."
+      "builds": "E1B1 (ZSO PDP), E1B2-B6 (UEM PIP)",
+      "description": "PDP in E1B1 (Zero Sign-On), PIP for endpoint management in later builds. Device-bound SSO and MFA.",
+      "zt_role": "PDP for device-based ZSO auth. PIP for endpoint compliance. PEP via Ivanti Tunnel."
     },
     {
       "id": "omnissa",
@@ -559,7 +559,7 @@ const ZT_DATA = {
       ],
       "nist_1800_35": true,
       "builds": "E1B2-B6",
-      "description": "UEM PIP providing endpoint identity and compliance attributes to the PE. (Formerly VMware Workspace ONE.)",
+      "description": "UEM PIP providing endpoint identity and compliance attributes to the PDP. (Formerly VMware Workspace ONE.)",
       "zt_role": "PIP for UEM/endpoint compliance data. PEP for access policy enforcement on managed devices."
     },
     {
@@ -603,7 +603,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Identity-native access plane for SSH, Kubernetes, databases, and web apps with SSO, short-lived certificates, and audit logging.",
-      "zt_role": "PE for access decisions using short-lived certs. PEP mediating all infrastructure access with continuous session recording."
+      "zt_role": "PDP for access decisions using short-lived certs. PEP mediating all infrastructure access with continuous session recording."
     },
     {
       "id": "ms-intune",
@@ -628,7 +628,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B2, E3B3",
       "description": "PDP for device compliance policy in E3B2. PIP feeding Conditional Access. Full UEM/MDM for Windows, iOS, Android.",
-      "zt_role": "PDP for device compliance decisions. PEP enforcing policies on endpoints. Feeds Conditional Access PE."
+      "zt_role": "PDP for device compliance decisions. PEP enforcing policies on endpoints. Feeds Conditional Access PDP."
     },
     {
       "id": "forescout",
@@ -750,7 +750,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Industry-leading EDR — dominant in DoD/IC. Cloud-native platform with NGAV, threat hunting, and automated response.",
-      "zt_role": "PIP for device health/threat telemetry feeding the PE. PEP for blocking malicious activity on endpoints."
+      "zt_role": "PIP for device health/threat telemetry feeding the PDP. PEP for blocking malicious activity on endpoints."
     },
     {
       "id": "sentinelone",
@@ -915,7 +915,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Cloud-delivered SSE/SASE platform for secure access service edge with ZTNA, CASB, SWG.",
-      "zt_role": "PEP for cloud-delivered network enforcement. PE for ZTNA access decisions at the edge."
+      "zt_role": "PEP for cloud-delivered network enforcement. PDP for ZTNA access decisions at the edge."
     },
     {
       "id": "zscaler",
@@ -934,9 +934,9 @@ const ZT_DATA = {
         "5.4"
       ],
       "nist_1800_35": true,
-      "builds": "E1B2, E1B3 (ZPA as PE/PDP)",
-      "description": "PE/PA/PDP in E1B2 & E1B3 (ZPA Central Authority). PEP via service edges. Full SSE stack.",
-      "zt_role": "PE via ZPA CA for access decisions. PEP via ZIA/ZPA service edges mediating all traffic. ZDX for data flow mapping."
+      "builds": "E1B2, E1B3 (ZPA as PDP)",
+      "description": "PDP/PA/PDP in E1B2 & E1B3 (ZPA Central Authority). PEP via service edges. Full SSE stack.",
+      "zt_role": "PDP via ZPA CA for access decisions. PEP via ZIA/ZPA service edges mediating all traffic. ZDX for data flow mapping."
     },
     {
       "id": "cisco-ise",
@@ -956,7 +956,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E2B1",
       "description": "Cisco ISE for TrustSec-based macro/micro segmentation and network access control. Secure Firewall for enforcement.",
-      "zt_role": "PE for network access decisions (ISE). PEP for TrustSec SGACL enforcement on switches."
+      "zt_role": "PDP for network access decisions (ISE). PEP for TrustSec SGACL enforcement on switches."
     },
     {
       "id": "appgate",
@@ -975,7 +975,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E2B3, E2B4, E2B5, E2B6",
       "description": "SDP provider in Enterprise 2 builds. Identity-aware, per-application access without network exposure.",
-      "zt_role": "PE for SDP access decisions. PEP via client connectors mediating application access."
+      "zt_role": "PDP for SDP access decisions. PEP via client connectors mediating application access."
     },
     {
       "id": "illumio",
@@ -1013,7 +1013,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E4B4, E4B5",
       "description": "SASE provider in Enterprise 4 builds. Context-aware access with no VPN, enforced at Google's edge.",
-      "zt_role": "PE for context-aware access. PEP at the edge enforcing identity-based policies."
+      "zt_role": "PDP for context-aware access. PEP at the edge enforcing identity-based policies."
     },
     {
       "id": "broadcom-nsx",
@@ -1052,7 +1052,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Cloud-native SSE platform with ZTNA, CASB, SWG, and DLP. NewEdge infrastructure for traffic inspection.",
-      "zt_role": "PEP for cloud access enforcement. PE for ZTNA policy decisions. CASB for SaaS data flow mapping."
+      "zt_role": "PEP for cloud access enforcement. PDP for ZTNA policy decisions. CASB for SaaS data flow mapping."
     },
     {
       "id": "cato",
@@ -1111,7 +1111,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "FortiGate NGFW for integrated network security, SD-WAN, and microsegmentation.",
-      "zt_role": "PEP for network enforcement. PE for dynamic policy decisions via FortiManager."
+      "zt_role": "PEP for network enforcement. PDP for dynamic policy decisions via FortiManager."
     },
     {
       "id": "juniper-mist",
@@ -1436,7 +1436,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Enterprise CMDB for application inventory, software asset management, and configuration tracking.",
-      "zt_role": "PIP providing authoritative application inventory data to the PE."
+      "zt_role": "PIP providing authoritative application inventory data to the PDP."
     },
     {
       "id": "ms-defender-cloud",
@@ -1622,7 +1622,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1, E2, E3, E4 (all)",
       "description": "PIP for SIEM/XDR in every build. CP4S for security orchestration. Threat intelligence and analytics.",
-      "zt_role": "PIP providing SIEM/XDR telemetry to the PE. CP4S for orchestration."
+      "zt_role": "PIP providing SIEM/XDR telemetry to the PDP. CP4S for orchestration."
     },
     {
       "id": "ms-sentinel",
@@ -1645,7 +1645,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B1, E3B2",
       "description": "PIP for SIEM/SOAR visibility in Enterprise 3. Cloud-native SIEM with AI-driven analytics.",
-      "zt_role": "PIP for enterprise telemetry. Feeds risk scores back to Conditional Access PE."
+      "zt_role": "PIP for enterprise telemetry. Feeds risk scores back to Conditional Access PDP."
     },
     {
       "id": "mandiant",
@@ -1706,7 +1706,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Industry SIEM leader — dominant in DoD. Search, correlation, analytics, and SOAR integration.",
-      "zt_role": "PIP providing security telemetry. PE for risk scoring and adaptive policies."
+      "zt_role": "PIP providing security telemetry. PDP for risk scoring and adaptive policies."
     },
     {
       "id": "elastic-sec",
@@ -1805,7 +1805,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Self-learning AI for cyber defense. Behavioral anomaly detection and autonomous response (Antigena).",
-      "zt_role": "PIP for behavioral anomaly detection. PE for autonomous policy adjustments via Antigena."
+      "zt_role": "PIP for behavioral anomaly detection. PDP for autonomous policy adjustments via Antigena."
     },
     {
       "id": "recorded-future",
@@ -1960,7 +1960,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Enterprise SIEM — correlation engine, log management, and threat detection.",
-      "zt_role": "PIP providing log aggregation and correlation. PE for risk-based alerting."
+      "zt_role": "PIP providing log aggregation and correlation. PDP for risk-based alerting."
     },
     {
       "id": "xsoar",
@@ -1980,7 +1980,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Industry SOAR leader — automated playbooks, case management, and incident response orchestration.",
-      "zt_role": "PE driving automated response decisions across PEPs via playbooks."
+      "zt_role": "PDP driving automated response decisions across PEPs via playbooks."
     },
     {
       "id": "ms-sentinel-soar",
@@ -2000,7 +2000,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B1-B5",
       "description": "Sentinel SOAR via Logic Apps-based playbooks. Automated incident response and enrichment.",
-      "zt_role": "PE for automated response. Logic Apps playbooks orchestrate response actions across Microsoft and third-party tools."
+      "zt_role": "PDP for automated response. Logic Apps playbooks orchestrate response actions across Microsoft and third-party tools."
     },
     {
       "id": "splunk-soar",
@@ -2020,7 +2020,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "SOAR platform (formerly Phantom) for playbook-driven automated incident response.",
-      "zt_role": "PE for automated response decisions. Orchestrates containment/remediation across security tools."
+      "zt_role": "PDP for automated response decisions. Orchestrates containment/remediation across security tools."
     },
     {
       "id": "fortinet-fabric",
@@ -2041,7 +2041,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Security Fabric orchestration — automated policy distribution and response across Fortinet ecosystem.",
-      "zt_role": "PE for automated policy decisions across the Fortinet Fabric. FortiManager for centralized policy orchestration."
+      "zt_role": "PDP for automated policy decisions across the Fortinet Fabric. FortiManager for centralized policy orchestration."
     },
     {
       "id": "terraform",
@@ -2116,7 +2116,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "SOC platform with case management, incident response workflows, and vulnerability response.",
-      "zt_role": "PE for incident response orchestration. Manages SOC workflows, case assignment, and response tracking."
+      "zt_role": "PDP for incident response orchestration. Manages SOC workflows, case assignment, and response tracking."
     },
     {
       "id": "swimlane",
@@ -2135,7 +2135,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Low-code security automation platform for building custom response playbooks.",
-      "zt_role": "PE driving automated response workflows across heterogeneous tool stacks."
+      "zt_role": "PDP driving automated response workflows across heterogeneous tool stacks."
     },
     {
       "id": "tines",
@@ -2154,7 +2154,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "No-code security automation platform for workflow automation and alert triage.",
-      "zt_role": "PE for automated alert triage and response workflow execution."
+      "zt_role": "PDP for automated alert triage and response workflow execution."
     },
     {
       "id": "opendifi",
@@ -2176,7 +2176,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Enterprise SIEM — correlation engine, log management, and threat detection.",
-      "zt_role": "PIP providing log aggregation and correlation. PE for risk-based alerting."
+      "zt_role": "PIP providing log aggregation and correlation. PDP for risk-based alerting."
     },
     {
       "id": "vertex-ai-sec",
@@ -2195,7 +2195,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E4B4-B5",
       "description": "Generative AI for security operations — threat analysis, natural language investigation, and AI-assisted triage.",
-      "zt_role": "PE for AI-driven security decisions. ML models for anomaly detection and risk scoring."
+      "zt_role": "PDP for AI-driven security decisions. ML models for anomaly detection and risk scoring."
     },
     {
       "id": "ms-copilot-sec",
@@ -2214,7 +2214,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B1-B5",
       "description": "AI assistant for security operations — incident summarization, threat hunting, and automated response.",
-      "zt_role": "PE for AI-driven investigation and response. ML models integrated with Sentinel/Defender."
+      "zt_role": "PDP for AI-driven investigation and response. ML models integrated with Sentinel/Defender."
     },
     {
       "id": "darktrace-ai",
@@ -2233,7 +2233,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Self-learning AI for autonomous detection and response. Antigena for automated containment.",
-      "zt_role": "PE for AI-driven autonomous response. ML models learn normal behavior and respond to deviations."
+      "zt_role": "PDP for AI-driven autonomous response. ML models learn normal behavior and respond to deviations."
     },
     {
       "id": "crowdstrike-charlotte",
@@ -2252,7 +2252,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Generative AI assistant for Falcon platform — natural language threat hunting and automated triage.",
-      "zt_role": "PE for AI-driven investigation. ML for real-time threat classification and scoring."
+      "zt_role": "PDP for AI-driven investigation. ML for real-time threat classification and scoring."
     },
     {
       "id": "datarobot-sec",
@@ -2271,7 +2271,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Enterprise AI platform for building and deploying ML models for security analytics and threat scoring.",
-      "zt_role": "PE for ML-driven security decisions. Custom models for anomaly detection and risk scoring."
+      "zt_role": "PDP for ML-driven security decisions. Custom models for anomaly detection and risk scoring."
     },
     {
       "id": "twingate",
@@ -2290,7 +2290,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Modern ZTNA replacing VPN — identity-aware access to specific resources without network exposure.",
-      "zt_role": "PEP mediating remote access. PE for per-resource access decisions."
+      "zt_role": "PEP mediating remote access. PDP for per-resource access decisions."
     },
     {
       "id": "openziti",
@@ -2309,7 +2309,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Open-source, programmable zero trust overlay — embeds zero trust directly into applications.",
-      "zt_role": "PEP for zero trust overlay network. PE for application-level access decisions."
+      "zt_role": "PEP for zero trust overlay network. PDP for application-level access decisions."
     },
     {
       "id": "pa-globalprotect",
@@ -2401,7 +2401,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E4B4-B5",
       "description": "Dynamic, context-aware access policies that adjust in real-time based on device, user, and threat signals.",
-      "zt_role": "PE for ML-driven dynamic policy decisions. Adjusts access based on real-time risk signals."
+      "zt_role": "PDP for ML-driven dynamic policy decisions. Adjusts access based on real-time risk signals."
     },
     {
       "id": "ms-conditional-dynamic",
@@ -2419,7 +2419,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E3B1-B5",
       "description": "Real-time, risk-adaptive access policies that continuously evaluate user, device, location, and threat signals.",
-      "zt_role": "PE for dynamic policy decisions. Risk scores from Identity Protection / Sentinel drive real-time access changes."
+      "zt_role": "PDP for dynamic policy decisions. Risk scores from Identity Protection / Sentinel drive real-time access changes."
     },
     {
       "id": "okta-riskext",
@@ -2437,7 +2437,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1B1-B3",
       "description": "Risk-based authentication engine that dynamically adjusts MFA and access policies based on real-time signals.",
-      "zt_role": "PE for risk-driven dynamic access decisions."
+      "zt_role": "PDP for risk-driven dynamic access decisions."
     },
     {
       "id": "auth0-fga",
@@ -2455,7 +2455,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E1B1-B3",
       "description": "Centralized fine-grained authorization engine — ABAC/RBAC policy decisions as a service (PDP-as-a-Service).",
-      "zt_role": "PE (PDP) making real-time, fine-grained authorization decisions for all applications and APIs."
+      "zt_role": "PDP making real-time, fine-grained authorization decisions for all applications and APIs."
     },
     {
       "id": "opa-pdp",
@@ -2474,7 +2474,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Open-source general-purpose policy engine for unified policy enforcement across cloud, APIs, and microservices.",
-      "zt_role": "PE (PDP) for policy decisions. Evaluates authorization requests in real time as a sidecar or service."
+      "zt_role": "PDP for policy decisions. Evaluates authorization requests in real time as a sidecar or service."
     },
     {
       "id": "aws-cedar",
@@ -2492,7 +2492,7 @@ const ZT_DATA = {
       "nist_1800_35": true,
       "builds": "E4B4-B5",
       "description": "Open-source policy language and managed authorization service for fine-grained access decisions.",
-      "zt_role": "PE (PDP) for centralized authorization decisions. Policy-as-code for fine-grained access control."
+      "zt_role": "PDP for centralized authorization decisions. Policy-as-code for fine-grained access control."
     },
     {
       "id": "zscaler-dlp",
@@ -2530,7 +2530,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Behavioral biometrics — continuously authenticates users by analyzing physical and cognitive digital behavior patterns.",
-      "zt_role": "PIP for behavioral biometric signals feeding the PE for continuous authentication decisions."
+      "zt_role": "PIP for behavioral biometric signals feeding the PDP for continuous authentication decisions."
     },
     {
       "id": "secureauth",
@@ -2549,7 +2549,7 @@ const ZT_DATA = {
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "Continuous risk-based authentication with behavioral biometrics — keystroke dynamics, device recognition.",
-      "zt_role": "PE for behavioral authentication decisions. PIP for behavioral risk signals."
+      "zt_role": "PDP for behavioral authentication decisions. PIP for behavioral risk signals."
     },
     {
       "id": "bigid",

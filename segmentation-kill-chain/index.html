@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Segmentation Kill Chain — Blast Radius Mapper | WarrantBdoesZT</title>
+<meta name="description" content="Interactive guide showing how segmentation across the full OSI stack breaks the attacker kill chain — lateral movement, pivoting, privilege escalation, and blast radius containment.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e14;--bg-2:#0d1218;--card:#131820;--card-hover:#171e28;
+  --border:#1e2530;--border-bright:#2a3442;
+  --accent:#00d9a3;--accent-dim:#00a87e;--accent-glow:rgba(0,217,163,.15);
+  --blue:#4fc3f7;--blue-dim:#2d9be0;
+  --text:#e0e6ed;--text-dim:#7d8a9c;--text-faint:#4a5567;
+  --danger:#ff4757;--warn:#ffa502;--purple:#a78bfa;
+}
+body{font-family:'Segoe UI','SF Pro Display',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ===== NAV ===== */
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,20,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-left{display:flex;align-items:center;gap:16px}
+.nav-home{color:var(--accent)!important;font-weight:600;font-size:.85rem}
+.nav-title{font-weight:700;font-size:1rem}
+.nav-title span{color:var(--accent)}
+
+/* ===== HERO ===== */
+.hero{text-align:center;padding:60px 20px 40px;background:linear-gradient(180deg,var(--bg-2) 0%,var(--bg) 100%)}
+.hero-shield{font-size:48px;margin-bottom:12px}
+.hero h1{font-size:2.4rem;font-weight:700;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent) 0%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text-dim);font-size:1.05rem;margin-top:12px;max-width:700px;margin-inline:auto}
+.hero-sources{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.source-badge{background:var(--card);border:1px solid var(--border);padding:5px 14px;border-radius:16px;font-size:.8rem;color:var(--text-dim)}
+.source-badge strong{color:var(--accent)}
+
+/* ===== SECTIONS ===== */
+.section{max-width:1100px;margin:0 auto;padding:50px 20px}
+.section-title{font-size:1.5rem;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.section-sub{color:var(--text-dim);font-size:.95rem;margin-bottom:28px}
+
+/* ===== KILL CHAIN DEMO ===== */
+.demo-container{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;overflow:hidden}
+.demo-grid{display:grid;grid-template-columns:1fr 280px;gap:24px}
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr}}
+
+/* Blast radius meter */
+.blast-meter{text-align:center;margin-bottom:20px}
+.blast-meter-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:8px}
+.blast-bar{height:14px;background:var(--bg-2);border-radius:7px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.blast-fill{height:100%;border-radius:7px;transition:width .5s ease,background .5s ease}
+.blast-stats{display:flex;justify-content:center;gap:24px;margin-top:12px;flex-wrap:wrap}
+.blast-stat{font-size:.85rem;color:var(--text-dim)}
+.blast-stat strong{color:var(--accent);font-size:1.1rem}
+
+/* Kill chain phases */
+.kc-phases{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
+.kc-phase{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .3s;position:relative}
+.kc-phase .kc-num{font-size:.62rem;color:var(--text-faint);background:var(--card);padding:1px 5px;border-radius:4px}
+.kc-phase.blocked{border-color:var(--accent);background:rgba(0,217,163,.08);box-shadow:0 0 12px rgba(0,217,163,.15)}
+.kc-phase.blocked::after{content:'🛡';position:absolute;top:-8px;right:-4px;font-size:.8rem}
+.kc-phase.active{border-color:var(--danger);background:rgba(255,71,87,.08)}
+
+/* Toggle panel */
+.toggle-panel{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.toggle-panel h4{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:12px}
+.toggle-group{margin-bottom:16px}
+.toggle-group-label{font-size:.72rem;color:var(--text-faint);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.toggle-chip{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;cursor:pointer;transition:all .2s;font-size:.8rem}
+.toggle-chip:hover{background:var(--card-hover);border-color:var(--border-bright)}
+.toggle-chip.on{border-color:var(--accent);background:rgba(0,217,163,.06)}
+.toggle-chip .tc-name{display:flex;align-items:center;gap:6px}
+.toggle-chip .tc-switch{width:32px;height:18px;border-radius:9px;background:var(--border);position:relative;transition:background .2s;flex-shrink:0}
+.toggle-chip .tc-switch::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text-faint);transition:all .2s}
+.toggle-chip.on .tc-switch{background:var(--accent-dim)}
+.toggle-chip.on .tc-switch::after{left:16px;background:var(--accent)}
+
+/* ===== OSI TABLE ===== */
+.osi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.osi-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;transition:all .2s}
+.osi-card:hover{border-color:var(--border-bright);transform:translateY(-2px)}
+.osi-card .oc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.osi-card .oc-layer{font-weight:700;font-size:.82rem;background:var(--bg-2);padding:2px 8px;border-radius:4px;color:var(--blue)}
+.osi-card .oc-name{font-size:.88rem;font-weight:600}
+.osi-card .oc-techniques{font-size:.8rem;color:var(--text-dim);margin-bottom:8px}
+.osi-card .oc-techniques li{list-style:none;padding:2px 0 2px 16px;position:relative}
+.osi-card .oc-techniques li::before{content:'▸';position:absolute;left:0;color:var(--accent-dim)}
+.osi-card .oc-stops{font-size:.78rem;color:var(--text-faint);margin-bottom:8px}
+.osi-card .oc-blast{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
+.oc-blast.full{background:rgba(255,71,87,.15);color:var(--danger)}
+.oc-blast.large{background:rgba(255,165,2,.15);color:var(--warn)}
+.oc-blast.medium{background:rgba(79,195,247,.15);color:var(--blue)}
+.oc-blast.small{background:rgba(0,217,163,.15);color:var(--accent)}
+
+/* ===== BLAST RADIUS COMPARISON ===== */
+.blast-compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.blast-compare{grid-template-columns:1fr}}
+.blast-diagram{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.blast-diagram h4{text-align:center;margin-bottom:14px;font-size:.9rem}
+.blast-diagram.flat h4{color:var(--danger)}
+.blast-diagram.seg h4{color:var(--accent)}
+.blast-svg{width:100%;height:auto}
+
+/* ===== SCENARIOS ===== */
+.scenario-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.scenario-header{padding:18px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
+.scenario-header:hover{background:var(--card-hover)}
+.scenario-header h4{font-size:.95rem;display:flex;align-items:center;gap:8px}
+.scenario-header .sh-toggle{font-size:.7rem;color:var(--text-faint);transition:transform .3s}
+.scenario-card.open .sh-toggle{transform:rotate(180deg)}
+.scenario-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.scenario-card.open .scenario-body{max-height:2000px}
+.scenario-inner{padding:0 22px 22px}
+.scenario-desc{font-size:.85rem;color:var(--text-dim);margin-bottom:14px}
+.scenario-flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.scenario-step{background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:.78rem;position:relative}
+.scenario-step.attack{border-color:rgba(255,71,87,.3)}
+.scenario-step.blocked{border-color:var(--accent);background:rgba(0,217,163,.06)}
+.scenario-step.blocked::after{content:'🛡 BLOCKED';position:absolute;top:-8px;right:-4px;font-size:.6rem;color:var(--accent);background:var(--bg);padding:1px 5px;border-radius:4px;border:1px solid var(--accent)}
+.scenario-arrow{color:var(--text-faint);font-size:1rem}
+.scenario-arrow.blocked{color:var(--accent)}
+
+/* ===== MATURITY ASSESSMENT ===== */
+.maturity-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px}
+.maturity-score{text-align:center;margin-bottom:24px}
+.maturity-progress{height:16px;background:var(--bg-2);border-radius:8px;overflow:hidden;border:1px solid var(--border);max-width:500px;margin:12px auto}
+.maturity-fill{height:100%;background:linear-gradient(90deg,var(--danger),var(--warn),var(--accent));border-radius:8px;transition:width .4s ease;width:0%}
+.maturity-value{font-size:2rem;font-weight:700;color:var(--accent)}
+.maturity-label{font-size:.85rem;color:var(--text-dim)}
+.maturity-checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.maturity-item{display:flex;align-items:flex-start;gap:8px;padding:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:.82rem;color:var(--text-dim)}
+.maturity-item:hover{background:var(--card-hover)}
+.maturity-item.checked{color:var(--text-faint)}
+.maturity-item.checked .mi-box{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.mi-box{width:18px;height:18px;border:2px solid var(--border-bright);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:transparent;transition:all .2s}
+.maturity-item.checked .mi-text{text-decoration:line-through}
+.maturity-reset{display:block;margin:18px auto 0;padding:8px 20px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text-dim);cursor:pointer;font-size:.82rem;transition:all .2s}
+.maturity-reset:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ===== LATERAL MOVEMENT DEEP DIVE ===== */
+.lm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.lm-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px}
+.lm-card .lm-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lm-card .lm-icon{font-size:1.4rem}
+.lm-card .lm-name{font-weight:700;font-size:.88rem;color:var(--danger)}
+.lm-card .lm-mitre{font-size:.68rem;color:var(--text-faint);margin-left:auto;background:var(--bg-2);padding:2px 6px;border-radius:4px}
+.lm-card .lm-desc{font-size:.8rem;color:var(--text-dim);margin-bottom:8px}
+.lm-card .lm-block{font-size:.78rem;color:var(--accent);padding:6px 10px;background:rgba(0,217,163,.06);border:1px solid rgba(0,217,163,.2);border-radius:6px}
+.lm-card .lm-block strong{color:var(--accent)}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:32px 20px;border-top:1px solid var(--border);color:var(--text-dim);font-size:.82rem}
+footer a{color:var(--accent)}
+.ref-list{max-width:700px;margin:12px auto;text-align:left;font-size:.78rem;color:var(--text-faint)}
+.ref-list div{padding:2px 0}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){.demo-grid{grid-template-columns:1fr}.nav-title{display:none}.hero h1{font-size:1.5rem}}
+@media(max-width:768px){.blast-compare{grid-template-columns:1fr}.kc-phases{gap:4px}.kc-phase{padding:6px 8px;font-size:.72rem}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a href="/" class="nav-home">← Hub</a>
+    <a href="/zt-implementation-guide/" class="nav-home" style="color:var(--blue)!important">← ZT Guide</a>
+  </div>
+  <div class="nav-title">Segmentation <span>Kill Chain</span></div>
+</nav>
+
+<div class="hero">
+  <div class="hero-shield">🎯</div>
+  <h1>Segmentation Kill Chain</h1>
+  <p>See how segmentation across the full OSI stack breaks every stage of the attacker kill chain — from initial foothold to crown jewels. Toggle controls, watch blast radius shrink, and explore real attack scenarios.</p>
+  <div class="hero-sources">
+    <span class="source-badge">🏛️ <strong>DoD ZT RA v2.0</strong> (7 Pillars)</span>
+    <span class="source-badge">📘 <strong>NIST SP 800-207</strong></span>
+    <span class="source-badge">⚔️ <strong>MITRE ATT&CK</strong></span>
+  </div>
+</div>
+
+<!-- ===== KILL CHAIN INTERACTIVE DEMO ===== -->
+<div class="section">
+  <h2 class="section-title">🎮 Interactive Kill Chain Demo</h2>
+  <p class="section-sub">Toggle segmentation layers on the right. Watch how each layer breaks specific phases of the MITRE ATT&CK kill chain. The blast radius shrinks as you add controls.</p>
+
+  <div class="demo-container">
+    <!-- Blast Radius Meter -->
+    <div class="blast-meter">
+      <div class="blast-meter-label">💥 Blast Radius</div>
+      <div class="blast-bar"><div class="blast-fill" id="blastFill" style="width:100%;background:var(--danger)"></div></div>
+      <div class="blast-stats">
+        <div class="blast-stat"><strong id="blockedCount">0</strong> of 11 phases blocked</div>
+        <div class="blast-stat">Blast Radius: <strong id="blastLabel" style="color:var(--danger)">FULL</strong></div>
+        <div class="blast-stat">Active Toggles: <strong id="toggleCount">0</strong></div>
+      </div>
+    </div>
+
+    <div class="demo-grid">
+      <!-- Kill Chain Phases -->
+      <div>
+        <div class="kc-phases" id="kcPhases"></div>
+      </div>
+
+      <!-- Toggle Panel -->
+      <div class="toggle-panel">
+        <h4>🔒 Segmentation Layers</h4>
+
+        <div class="toggle-group">
+          <div class="toggle-group-label">📡 Network Layers (L2–L4)</div>
+          <div id="togglesNetwork"></div>
+        </div>
+
+        <div class="toggle-group">
+          <div class="toggle-group-label">🪪 Identity & Access</div>
+          <div id="togglesIdentity"></div>
+        </div>
+
+        <div class="toggle-group">
+          <div class="toggle-group-label">📦 App & Workload</div>
+          <div id="togglesApp"></div>
+        </div>
+
+        <div class="toggle-group">
+          <div class="toggle-group-label">🔒 Data & Cloud</div>
+          <div id="togglesData"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LATERAL MOVEMENT & PIVOTING DEEP DIVE ===== -->
+<div class="section">
+  <h2 class="section-title">🔀 Lateral Movement & Pivoting — How Segmentation Stops It</h2>
+  <p class="section-sub">The attacker's goal after initial compromise is always the same: move laterally, escalate privileges, and reach the crown jewels. Segmentation is the control that breaks every pivot technique.</p>
+
+  <div class="lm-grid" id="lateralGrid"></div>
+</div>
+
+<!-- ===== OSI SEGMENTATION TABLE ===== -->
+<div class="section">
+  <h2 class="section-title">📋 Segmentation Across the Full Stack</h2>
+  <p class="section-sub">Every layer of the OSI model — and beyond — offers segmentation controls. Each shrinks the attacker's blast radius.</p>
+
+  <div class="osi-grid" id="osiGrid"></div>
+</div>
+
+<!-- ===== BLAST RADIUS COMPARISON ===== -->
+<div class="section">
+  <h2 class="section-title">💥 Flat vs Segmented — Blast Radius</h2>
+  <p class="section-sub">The same initial compromise in a flat network vs a properly segmented one. Same attacker, radically different outcome.</p>
+
+  <div class="blast-compare">
+    <!-- FLAT NETWORK -->
+    <div class="blast-diagram flat">
+      <h4>🔴 Flat Network — Full Blast Radius</h4>
+      <svg class="blast-svg" viewBox="0 0 380 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- connections -->
+        <line x1="190" y1="60" x2="90" y2="140" stroke="#333" stroke-width="1.5"/>
+        <line x1="190" y1="60" x2="290" y2="140" stroke="#333" stroke-width="1.5"/>
+        <line x1="90" y1="140" x2="50" y2="250" stroke="#333" stroke-width="1.5"/>
+        <line x1="90" y1="140" x2="130" y2="250" stroke="#333" stroke-width="1.5"/>
+        <line x1="290" y1="140" x2="250" y2="250" stroke="#333" stroke-width="1.5"/>
+        <line x1="290" y1="140" x2="330" y2="250" stroke="#333" stroke-width="1.5"/>
+        <line x1="50" y1="250" x2="100" y2="350" stroke="#333" stroke-width="1.5"/>
+        <line x1="130" y1="250" x2="100" y2="350" stroke="#333" stroke-width="1.5"/>
+        <line x1="250" y1="250" x2="280" y2="350" stroke="#333" stroke-width="1.5"/>
+        <line x1="330" y1="250" x2="280" y2="350" stroke="#333" stroke-width="1.5"/>
+        <line x1="50" y1="250" x2="250" y2="250" stroke="#333" stroke-width="1" opacity=".3"/>
+        <line x1="130" y1="250" x2="330" y2="250" stroke="#333" stroke-width="1" opacity=".3"/>
+        <line x1="90" y1="140" x2="290" y2="140" stroke="#333" stroke-width="1" opacity=".3"/>
+        <!-- Compromised (patient zero) -->
+        <circle cx="190" cy="60" r="20" fill="rgba(255,71,87,.2)" stroke="#ff4757" stroke-width="2"/>
+        <circle cx="190" cy="60" r="28" fill="none" stroke="#ff4757" stroke-width="1" opacity=".3" class="pulse"/>
+        <text x="190" y="65" text-anchor="middle" fill="#ff4757" font-size="18">💻</text>
+        <text x="190" y="98" text-anchor="middle" fill="#ff4757" font-size="8" font-weight="bold">PATIENT ZERO</text>
+        <!-- Infected Layer 1 -->
+        <circle cx="90" cy="140" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="90" y="145" text-anchor="middle" font-size="14">🖥️</text>
+        <circle cx="290" cy="140" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="290" y="145" text-anchor="middle" font-size="14">🖥️</text>
+        <!-- Infected Layer 2 -->
+        <circle cx="50" cy="250" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="50" y="255" text-anchor="middle" font-size="14">🗄️</text>
+        <circle cx="130" cy="250" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="130" y="255" text-anchor="middle" font-size="14">📊</text>
+        <circle cx="250" cy="250" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="250" y="255" text-anchor="middle" font-size="14">📧</text>
+        <circle cx="330" cy="250" r="16" fill="rgba(255,71,87,.15)" stroke="#ff4757" stroke-width="1.5"/>
+        <text x="330" y="255" text-anchor="middle" font-size="14">☁️</text>
+        <!-- Infected Layer 3 -->
+        <circle cx="100" cy="350" r="16" fill="rgba(255,71,87,.2)" stroke="#ff4757" stroke-width="2"/>
+        <text x="100" y="355" text-anchor="middle" font-size="14">🔐</text>
+        <text x="100" y="382" text-anchor="middle" fill="#ff4757" font-size="8" font-weight="bold">CROWN JEWELS</text>
+        <circle cx="280" cy="350" r="16" fill="rgba(255,71,87,.2)" stroke="#ff4757" stroke-width="2"/>
+        <text x="280" y="355" text-anchor="middle" font-size="14">🗄️</text>
+        <text x="280" y="382" text-anchor="middle" fill="#ff4757" font-size="8" font-weight="bold">DB SERVER</text>
+        <!-- Blast radius circle -->
+        <circle cx="190" cy="200" r="180" fill="none" stroke="#ff4757" stroke-width="1" stroke-dasharray="6,4" opacity=".25"/>
+        <text x="190" y="395" text-anchor="middle" fill="#ff4757" font-size="9" opacity=".5">EVERYTHING COMPROMISED</text>
+      </svg>
+      <p style="text-align:center;font-size:.8rem;color:var(--danger);margin-top:8px">One foothold → entire enterprise compromised. The attacker moves freely between VLANs, servers, databases, and cloud.</p>
+    </div>
+
+    <!-- SEGMENTED NETWORK -->
+    <div class="blast-diagram seg">
+      <h4>🟢 Segmented Network — Contained Blast Radius</h4>
+      <svg class="blast-svg" viewBox="0 0 380 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Zone boundaries -->
+        <rect x="10" y="25" width="360" height="100" rx="8" fill="none" stroke="rgba(0,217,163,.2)" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="20" y="42" fill="rgba(0,217,163,.4)" font-size="8">ZONE: ENDPOINTS</text>
+        <rect x="10" y="135" width="170" height="130" rx="8" fill="none" stroke="rgba(0,217,163,.2)" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="20" y="152" fill="rgba(0,217,163,.4)" font-size="8">ZONE: FINANCE VLAN</text>
+        <rect x="195" y="135" width="175" height="130" rx="8" fill="none" stroke="rgba(0,217,163,.2)" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="205" y="152" fill="rgba(0,217,163,.4)" font-size="8">ZONE: IT VLAN</text>
+        <rect x="10" y="280" width="360" height="110" rx="8" fill="none" stroke="rgba(0,217,163,.15)" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="20" y="297" fill="rgba(0,217,163,.35)" font-size="8">ZONE: TIER 0 (DC/INFRA) — ISOLATED</text>
+        <!-- Zone firewall markers -->
+        <rect x="180" y="120" width="20" height="14" rx="3" fill="var(--card)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="190" y="130" text-anchor="middle" font-size="8">🛡</text>
+        <rect x="180" y="262" width="20" height="14" rx="3" fill="var(--card)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="190" y="272" text-anchor="middle" font-size="8">🛡</text>
+        <!-- Connections within zones only -->
+        <line x1="190" y1="60" x2="100" y2="95" stroke="#333" stroke-width="1.5"/>
+        <line x1="190" y1="60" x2="280" y2="95" stroke="#333" stroke-width="1.5"/>
+        <line x1="100" y1="95" x2="60" y2="185" stroke="#333" stroke-width="1.5"/>
+        <line x1="100" y1="95" x2="140" y2="185" stroke="#333" stroke-width="1.5"/>
+        <!-- Compromised patient zero -->
+        <circle cx="190" cy="60" r="20" fill="rgba(255,71,87,.2)" stroke="#ff4757" stroke-width="2"/>
+        <text x="190" y="65" text-anchor="middle" font-size="18">💻</text>
+        <text x="190" y="98" text-anchor="middle" fill="#ff4757" font-size="8" font-weight="bold">PATIENT ZERO</text>
+        <!-- Contained spread (within endpoint zone only) -->
+        <circle cx="100" cy="95" r="14" fill="rgba(255,71,87,.1)" stroke="#ff4757" stroke-width="1"/>
+        <text x="100" y="100" text-anchor="middle" font-size="12">🖥️</text>
+        <circle cx="280" cy="95" r="14" fill="none" stroke="var(--text-faint)" stroke-width="1" opacity=".4"/>
+        <text x="280" y="100" text-anchor="middle" font-size="12" opacity=".4">🖥️</text>
+        <!-- Safe nodes in other zones -->
+        <circle cx="60" cy="185" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="60" y="190" text-anchor="middle" font-size="12" opacity=".5">🗄️</text>
+        <circle cx="140" cy="185" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="140" y="190" text-anchor="middle" font-size="12" opacity=".5">📊</text>
+        <circle cx="240" cy="185" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="240" y="190" text-anchor="middle" font-size="12" opacity=".5">📧</text>
+        <circle cx="320" cy="185" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="320" y="190" text-anchor="middle" font-size="12" opacity=".5">☁️</text>
+        <circle cx="120" cy="330" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="120" y="335" text-anchor="middle" font-size="12" opacity=".5">🔐</text>
+        <circle cx="280" cy="330" r="14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+        <text x="280" y="335" text-anchor="middle" font-size="12" opacity=".5">🗄️</text>
+        <!-- Blocked crossover attempts (red X) -->
+        <text x="172" y="128" fill="var(--accent)" font-size="10" font-weight="bold">✕</text>
+        <text x="172" y="270" fill="var(--accent)" font-size="10" font-weight="bold">✕</text>
+        <!-- Containment circle -->
+        <circle cx="145" cy="78" r="55" fill="rgba(255,71,87,.04)" stroke="#ff4757" stroke-width="1" stroke-dasharray="4,3" opacity=".4"/>
+      </svg>
+      <p style="text-align:center;font-size:.8rem;color:var(--accent);margin-top:8px">Same foothold — attack contained to the endpoint zone. Firewalls block lateral movement. Crown jewels safe.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ATTACK CHAIN SCENARIOS ===== -->
+<div class="section">
+  <h2 class="section-title">🧨 Attack Scenarios — With & Without Segmentation</h2>
+  <p class="section-sub">Real-world attack paths showing exactly where segmentation breaks the chain. Click to expand each scenario.</p>
+
+  <div id="scenarios"></div>
+</div>
+
+<!-- ===== MATURITY ASSESSMENT ===== -->
+<div class="section">
+  <h2 class="section-title">📊 Segmentation Maturity Self-Assessment</h2>
+  <p class="section-sub">How mature is your segmentation? Check what you have in place. Progress bar updates in real-time.</p>
+
+  <div class="maturity-box">
+    <div class="maturity-score">
+      <div class="maturity-value" id="matValue">0%</div>
+      <div class="maturity-label" id="matLabel">Getting Started</div>
+      <div class="maturity-progress"><div class="maturity-fill" id="matFill"></div></div>
+    </div>
+    <div class="maturity-checks" id="matChecks"></div>
+    <button class="maturity-reset" onclick="resetMaturity()">↻ Reset Assessment</button>
+  </div>
+</div>
+
+<footer>
+  <p>Built by <a href="https://github.com/WarrantBdoesZT">WarrantBdoesZT</a> · Segmentation Kill Chain — Blast Radius Mapper</p>
+  <div class="ref-list">
+    <div>[1] DoD Zero Trust Reference Architecture v2.0, July 2022 — DISA/NSA (7 Pillars, 45 Capabilities)</div>
+    <div>[2] DoD Zero Trust Strategy, November 2022 — DoD CIO (Target Level by FY2027)</div>
+    <div>[3] NIST SP 800-207, "Zero Trust Architecture," August 2020 — PE/PDP/PEP/PIP Model</div>
+    <div>[4] MITRE ATT&CK Framework — Enterprise Tactics & Techniques</div>
+    <div>[5] DTM 25-003, "Implementing the DoD Zero Trust Strategy," July 2025</div>
+  </div>
+  <p style="margin-top:8px">UNCLASSIFIED · Educational resource · Always verify against current official guidance</p>
+</footer>
+
+<script>
+// ===================== DATA =====================
+
+// Kill chain phases (MITRE ATT&CK Enterprise Tactics in logical attack order)
+const KC_PHASES = [
+  {id:'initial-access',name:'Initial Access',num:'TA0001'},
+  {id:'execution',name:'Execution',num:'TA0002'},
+  {id:'persistence',name:'Persistence',num:'TA0003'},
+  {id:'privilege-escalation',name:'Priv. Escalation',num:'TA0004'},
+  {id:'defense-evasion',name:'Defense Evasion',num:'TA0005'},
+  {id:'credential-access',name:'Credential Access',num:'TA0006'},
+  {id:'discovery',name:'Discovery',num:'TA0007'},
+  {id:'lateral-movement',name:'Lateral Movement',num:'TA0008'},
+  {id:'collection',name:'Collection',num:'TA0009'},
+  {id:'exfiltration',name:'Exfiltration',num:'TA0010'},
+  {id:'impact',name:'Impact',num:'TA0040'},
+];
+
+// Segmentation toggle layers and which phases they block
+const SEG_TOGGLES = {
+  network: [
+    {id:'l2-vlan',name:'L2 VLAN + PVLAN',icon:'🔌',group:'Network',blocks:['lateral-movement']},
+    {id:'l3-microseg',name:'L3 Micro-segmentation',icon:'🛡',group:'Network',blocks:['lateral-movement','discovery','collection']},
+    {id:'l4-port-filter',name:'L4 Port Filtering',icon:'🚧',group:'Network',blocks:['lateral-movement']},
+    {id:'l3-firewall',name:'Internal Firewall (NGFW)',icon:'🔥',group:'Network',blocks:['lateral-movement','exfiltration']},
+  ],
+  identity: [
+    {id:'conditional-access',name:'Conditional Access',icon:'🔑',group:'Identity',blocks:['initial-access','privilege-escalation']},
+    {id:'pam',name:'Privileged Access Mgmt (PAM)',icon:'🔐',group:'Identity',blocks:['privilege-escalation','credential-access','lateral-movement']},
+    {id:'tiered-admin',name:'Tiered Admin Model',icon:'🏆',group:'Identity',blocks:['privilege-escalation','lateral-movement','credential-access']},
+    {id:'rbac-abac',name:'RBAC / ABAC Policies',icon:'🪪',group:'Identity',blocks:['privilege-escalation','credential-access']},
+  ],
+  app: [
+    {id:'container-isolation',name:'Container Network Policies',icon:'📦',group:'App',blocks:['lateral-movement','execution']},
+    {id:'api-gateway',name:'API Gateway + mTLS',icon:'🔗',group:'App',blocks:['lateral-movement','exfiltration']},
+    {id:'waf',name:'Web Application Firewall',icon:'🧱',group:'App',blocks:['initial-access','execution']},
+    {id:'service-mesh',name:'Service Mesh (Istio/Linkerd)',icon:'🕸',group:'App',blocks:['lateral-movement','discovery']},
+  ],
+  data: [
+    {id:'data-classification',name:'Data Classification + DLP',icon:'📄',group:'Data',blocks:['exfiltration','collection']},
+    {id:'encryption-zones',name:'Encryption Zones',icon:'🔒',group:'Data',blocks:['collection','impact']},
+    {id:'cloud-seg',name:'VPC/VNet + Security Groups',icon:'☁',group:'Data',blocks:['lateral-movement','discovery','exfiltration']},
+    {id:'db-row-security',name:'Database Row-Level Security',icon:'🗄',group:'Data',blocks:['collection','exfiltration']},
+  ],
+};
+
+// OSI segmentation layers
+const OSI_LAYERS = [
+  {layer:'L1',name:'Physical',icon:'🔌',techniques:['Physical port security (802.1X NAC)','Cabinet & rack access controls','Disabled unused ports → quarantine VLAN','Badge + biometric + camera'],stops:'Rogue device drops, evil twins, physical tap-ins',blast:'Small'},
+  {layer:'L2',name:'Data Link',icon:'🔗',techniques:['VLAN segmentation (finance, IT, guest, OT)','Private VLANs (promiscuous / isolated / community)','Dynamic ARP Inspection (DAI)','DHCP Snooping + binding DB','MAC port-security (sticky/max)'],stops:'ARP spoofing, VLAN hopping, MAC flooding, rogue DHCP, lateral L2 pivoting',blast:'Large'},
+  {layer:'L3',name:'Network',icon:'🌐',techniques:['ACLs on routers & L3 switches','VRF (Virtual Routing & Forwarding)','Micro-segmentation (SDN/Illumio/VMware)','Internal NGFW between trust zones','IPsec tunnels for domain isolation','Bogon & darknet routing filters'],stops:'Subnet pivoting, east-west lateral movement, route poisoning, cross-zone discovery',blast:'Full'},
+  {layer:'L4',name:'Transport',icon:'🚚',techniques:['Port-based ACLs (allow 443, deny 445/SMB)','Stateful firewall rules','TLS 1.3 everywhere — no cleartext protocols','Service mesh sidecar proxies'],stops:'SMB relay (445), RDP pivoting (3389), WinRM lateral (5985/5986), pass-the-hash relay',blast:'Large'},
+  {layer:'L5-7',name:'Session / Presentation / Application',icon:'📱',techniques:['API Gateway with rate limiting & auth','WAF (dynamic policy learning)','Zero Trust Network Access (ZTNA) — no VPN','CASB for SaaS visibility & control','DLP at the proxy/gateway'],stops:'App-layer exploitation, API abuse, session hijacking, data exfil through web/SaaS channels',blast:'Large'},
+  {layer:'Data',name:'Data (Crown Jewels)',icon:'🔒',techniques:['Data classification tags & labels','Encryption zones (FDE, TDE, field-level)','Database row-level security (RLS)','Data loss prevention (DLP) policies','Honeytokens & canary files'],stops:'Bulk data theft, unauthorized data access, mass encryption (ransomware impact)',blast:'Small'},
+  {layer:'Identity',name:'Identity',icon:'🪪',techniques:['Conditional Access (risk-based, device-gated)','RBAC / ABAC fine-grained authorization','Privileged Access Management (PAM) — JIT elevation','Tiered Admin Model (Tier 0/1/2 isolation)','Continuous MFA (CMFA) — not just at login'],stops:'Credential theft reuse, pass-the-ticket, golden ticket, privilege escalation, PAM bypass, admin lateral movement',blast:'Full'},
+  {layer:'App/Workload',name:'Application & Workload',icon:'📦',techniques:['Container namespaces + cgroups','Kubernetes NetworkPolicies (deny by default)','Microservice isolation (one service per identity)','Serverless function sandbox isolation','Trusted image registry + signing'],stops:'Container escape, pod-to-pod lateral movement, microservice pivoting, supply chain compromise',blast:'Medium'},
+  {layer:'Cloud',name:'Cloud / IaaS',icon:'☁',techniques:['VPC/VNet with strict peering rules','Security groups (deny by default, allow by tag)','Cloud micro-segmentation (AWS GuardDuty, Azure Firewall)','Subscription/account isolation','Transit gateway with inspection VPC'],stops:'Cloud lateral movement, cross-account pivot, metadata service abuse, SSRF to internal APIs',blast:'Full'},
+];
+
+// Lateral movement techniques
+const LATERAL_TECHNIQUES = [
+  {icon:'🎫',name:'Pass-the-Hash (PtH)',mitre:'T1550.002',desc:'Attacker uses stolen NTLM hash to authenticate as the user without knowing the password. Enables instant lateral movement to any system where the hash is valid.',block:'L3/L4 segmentation denies SMB (445) between zones. Tiered admin model + PAM prevents hash reuse. Internal firewall blocks east-west SMB.'},
+  {icon:'🎟️',name:'Pass-the-Ticket (PtT)',mitre:'T1550.003',desc:'Stolen Kerberos tickets are injected into the attacker\'s session to impersonate users across the domain. Golden Ticket attacks forge a TGT using the krbtgt hash.',block:'Identity segmentation (tiered admin) limits ticket scope. Tier 0 isolation prevents DC access. PAM brokers all admin access — no direct tickets.'},
+  {icon:'🔧',name:'PsExec / WMI / WinRM',mitre:'T1021',desc:'Living-off-the-land binaries built into Windows. Attacker uses native admin tools to execute code remotely — looks like legitimate admin activity.',block:'L4 port filtering blocks 445/135/5985/5986 between zones. Jump server/PAM enforces all admin through monitored channel. Service mesh for workloads.'},
+  {icon:'🖥️',name:'RDP Pivoting',mitre:'T1021.001',desc:'Attacker chains RDP sessions through multiple hosts to obscure their trail and reach isolated systems. Double-hop pivoting bypasses perimeter monitoring.',block:'L3 firewall denies RDP (3389) between zones except through jump server. Conditional Access requires device compliance + MFA for each RDP hop.'},
+  {icon:'🎟️',name:'Overpass-the-Hash',mitre:'T1550.006',desc:'Attacker uses a stolen Kerberos AS-REQ to obtain a TGT, converting a valid credential into a Kerberos ticket for lateral movement without touching the DC directly.',block:'Identity segmentation with continuous MFA. Tiered admin model restricts which accounts can request tickets for Tier 0 resources. Network segmentation limits DC exposure.'},
+  {icon:'🔗',name:'SSH Tunneling / Port Relay',mitre:'T1572',desc:'Attacker establishes SSH tunnels or port relays through compromised hosts, creating covert channels that bypass network segmentation and firewall rules.',block:'L4 deep packet inspection detects tunneling. Egress filtering denies outbound SSH. Internal NGFW with TLS inspection catches protocol abuse.'},
+  {icon:'🔄',name:'NTLM Relay',mitre:'T1557.001',desc:'Attacker intercepts NTLM authentication attempts and relays them to other systems, authenticating as the victim without cracking the hash. Combined with LLMNR/NBT-NS poisoning.',block:'L2 controls (DAI, DHCP Snooping) prevent the poisoning phase. L3 segmentation limits relay targets. Disabling NTLMv1/v2 + enforcing SMB signing eliminates the vulnerability.'},
+  {icon:'🕸️',name:'Internal Spearphishing',mitre:'T1534',desc:'Attacker uses a compromised mailbox to send targeted phishing emails to colleagues from a trusted internal address, harvesting credentials and spreading laterally.',block:'Identity segmentation limits compromised account scope. DLP and mail gateway policies flag anomalous internal messages. Conditional Access detects impossible travel.'},
+];
+
+// Attack scenarios
+const SCENARIOS = [
+  {
+    icon:'🦠',title:'Ransomware Containment',desc:'A coordinated ransomware operator gains an initial foothold through a phishing payload and attempts to spread laterally to encrypt the entire enterprise.',
+    steps:[{t:'Phishing payload executes',type:'attack',detail:'Macro-enabled document drops Cobalt Strike beacon'},{t:'Local privilege escalation',type:'attack',detail:'Exploits PrintNightmare for SYSTEM'},{t:'Credential theft (LSASS)',type:'attack',detail:'Mimikatz dumps NTLM hashes from LSASS'},{t:'Lateral movement via SMB',type:'blocked',detail:'🛡 L2 VLAN segmentation + L4 SMB filtering blocks port 445 between zones'},{t:'Spread to file server',type:'blocked',detail:'🛡 Internal NGFW denies east-west traffic between endpoint and server VLANs'},{t:'Mass encryption',type:'blocked',detail:'🛡 Attack contained to single endpoint zone — file servers, databases, and backups are unreachable'}]
+  },
+  {
+    icon:'☁️',title:'Cloud Data Exfiltration',desc:'An attacker obtains valid cloud credentials through session token theft and attempts to enumerate and exfiltrate data from cloud storage and databases.',
+    steps:[{t:'Session token theft',type:'attack',detail:'Phishing page captures Entra ID session cookie'},{t:'Cloud API access',type:'blocked',detail:'🛡 Conditional Access requires device compliance + MFA — unmanaged device blocked'},{t:'VPC lateral movement',type:'blocked',detail:'🛡 Security groups deny cross-subnet traffic — attacker cannot pivot between VPCs'},{t:'Data enumeration',type:'blocked',detail:'🛡 Data classification + DLP policies flag bulk access patterns'},{t:'Exfiltration attempt',type:'blocked',detail:'🛡 Egress filtering + CASB blocks data transfer to unsanctioned external storage'}]
+  },
+  {
+    icon:'👑',title:'Privilege Escalation to Domain Admin',desc:'An attacker performs Kerberoasting to extract service account credentials, then attempts to move laterally to the Domain Controller for full domain compromise.',
+    steps:[{t:'Kerberoasting (T1558.003)',type:'attack',detail:'Extracts service ticket hashes for SPN-registered accounts'},{t:'Offline hash cracking',type:'attack',detail:'Cracks weak service account password using hashcat'},{t:'Credential access to DC',type:'blocked',detail:'🛡 Tiered admin model — service account has no Tier 0 privileges'},{t:'Lateral movement to DC',type:'blocked',detail:'🛡 Network segmentation isolates Tier 0 (DC/infra) — separate VLAN + firewall'},{t:'PAM broker enforcement',type:'blocked',detail:'🛡 All DC access goes through PAM jump server with session recording — no direct access'},{t:'Domain compromise (Golden Ticket)',type:'blocked',detail:'🛡 Without DC access, krbtgt hash cannot be obtained — Golden Ticket attack fails'}]
+  },
+  {
+    icon:'🔀',title:'Lateral Pivot Chain — Multi-Hop Movement',desc:'An attacker compromises a single endpoint and attempts to chain through multiple hosts to reach the database, using living-off-the-land tools at each hop.',
+    steps:[{t:'Endpoint compromised',type:'attack',detail:'Phishing delivers Cobalt Strike beacon to developer workstation'},{t:'Discovery — network scanning',type:'attack',detail:'Attacker runs ARP scan + netstat to find internal hosts'},{t:'Hop 1 → Internal web server',type:'blocked',detail:'🛡 L3 micro-segmentation denies endpoint-to-DMZ traffic — web server unreachable from endpoint VLAN'},{t:'Hop 2 → File share (SMB)',type:'blocked',detail:'🛡 L4 port filtering blocks SMB (445) between endpoint zone and file server zone'},{t:'Hop 3 → Database server',type:'blocked',detail:'🛡 Internal firewall + IPsec domain isolation — DB only accepts connections from app tier, not endpoints'},{t:'Data theft / ransomware',type:'blocked',detail:'🛡 Every pivot path blocked — attacker stuck on single endpoint with no lateral access'}]
+  },
+  {
+    icon:'🎫',title:'Credential Relay — Pass-the-Hash Chain',desc:'Attacker steals NTLM credentials and attempts to relay them across the network to authenticate to multiple systems without knowing the actual password.',
+    steps:[{t:'LSASS credential dump',type:'attack',detail:'Mimikatz extracts NTLM hashes from compromised host'},{t:'NTLM relay to file server',type:'blocked',detail:'🛡 L2 DAI + DHCP Snooping prevent LLMNR/NBT-NS poisoning needed for relay setup'},{t:'SMB relay to admin workstation',type:'blocked',detail:'🛡 L4 filtering blocks SMB (445) between zones — relay target unreachable'},{t:'PsExec lateral execution',type:'blocked',detail:'🛡 Internal NGFW denies east-west PsExec/WMI traffic (135/445/5985)'},{t:'Domain Controller access',type:'blocked',detail:'🛡 Tier 0 isolation + PAM — no NTLM authentication to DC from non-Tier-0 hosts'},{t:'Mass credential compromise',type:'blocked',detail:'🛡 Relay chain broken at every hop — hashes are useless without network reachability'}]
+  },
+];
+
+// Maturity assessment checklist
+const MATURITY_ITEMS = [
+  {layer:'L2',text:'VLANs segment users, servers, guests, and OT into separate broadcast domains'},
+  {layer:'L2',text:'Dynamic ARP Inspection + DHCP Snooping enabled on all access switches'},
+  {layer:'L2',text:'Unused switch ports disabled or assigned to quarantine VLAN'},
+  {layer:'L3',text:'Internal firewall(s) inspect traffic between trust zones (not just at perimeter)'},
+  {layer:'L3',text:'Micro-segmentation policy in place for critical workloads (SDN or host-based)'},
+  {layer:'L3',text:'IPsec domain isolation for Windows infrastructure (mutual auth between hosts)'},
+  {layer:'L4',text:'SMB (445), RDP (3389), and WinRM (5985/5986) blocked between zones'},
+  {layer:'L4',text:'Stateful firewall rules with default-deny between zones'},
+  {layer:'L5-7',text:'API Gateway enforces authentication and rate limiting on all internal APIs'},
+  {layer:'L5-7',text:'ZTNA replaces traditional VPN for remote access to internal apps'},
+  {layer:'Data',text:'Data classified into sensitivity tiers with matching encryption zones'},
+  {layer:'Data',text:'DLP policies enforce egress controls on classified data'},
+  {layer:'Data',text:'Honeytokens/canary credentials deployed in AD, files, and databases'},
+  {layer:'Identity',text:'Conditional Access policies require device compliance + risk assessment'},
+  {layer:'Identity',text:'PAM solution brokers all privileged access with session recording'},
+  {layer:'Identity',text:'Tiered Admin Model enforced (Tier 0/1/2 with strict isolation)'},
+  {layer:'Identity',text:'Service accounts have minimal privileges and managed passwords (gMSA)'},
+  {layer:'App',text:'Kubernetes NetworkPolicies default-deny inter-pod traffic'},
+  {layer:'App',text:'Container runtime isolation (AppArmor/SELinux + resource limits)'},
+  {layer:'Cloud',text:'Security groups default-deny with explicit allow rules only'},
+  {layer:'Cloud',text:'VPC/VNet peering restricted with centralized inspection (transit VPC)'},
+  {layer:'Cloud',text:'Cloud accounts/subscriptions isolated per environment (prod/dev/test)'},
+];
+
+// ===================== RENDER =====================
+
+// --- Kill chain demo ---
+const togglesState = {};
+
+function renderToggles(){
+  const groups = [
+    {container:'togglesNetwork',key:'network',label:'📡 Network'},
+    {container:'togglesIdentity',key:'identity',label:'🪪 Identity'},
+    {container:'togglesApp',key:'app',label:'📦 App'},
+    {container:'togglesData',key:'data',label:'🔒 Data'},
+  ];
+  let allToggles = [];
+  groups.forEach(g=>{
+    SEG_TOGGLES[g.key].forEach(t=>{
+      allToggles.push({...t,groupKey:g.key});
+      togglesState[t.id] = false;
+    });
+    document.getElementById(g.container).innerHTML = SEG_TOGGLES[g.key].map(t=>`
+      <div class="toggle-chip" id="tc-${t.id}" onclick="toggleSeg('${t.id}')">
+        <div class="tc-name">${t.icon} ${t.name}</div>
+        <div class="tc-switch"></div>
+      </div>
+    `).join('');
+  });
+}
+
+function toggleSeg(id){
+  togglesState[id] = !togglesState[id];
+  document.getElementById('tc-'+id).classList.toggle('on',togglesState[id]);
+  updateDemo();
+}
+
+function updateDemo(){
+  // Collect all blocked phases
+  const blockedPhases = new Set();
+  let activeCount = 0;
+  Object.entries(togglesState).forEach(([id,on])=>{
+    if(on){
+      activeCount++;
+      // Find toggle definition
+      Object.values(SEG_TOGGLES).flat().forEach(t=>{
+        if(t.id===id) t.blocks.forEach(p=>blockedPhases.add(p));
+      });
+    }
+  });
+
+  // Render phases
+  document.getElementById('kcPhases').innerHTML = KC_PHASES.map(p=>{
+    const blocked = blockedPhases.has(p.id);
+    return `<div class="kc-phase ${blocked?'blocked':''}">
+      <span class="kc-num">${p.num}</span> ${p.name} ${blocked?'🛡':''}
+    </div>`;
+  }).join('');
+
+  // Update stats
+  const blockedCount = blockedPhases.size;
+  const totalPhases = KC_PHASES.length;
+  const blastPct = Math.round(100 * (1 - blockedCount/totalPhases));
+  document.getElementById('blockedCount').textContent = blockedCount;
+  document.getElementById('toggleCount').textContent = activeCount;
+
+  const blastFill = document.getElementById('blastFill');
+  blastFill.style.width = blastPct + '%';
+  let label,color;
+  if(blastPct>=90){label='FULL';color='var(--danger)'}
+  else if(blastPct>=70){label='LARGE';color='var(--warn)'}
+  else if(blastPct>=40){label='MEDIUM';color='var(--blue)'}
+  else if(blastPct>=15){label='SMALL';color='var(--accent)'}
+  else{label='MINIMAL';color='var(--accent)'}
+  blastFill.style.background = color;
+  const bl = document.getElementById('blastLabel');
+  bl.textContent = label;
+  bl.style.color = color;
+}
+
+// --- Lateral movement grid ---
+function renderLateral(){
+  document.getElementById('lateralGrid').innerHTML = LATERAL_TECHNIQUES.map(t=>`
+    <div class="lm-card">
+      <div class="lm-header">
+        <span class="lm-icon">${t.icon}</span>
+        <span class="lm-name">${t.name}</span>
+        <span class="lm-mitre">${t.mitre}</span>
+      </div>
+      <div class="lm-desc">${t.desc}</div>
+      <div class="lm-block"><strong>🛡 Segmentation Fix:</strong> ${t.block}</div>
+    </div>
+  `).join('');
+}
+
+// --- OSI grid ---
+function renderOSI(){
+  document.getElementById('osiGrid').innerHTML = OSI_LAYERS.map(l=>`
+    <div class="osi-card">
+      <div class="oc-header">
+        <span class="oc-layer">${l.layer}</span>
+        <span class="oc-name">${l.icon} ${l.name}</span>
+      </div>
+      <ul class="oc-techniques">${l.techniques.map(t=>`<li>${t}</li>`).join('')}</ul>
+      <div class="oc-stops"><strong>Stops:</strong> ${l.stops}</div>
+      <span class="oc-blast ${l.blast.toLowerCase()}">Blast Radius if Missing: ${l.blast}</span>
+    </div>
+  `).join('');
+}
+
+// --- Scenarios ---
+function renderScenarios(){
+  document.getElementById('scenarios').innerHTML = SCENARIOS.map((s,i)=>`
+    <div class="scenario-card ${i===0?'open':''}" id="scn-${i}">
+      <div class="scenario-header" onclick="document.getElementById('scn-${i}').classList.toggle('open')">
+        <h4>${s.icon} ${s.title}</h4>
+        <span class="sh-toggle">▼</span>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-inner">
+          <p class="scenario-desc">${s.desc}</p>
+          <div class="scenario-flow">
+            ${s.steps.map((step,si)=>`
+              <div class="scenario-step ${step.type}">${step.t}<div style="font-size:.68rem;color:var(--text-faint);margin-top:3px">${step.detail}</div></div>
+              ${si < s.steps.length-1 ? `<span class="scenario-arrow ${step.type==='blocked'?'blocked':''}">${step.type==='blocked'?'✕':'→'}</span>` : ''}
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// --- Maturity assessment ---
+let maturityState = {};
+function renderMaturity(){
+  document.getElementById('matChecks').innerHTML = MATURITY_ITEMS.map((m,i)=>`
+    <div class="maturity-item" id="mat-${i}" onclick="toggleMaturity(${i})">
+      <span class="mi-box">✓</span>
+      <span class="mi-text"><strong style="color:var(--blue);font-size:.72rem">${m.layer}</strong> ${m.text}</span>
+    </div>
+  `).join('');
+  MATURITY_ITEMS.forEach((m,i)=>maturityState[i]=false);
+  updateMaturity();
+}
+function toggleMaturity(i){
+  maturityState[i] = !maturityState[i];
+  document.getElementById('mat-'+i).classList.toggle('checked',maturityState[i]);
+  updateMaturity();
+}
+function updateMaturity(){
+  const checked = Object.values(maturityState).filter(v=>v).length;
+  const total = MATURITY_ITEMS.length;
+  const pct = Math.round(checked/total*100);
+  document.getElementById('matValue').textContent = pct + '%';
+  document.getElementById('matFill').style.width = pct + '%';
+  let label;
+  if(pct<20)label='Getting Started';
+  else if(pct<40)label='Foundational';
+  else if(pct<60)label='Developing';
+  else if(pct<80)label='Advanced';
+  else label='Optimal — DoD ZT Target Level';
+  document.getElementById('matLabel').textContent = label;
+}
+function resetMaturity(){
+  MATURITY_ITEMS.forEach((m,i)=>{
+    maturityState[i]=false;
+    document.getElementById('mat-'+i).classList.remove('checked');
+  });
+  updateMaturity();
+}
+
+// --- Init ---
+renderToggles();
+updateDemo();
+renderLateral();
+renderOSI();
+renderScenarios();
+renderMaturity();
+</script>
+</body>
+</html>
