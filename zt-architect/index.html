@@ -90,41 +90,82 @@
         .diagram-header h3 { font-size: .9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
 
         /* ZT Logical Architecture Diagram */
-        .zt-diagram { position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; }
-        .zt-layer {
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            transition: all .3s;
-        }
-        .zt-node {
-            background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
-            padding: 14px 18px; text-align: center; min-width: 120px; transition: all .3s;
-            position: relative;
-        }
-        .zt-node .zn-label { font-size: .7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--faint); }
-        .zt-node .zn-name { font-size: .9rem; font-weight: 600; margin-top: 4px; }
-        .zt-node .zn-desc { font-size: .75rem; color: var(--muted); margin-top: 4px; }
+        .zt-diagram { position: relative; min-height: 200px; }
 
-        /* PE/PEP/PIP nodes */
-        .zt-node.role-pe { border-color: var(--pe); background: rgba(242,166,90,.08); }
-        .zt-node.role-pep { border-color: var(--pep); background: rgba(63,208,201,.08); }
-        .zt-node.role-pip { border-color: var(--pip); background: rgba(185,140,255,.08); }
-        .zt-node .zn-badge {
+        /* Column flow layout — PIP → PDP → PEP side by side */
+        .zt-flow { display: flex; align-items: stretch; gap: 12px; width: 100%; }
+        .zt-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .zt-col-header {
+            background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+            padding: 12px 14px; text-align: center;
+        }
+        .zt-col-header .zn-badge {
             display: inline-block; padding: 2px 8px; border-radius: 10px;
             font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
         }
-        .role-pe .zn-badge { background: rgba(242,166,90,.2); color: var(--pe); }
-        .role-pep .zn-badge { background: rgba(63,208,201,.2); color: var(--pep); }
-        .role-pip .zn-badge { background: rgba(185,140,255,.2); color: var(--pip); }
+        .zt-col-header .zn-name { font-size: .85rem; font-weight: 600; margin-top: 4px; }
+        .zt-col-header .zn-desc { font-size: .72rem; color: var(--muted); margin-top: 3px; }
 
-        .zt-connector {
-            width: 2px; height: 30px; background: var(--line-strong);
-            position: relative;
+        .zt-col-header.role-pe { border-color: var(--pe); border-width: 2px; background: rgba(242,166,90,.08); }
+        .zt-col-header.role-pe .zn-badge { background: rgba(242,166,90,.2); color: var(--pe); }
+        .zt-col-header.role-pep { border-color: var(--pep); background: rgba(63,208,201,.06); }
+        .zt-col-header.role-pep .zn-badge { background: rgba(63,208,201,.2); color: var(--pep); }
+        .zt-col-header.role-pip { border-color: var(--pip); background: rgba(185,140,255,.06); }
+        .zt-col-header.role-pip .zn-badge { background: rgba(185,140,255,.2); color: var(--pip); }
+
+        /* Flow arrow between columns */
+        .zt-arrow {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 0 2px; flex-shrink: 0;
         }
-        .zt-connector::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 8px; height: 8px; border-right: 2px solid var(--line-strong);
-            border-bottom: 2px solid var(--line-strong); transform: translateX(-50%) rotate(45deg);
+        .zt-arrow span { font-size: 1.4rem; color: var(--faint); }
+        .zt-arrow label { font-size: .58rem; color: var(--faint); writing-mode: vertical-lr; letter-spacing: 1px; margin-bottom: 4px; }
+
+        /* Vendor chips — wrap horizontally instead of stacking vertically */
+        .zt-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+        .vendor-chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 8px; background: var(--panel-2);
+            border: 1px solid var(--line); border-radius: 16px;
+            font-size: .72rem; font-weight: 500; transition: all .2s;
+            cursor: default;
         }
+        .vendor-chip:hover { background: var(--raise); border-color: var(--line-strong); }
+        .vendor-chip .vc-icon { font-size: .9rem; }
+
+        /* Empty column placeholder */
+        .zt-col-empty {
+            font-size: .72rem; color: var(--faint); text-align: center;
+            padding: 10px 4px; font-style: italic;
+        }
+
+        /* Collapsible details section */
+        .vendor-details { margin-top: 16px; }
+        .vendor-details summary {
+            cursor: pointer; font-size: .8rem; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 1px; padding: 8px 0;
+            user-select: none;
+        }
+        .vendor-details summary:hover { color: var(--text); }
+        .vendor-details[open] summary { margin-bottom: 10px; }
+        .vendor-details-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;
+        }
+        .vendor-detail-card {
+            background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px;
+            padding: 10px 12px; font-size: .78rem;
+        }
+        .vendor-detail-card .vd-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .vendor-detail-card .vd-head .vd-icon { font-size: 1.2rem; }
+        .vendor-detail-card .vd-head .vd-name { font-weight: 600; font-size: .82rem; }
+        .vendor-detail-card .vd-desc { color: var(--muted); font-size: .72rem; }
+        .vendor-detail-card .vd-role { color: var(--accent-dim); font-size: .7rem; margin-top: 3px; }
+        .vendor-detail-card .vd-caps { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
+        .vendor-detail-card .vd-cap {
+            font-size: .58rem; padding: 2px 5px; background: rgba(125,145,185,.1);
+            border: 1px solid var(--line); border-radius: 4px; color: var(--muted);
+        }
+        .vendor-detail-card .vd-cap strong { color: var(--faint); }
 
         .zt-empty { text-align: center; color: var(--faint); padding: 60px 20px; }
         .zt-empty .zt-empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: .4; }
@@ -202,7 +243,7 @@
 <div class="container">
     <!-- Legend -->
     <div class="legend">
-        <div class="legend-item"><span class="legend-dot pe"></span> Policy Engine (PE)</div>
+        <div class="legend-item"><span class="legend-dot pe"></span> Policy Decision Point (PDP)</div>
         <div class="legend-item"><span class="legend-dot pep"></span> Policy Enforcement Point (PEP)</div>
         <div class="legend-item"><span class="legend-dot pip"></span> Policy Information Point (PIP)</div>
     </div>
@@ -298,7 +339,7 @@ function renderDiagram() {
         diag.innerHTML = `
             <div class="zt-empty">
                 <div class="zt-empty-icon">🛡️</div>
-                <p>Select vendor tools from the left to build your architecture.<br>Components will populate into PE / PEP / PIP layers.</p>
+                <p>Select vendor tools from the left to build your architecture.<br>Components will populate into PDP / PEP / PIP layers.</p>
             </div>`;
         return;
     }
@@ -308,114 +349,71 @@ function renderDiagram() {
     const pepVendors = selected.filter(v => v.roles.includes('PEP'));
     const pipVendors = selected.filter(v => v.roles.includes('PIP'));
 
-    function renderNodeGroup(roleClass, badge, label, desc, vendors) {
-        if (vendors.length === 0) return '';
-        const vendorTags = vendors.map(v => `
-            <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding:4px 8px;background:var(--panel);border-radius:6px;font-size:.75rem;">
-                <span>${v.icon}</span>
-                <span style="font-weight:600;">${v.name}</span>
-                <span style="color:var(--muted);font-size:.7rem;">${v.product}</span>
-            </div>
-        `).join('');
+    // Compact chip renderer
+    function renderChips(vendors) {
+        if (vendors.length === 0) return '<div class="zt-col-empty">No tools in this layer</div>';
+        return '<div class="zt-chips">' + vendors.map(v => `
+            <span class="vendor-chip" title="${v.name} — ${v.product}">
+                <span class="vc-icon">${v.icon}</span>${v.name}
+            </span>`).join('') + '</div>';
+    }
+
+    // Build column for a role
+    function renderCol(roleClass, badge, name, desc, vendors) {
         return `
-            <div class="zt-node ${roleClass}">
-                <span class="zn-badge">${badge}</span>
-                <div class="zn-name">${label}</div>
-                <div class="zn-desc">${desc}</div>
-                <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">${vendorTags}</div>
+            <div class="zt-col">
+                <div class="zt-col-header ${roleClass}">
+                    <span class="zn-badge">${badge}</span>
+                    <div class="zn-name">${name}</div>
+                    <div class="zn-desc">${desc}</div>
+                    <div style="font-size:.62rem;color:var(--faint);margin-top:4px;">${vendors.length} tool${vendors.length !== 1 ? 's' : ''}</div>
+                </div>
+                ${renderChips(vendors)}
             </div>`;
     }
 
     diag.innerHTML = `
-        <div style="display:flex;align-items:stretch;gap:20px;width:100%;">
-            <!-- PIP Layer -->
-            <div class="zt-layer" style="flex:1;">
-                <div class="zt-node role-pip" style="min-width:160px;">
-                    <span class="zn-badge">PIP</span>
-                    <div class="zn-name">Policy Information Points</div>
-                    <div class="zn-desc">Identity, posture, telemetry sources</div>
-                </div>
-                ${pipVendors.map(v => `
-                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
-                        <span style="font-size:1.1rem;">${v.icon}</span>
-                        <div>
-                            <div style="font-weight:600;">${v.name}</div>
-                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
-                        </div>
-                    </div>
-                `).join('')}
+        <div class="zt-flow">
+            ${renderCol('role-pip', 'PIP', 'Policy Information Points', 'Identity, posture & telemetry sources', pipVendors)}
+
+            <div class="zt-arrow">
+                <label>FEEDS</label>
+                <span>→</span>
             </div>
 
-            <!-- Arrows -->
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;">
-                <span style="color:var(--faint);font-size:.7rem;writing-mode:vertical-lr;letter-spacing:1px;">FEEDS</span>
-                <span style="font-size:1.2rem;color:var(--faint);margin:8px 0;">→</span>
+            ${renderCol('role-pe', 'PDP', 'Policy Decision Point', 'Evaluates context, makes access decisions', peVendors)}
+
+            <div class="zt-arrow">
+                <label>ENFORCES</label>
+                <span>→</span>
             </div>
 
-            <!-- PE Layer -->
-            <div class="zt-layer" style="flex:1.2;">
-                <div class="zt-node role-pe" style="min-width:180px;border-width:2px;">
-                    <span class="zn-badge">PE</span>
-                    <div class="zn-name">Policy Engine</div>
-                    <div class="zn-desc">Evaluates context, makes access decisions</div>
-                </div>
-                ${peVendors.map(v => `
-                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
-                        <span style="font-size:1.1rem;">${v.icon}</span>
-                        <div>
-                            <div style="font-weight:600;">${v.name}</div>
-                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-
-            <!-- Arrows -->
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;">
-                <span style="color:var(--faint);font-size:.7rem;writing-mode:vertical-lr;letter-spacing:1px;">ENFORCES</span>
-                <span style="font-size:1.2rem;color:var(--faint);margin:8px 0;">→</span>
-            </div>
-
-            <!-- PEP Layer -->
-            <div class="zt-layer" style="flex:1;">
-                <div class="zt-node role-pep" style="min-width:160px;">
-                    <span class="zn-badge">PEP</span>
-                    <div class="zn-name">Policy Enforcement Points</div>
-                    <div class="zn-desc">Gateways, proxies, firewalls, agents</div>
-                </div>
-                ${pepVendors.map(v => `
-                    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;font-size:.78rem;width:100%;">
-                        <span style="font-size:1.1rem;">${v.icon}</span>
-                        <div>
-                            <div style="font-weight:600;">${v.name}</div>
-                            <div style="font-size:.68rem;color:var(--muted);">${v.product}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
+            ${renderCol('role-pep', 'PEP', 'Policy Enforcement Points', 'Gateways, proxies, firewalls, agents', pepVendors)}
         </div>
 
-        <!-- Selected vendor details -->
-        <div style="margin-top:24px;width:100%;">
-            <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Selected Tool Details</div>
+        <details class="vendor-details">
+            <summary>📋 Selected Tool Details (${selected.length})</summary>
+            <div class="vendor-details-grid">
             ${selected.map(v => `
-                <div style="display:flex;align-items:flex-start;gap:12px;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;">
-                    <span style="font-size:1.5rem;">${v.icon}</span>
-                    <div style="flex:1;">
-                        <div style="font-weight:600;font-size:.88rem;">${v.name} — ${v.product} ${v.nist_1800_35 ? '<span style="font-size:.65rem;background:rgba(0,217,163,.15);color:var(--accent);padding:2px 6px;border-radius:4px;">SP 1800-35</span>' : ''}</div>
-                        <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">${v.description}</div>
-                        <div style="font-size:.75rem;color:var(--accent-dim);margin-top:4px;">ZT Role: ${v.zt_role}</div>
-                        <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
-                            ${(v.capabilities || []).map(cid => {
-                                const cap = CAP_BY_ID[cid];
-                                return cap ? `<span style="font-size:.62rem;padding:2px 6px;background:rgba(125,145,185,.1);border:1px solid var(--line);border-radius:4px;color:var(--muted);"><strong style="color:var(--faint);">${cap.id}</strong> ${cap.name}</span>` : '';
-                            }).join('')}
-                        </div>
-                        ${v.builds && v.builds !== 'N/A' ? `<div style="font-size:.72rem;color:var(--faint);margin-top:4px;">NIST SP 1800-35 Builds: ${v.builds}</div>` : ''}
+                <div class="vendor-detail-card">
+                    <div class="vd-head">
+                        <span class="vd-icon">${v.icon}</span>
+                        <span class="vd-name">${v.name} — ${v.product}</span>
+                        ${v.nist_1800_35 ? '<span style="font-size:.58rem;background:rgba(0,217,163,.15);color:var(--accent);padding:2px 5px;border-radius:4px;">SP 1800-35</span>' : ''}
                     </div>
+                    <div class="vd-desc">${v.description}</div>
+                    <div class="vd-role">ZT Role: ${v.zt_role} · ${v.roles.join('/')}</div>
+                    <div class="vd-caps">
+                        ${(v.capabilities || []).map(cid => {
+                            const cap = CAP_BY_ID[cid];
+                            return cap ? `<span class="vd-cap"><strong>${cap.id}</strong> ${cap.name}</span>` : '';
+                        }).join('')}
+                    </div>
+                    ${v.builds && v.builds !== 'N/A' ? `<div style="font-size:.66rem;color:var(--faint);margin-top:4px;">NIST SP 1800-35 Builds: ${v.builds}</div>` : ''}
                 </div>
             `).join('')}
-        </div>
+            </div>
+        </details>
     `;
 }
 
