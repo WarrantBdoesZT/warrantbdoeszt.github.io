@@ -72,6 +72,11 @@
         .vendor-item .vi-name { font-size: .88rem; font-weight: 600; }
         .vendor-item .vi-product { font-size: .78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .vendor-item .vi-pillar { font-size: .7rem; color: var(--faint); margin-top: 2px; }
+        .vendor-item .vi-badge-nist {
+            font-size: .58rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+            padding: 2px 6px; border-radius: 4px; background: rgba(0,217,163,.15); color: var(--accent);
+            margin-top: 3px; display: inline-block;
+        }
         .vendor-item .vi-check {
             width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line-strong);
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
@@ -268,6 +273,7 @@ function renderVendorList(filter = '') {
                 <div class="vi-name">${v.name}</div>
                 <div class="vi-product">${v.product}</div>
                 <div class="vi-pillar">${v.pillar} · ${v.roles.join('/')}</div>
+                ${v.nist_1800_35 ? '<span class="vi-badge-nist">✓ NIST SP 1800-35</span>' : ''}
             </div>
             <div class="vi-check">✓</div>
         </div>
@@ -396,9 +402,10 @@ function renderDiagram() {
                 <div style="display:flex;align-items:flex-start;gap:12px;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;margin-bottom:8px;">
                     <span style="font-size:1.5rem;">${v.icon}</span>
                     <div style="flex:1;">
-                        <div style="font-weight:600;font-size:.88rem;">${v.name} — ${v.product}</div>
+                        <div style="font-weight:600;font-size:.88rem;">${v.name} — ${v.product} ${v.nist_1800_35 ? '<span style="font-size:.65rem;background:rgba(0,217,163,.15);color:var(--accent);padding:2px 6px;border-radius:4px;">SP 1800-35</span>' : ''}</div>
                         <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">${v.description}</div>
                         <div style="font-size:.75rem;color:var(--accent-dim);margin-top:4px;">ZT Role: ${v.zt_role}</div>
+                        ${v.builds && v.builds !== 'N/A' ? `<div style="font-size:.72rem;color:var(--faint);margin-top:2px;">NIST SP 1800-35 Builds: ${v.builds}</div>` : ''}
                     </div>
                 </div>
             `).join('')}
@@ -419,18 +426,22 @@ function renderCapabilityMap() {
         'Visibility & Analytics': '👁️', 'Automation & Orchestration': '⚙️'
     };
 
-    fan.innerHTML = Object.entries(ZT_DATA.capabilities).map(([pillar, caps]) => {
-        const covered = caps.filter(c => coveredCaps.has(c));
+    const capsData = ZT_DATA.capabilities || ZT_DATA.capabilities_simple;
+
+    fan.innerHTML = Object.entries(capsData).map(([pillar, caps]) => {
+        // Handle both rich objects and simple strings
+        const capList = caps.map(c => typeof c === 'string' ? {name: c} : c);
+        const covered = capList.filter(c => coveredCaps.has(c.name));
         const hasCoverage = covered.length > 0;
 
-        const capRows = caps.map(cap => {
-            const isCovered = coveredCaps.has(cap);
-            const capVendors = selected.filter(v => v.capabilities.includes(cap));
-            const vendorNames = capVendors.map(v => v.name).join(', ');
+        const capRows = capList.map(cap => {
+            const isCovered = coveredCaps.has(cap.name);
+            const capVendors = selected.filter(v => v.capabilities.includes(cap.name));
+            const vendorNames = capVendors.map(v => v.icon + v.name).join(' ');
             return `
-                <div class="cap-row ${isCovered ? 'covered' : ''}">
+                <div class="cap-row ${isCovered ? 'covered' : ''}" title="${cap.desc || cap.name}">
                     <span class="cap-dot"></span>
-                    <span class="cap-name">${cap}</span>
+                    <span class="cap-name">${cap.id ? '<span style="color:var(--faint);font-size:.68rem">' + cap.id + '</span> ' : ''}${cap.name}</span>
                     <span class="cap-vendors">${vendorNames}</span>
                 </div>`;
         }).join('');
@@ -440,7 +451,7 @@ function renderCapabilityMap() {
                 <div class="pc-header">
                     <span class="pc-icon">${pillarIcons[pillar]}</span>
                     <span class="pc-name">${pillar}</span>
-                    <span class="pc-count"><span class="covered">${covered.length}</span>/${caps.length}</span>
+                    <span class="pc-count"><span class="covered">${covered.length}</span>/${capList.length}</span>
                 </div>
                 ${capRows}
             </div>`;
@@ -452,16 +463,18 @@ function renderStats() {
     const selected = ZT_DATA.vendors.filter(v => selectedVendors.has(v.id));
     const coveredCaps = new Set();
     selected.forEach(v => v.capabilities.forEach(c => coveredCaps.add(c)));
-    const totalCaps = Object.values(ZT_DATA.capabilities).flat().length;
+    const capsData = ZT_DATA.capabilities || ZT_DATA.capabilities_simple;
+    const totalCaps = Object.values(capsData).flat().map(c => typeof c === 'string' ? c : c.name).length;
     const coveredPillars = new Set();
 
-    Object.entries(ZT_DATA.capabilities).forEach(([pillar, caps]) => {
-        const hasAny = caps.some(c => coveredCaps.has(c));
+    Object.entries(capsData).forEach(([pillar, caps]) => {
+        const capNames = caps.map(c => typeof c === 'string' ? c : c.name);
+        const hasAny = capNames.some(c => coveredCaps.has(c));
         if (hasAny) coveredPillars.add(pillar);
     });
 
     document.getElementById('statVendors').textContent = selected.length;
-    document.getElementById('statCaps').textContent = coveredCaps.size;
+    document.getElementById('statCaps').textContent = `${coveredCaps.size}/${totalCaps}`;
     document.getElementById('statPillars').textContent = `${coveredPillars.size}/7`;
     document.getElementById('statCoverage').textContent = `${Math.round((coveredCaps.size / totalCaps) * 100)}%`;
 }
