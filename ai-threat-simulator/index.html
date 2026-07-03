@@ -89,14 +89,27 @@ a:hover{text-decoration:underline}
 .sim-speed select{background:var(--bg-2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-size:.8rem;font-family:inherit}
 
 .sim-phase-label{text-align:center;font-size:.85rem;font-weight:600;color:var(--text-dim);margin-top:12px;min-height:24px}
+
+/* Attack chain commentary log */
+.attack-log{margin-top:16px;background:#06080d;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:.76rem;line-height:1.7;max-height:220px;overflow-y:auto}
+.attack-log:empty::before{content:"Step-by-step commentary will appear here when the simulation runs...";color:var(--text-faint);font-style:italic;font-family:inherit}
+.attack-log .log-entry{padding:2px 0;border-bottom:1px solid rgba(125,145,185,.06)}
+.attack-log .log-entry:last-child{border-bottom:none}
+.attack-log .log-time{color:var(--text-faint);font-size:.68rem;margin-right:8px}
+.attack-log .log-attack{color:var(--danger)}
+.attack-log .log-block{color:var(--accent)}
+.attack-log .log-info{color:var(--text-dim)}
+.attack-log .log-agent{color:var(--warn)}
+.attack-log .log-defense-agent{color:var(--blue)}
+.attack-log .log-result{color:var(--accent);font-weight:700}
 .sim-phase-label .phase-name{color:var(--accent);font-weight:700}
 .sim-phase-label .phase-name.danger{color:var(--danger)}
 .sim-phase-label .phase-name.blue{color:var(--blue)}
 
 /* SVG node styles */
 .node-circle{transition:fill .5s,stroke .5s}
-.node-label{font-size:7px;fill:var(--text-dim);text-anchor:middle;font-weight:600}
-.node-sublabel{font-size:5px;fill:var(--text-faint);text-anchor:middle}
+.node-label{font-size:9px;fill:var(--text-dim);text-anchor:middle;font-weight:600}
+.node-sublabel{font-size:7px;fill:var(--text-faint);text-anchor:middle}
 .flow-line{stroke-dasharray:4,3;opacity:0;transition:opacity .3s}
 .flow-line.active{opacity:.6;animation:dash-flow 1s linear infinite}
 @keyframes dash-flow{to{stroke-dashoffset:-14}}
@@ -109,7 +122,7 @@ a:hover{text-decoration:underline}
 .node-compromised{fill:rgba(255,71,87,.2)!important;stroke:var(--danger)!important;stroke-width:2!important}
 .node-defended{stroke:var(--accent)!important;stroke-width:2!important}
 .node-hunted{stroke:var(--blue)!important;stroke-width:2!important}
-.shield-icon{font-size:10px;opacity:0;transition:opacity .5s}
+.shield-icon{font-size:13px;opacity:0;transition:opacity .5s}
 .shield-icon.visible{opacity:1}
 
 .pulse-ring{fill:none;stroke:var(--danger);stroke-width:1;opacity:0}
@@ -118,10 +131,10 @@ a:hover{text-decoration:underline}
 .pulse-ring-blue{fill:none;stroke:var(--blue);stroke-width:1;opacity:0}
 .pulse-ring-blue.pulsing{animation:pulse-expand 1.5s ease-out infinite}
 
-.agent-badge{font-size:8px;opacity:0;transition:opacity .3s}
+.agent-badge{font-size:10px;opacity:0;transition:opacity .3s}
 .agent-badge.visible{opacity:1}
 
-.vuln-flash{fill:var(--warn);font-size:6px;font-weight:700;text-anchor:middle;opacity:0;transition:opacity .3s}
+.vuln-flash{fill:var(--warn);font-size:8px;font-weight:700;text-anchor:middle;opacity:0;transition:opacity .3s}
 .vuln-flash.visible{opacity:1;animation:vuln-blink .6s ease-in-out infinite alternate}
 @keyframes vuln-blink{from{opacity:.4}to{opacity:1}}
 
@@ -295,10 +308,10 @@ footer .ref-list div{font-size:.7rem;color:var(--text-faint);padding:2px 0}
         <rect width="760" height="460" fill="url(#grid)"/>
 
         <!-- Zone labels -->
-        <text x="55" y="15" fill="rgba(255,71,87,.5)" font-size="6" font-weight="bold">EXTERNAL</text>
-        <text x="280" y="15" fill="rgba(255,165,2,.4)" font-size="6" font-weight="bold">DMZ</text>
-        <text x="480" y="15" fill="rgba(0,217,163,.4)" font-size="6" font-weight="bold">INTERNAL</text>
-        <text x="640" y="15" fill="rgba(167,139,250,.4)" font-size="6" font-weight="bold">CROWN JEWELS</text>
+        <text x="55" y="15" fill="rgba(255,71,87,.5)" font-size="8" font-weight="bold">EXTERNAL</text>
+        <text x="280" y="15" fill="rgba(255,165,2,.4)" font-size="8" font-weight="bold">DMZ</text>
+        <text x="480" y="15" fill="rgba(0,217,163,.4)" font-size="8" font-weight="bold">INTERNAL</text>
+        <text x="640" y="15" fill="rgba(167,139,250,.4)" font-size="8" font-weight="bold">CROWN JEWELS</text>
 
         <!-- Zone dividers -->
         <line x1="230" y1="0" x2="230" y2="460" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3" opacity=".3"/>
@@ -323,7 +336,7 @@ footer .ref-list div{font-size:.7rem;color:var(--text-faint);padding:2px 0}
         <!-- Firewall -->
         <g id="node-firewall">
           <rect x="215" y="20" width="30" height="420" rx="4" fill="var(--bg-2)" stroke="var(--border)" stroke-width="1"/>
-          <text x="230" y="230" text-anchor="middle" font-size="7" fill="var(--text-faint)" transform="rotate(-90 230 230)">FIREWALL</text>
+          <text x="230" y="230" text-anchor="middle" font-size="8" fill="var(--text-faint)" transform="rotate(-90 230 230)">FIREWALL</text>
         </g>
 
         <!-- DMZ Web Server -->
@@ -445,6 +458,8 @@ footer .ref-list div{font-size:.7rem;color:var(--text-faint);padding:2px 0}
     </div>
 
     <div class="sim-phase-label" id="phaseLabel">Press ▶ Run Attack to begin the simulation</div>
+
+    <div class="attack-log" id="attackLog"></div>
 
     <div class="sim-controls">
       <button class="sim-btn" id="btnRun" onclick="runSimulation()">▶ Run Attack</button>
@@ -794,6 +809,12 @@ const PHASES = [
     attacks:[],
     defends:[],
     shields:[],
+    log:[
+      {t:"agent",m:"🛰️ Replr activated — scanning target network from external position"},
+      {t:"attack",m:"→ Probing 10.0.1.10:443 (DMZ web server) — port open, service identified"},
+      {t:"attack",m:"→ Probing 10.0.1.20:443 (API gateway) — port open, REST API detected"},
+      {t:"info",m:"LLM analysis: web server runs nginx/1.24, API uses /v2 endpoints, upload endpoint found"},
+    ],
     zt_block:"Deny-by-default + microsegmentation: Probes hit invisible endpoints — services behind the PEP are not reachable.",
     aiva_block:"Sentinel: Deception layer feeds false data to recon — attacker maps a honeypot network.",
   },
@@ -805,6 +826,14 @@ const PHASES = [
     attacks:[],
     defends:[],
     shields:[],
+    log:[
+      {t:"agent",m:"🔓 CipherBreaker activated — differential fuzzing campaign on /api/v2/upload"},
+      {t:"attack",m:"→ Sending 2,847 crafted multipart payloads — comparing v2.4.1 vs v2.4.0 responses"},
+      {t:"attack",m:"→ Anomaly detected: +8192 byte response delta on malformed boundary header"},
+      {t:"attack",m:"→ CRASH: Segfault in parse_multipart_header() — heap buffer overflow (CWE-122)"},
+      {t:"info",m:"LLM triage: controllable write primitive, exploitability HIGH, no matching CVE found"},
+      {t:"info",m:"⚠ ZERO-DAY CONFIRMED — novel vulnerability catalogued"},
+    ],
     zt_block:"Continuous verification: Device posture check fails — the attacker endpoint is flagged as non-compliant before any exploit can be delivered.",
     aiva_block:"PatchWarden: Defensive AI already found and reported this vulnerability internally — it was patched last patch cycle.",
   },
@@ -816,6 +845,12 @@ const PHASES = [
     attacks:["atk-1"],
     defends:["def-1"],
     shields:["shield-web"],
+    log:[
+      {t:"agent",m:"⚙️ PayloadSmith activated — generating exploit from CipherBreaker crash data"},
+      {t:"attack",m:"→ Building RCE payload: malicious multipart boundary → heap overflow → shellcode"},
+      {t:"attack",m:"→ Delivering exploit to 10.0.1.10:443 — web server compromised, shell obtained"},
+      {t:"attack",m:"→ WEB SERVER turns RED — attacker has code execution on DMZ host"},
+    ],
     zt_block:"Least privilege + app isolation: Exploit executes but is contained to a sandboxed microservice. No lateral access.",
     aiva_block:"Guardian: Behavioral ML detects the novel exploit payload in real-time. Process killed before execution completes.",
   },
@@ -827,6 +862,11 @@ const PHASES = [
     attacks:["atk-c2"],
     defends:["def-block-c2"],
     shields:[],
+    log:[
+      {t:"agent",m:"🕸️ C2Weaver activated — designing covert C2 channel disguised as HTTPS to cdn-update.cloud"},
+      {t:"attack",m:"→ Beacon established: compromised web server calls out to C2 every 60s over port 443"},
+      {t:"attack",m:"→ C2 SERVER receives beacon — persistent remote control achieved"},
+    ],
     zt_block:"Encrypted egress inspection + SDN policy: PEP denies traffic to unknown external endpoints. C2 channel blocked at the enforcement point.",
     aiva_block:"BeaconHunter: AI traffic analysis identifies the C2 channel by behavioral anomalies — not signatures. Channel severed.",
   },
@@ -838,6 +878,13 @@ const PHASES = [
     attacks:["atk-2","atk-3"],
     defends:["def-2","def-3"],
     shields:["shield-app","shield-dc"],
+    log:[
+      {t:"agent",m:"🧠 Sage activated — coordinating lateral movement from DMZ foothold"},
+      {t:"attack",m:"→ Credential dump from web server — service account creds extracted"},
+      {t:"attack",m:"→ Pivoting DMZ → INTERNAL: web server (10.0.1.10) → app server (10.0.2.10)"},
+      {t:"attack",m:"→ APP SERVER turns RED — attacker now on internal network"},
+      {t:"attack",m:"→ Pivoting toward DOMAIN CONTROLLER (10.0.3.5) — targeting Tier 0 crown jewels"},
+    ],
     zt_block:"Microsegmentation + PAM brokering: Every hop requires re-authentication through the PDP. The web server has no route to the internal network — segmentation denies east-west traffic.",
     aiva_block:"Aegis: Defensive orchestrator correlates all signals — correlates the exploit, C2 attempt, and credential use into a single incident. Automated isolation kicks in.",
   },
@@ -849,6 +896,11 @@ const PHASES = [
     attacks:["atk-exfil"],
     defends:[],
     shields:["shield-db"],
+    log:[
+      {t:"attack",m:"→ Accessing DATABASE (10.0.3.10) — querying sensitive tables"},
+      {t:"attack",m:"→ DATABASE turns RED — data access achieved"},
+      {t:"attack",m:"→ Exfiltrating data through C2 channel to external server"},
+    ],
     zt_block:"Data classification + DLP at PEP: Classified data triggers DLP policy. Egress blocked at the enforcement point. Data never leaves the segment.",
     aiva_block:"Aegis + BeaconHunter: The exfil attempt over the already-flagged C2 channel triggers immediate automated response — source host quarantined.",
   },
@@ -860,6 +912,7 @@ const PHASES = [
     attacks:[],
     defends:[],
     shields:[],
+    log:[],
     zt_block:"",
     aiva_block:"",
   },
@@ -900,6 +953,7 @@ function resetSimulation(){
   document.getElementById("btnRun").textContent = "▶ Run Attack";
   document.getElementById("btnRun").disabled = false;
   document.getElementById("phaseLabel").innerHTML = "Press ▶ Run Attack to begin the simulation";
+  document.getElementById("attackLog").innerHTML = "";
 }
 
 function showPhaseInfo(phase){
@@ -921,6 +975,25 @@ function showPhaseInfo(phase){
     html += '<br><span style="color:var(--blue)">🤖 AI Defense: ' + phase.aiva_block + "</span>";
   }
   label.innerHTML = html;
+}
+
+function appendLog(phase, phaseIndex){
+  const logEl = document.getElementById("attackLog");
+  if(!phase.log || phase.log.length === 0) return;
+  const timestamp = "T+" + String(phaseIndex * 4).padStart(2,"0") + "s";
+  phase.log.forEach((entry, i) => {
+    const delay = (i * 250) / speedMultiplier;
+    const t = setTimeout(() => {
+      const cls = "log-" + entry.t;
+      const div = document.createElement("div");
+      div.className = "log-entry";
+      div.innerHTML = '<span class="log-time">' + timestamp + "</span>" +
+                      '<span class="' + cls + '">' + entry.m + "</span>";
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }, delay);
+    simTimers.push(t);
+  });
 }
 
 function applyPhase(phaseIndex){
@@ -970,6 +1043,7 @@ function applyPhase(phaseIndex){
   }
 
   showPhaseInfo(phase);
+  appendLog(phase, phaseIndex);
 }
 
 function stepSimulation(){
