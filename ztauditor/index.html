@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZTAuditor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0e14;
+            --card: #131820;
+            --border: #1e2530;
+            --accent: #00d9a3;
+            --accent-dim: #00a87e;
+            --text: #e0e6ed;
+            --text-dim: #7d8a9c;
+            --danger: #ff4757;
+            --warn: #ffa502;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(180deg, #0d1218 0%, var(--bg) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero .shield {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent) 0%, #4fc3f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1.15rem;
+            margin-top: 12px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero .cta {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 12px 28px;
+            background: var(--accent);
+            color: #0a0e14;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .hero .cta:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            margin-bottom: 28px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+        }
+
+        .step h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+
+        .step p, .step li {
+            color: var(--text-dim);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .step ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .step li {
+            padding: 4px 0 4px 24px;
+            position: relative;
+        }
+
+        .step li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        pre {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        code {
+            font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        pre code { color: var(--accent); }
+
+        .step table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.88rem;
+        }
+
+        .step th, .step td {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .step th {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .step td { color: var(--text-dim); }
+
+        .step td:first-child {
+            color: var(--accent);
+            font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .sev {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .sev.critical { background: rgba(255,71,87,0.15); color: var(--danger); }
+        .sev.high     { background: rgba(255,165,2,0.15); color: var(--warn); }
+        .sev.medium   { background: rgba(0,217,163,0.15); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="shield">🔍</div>
+    <h1>ZTAuditor</h1>
+    <p>Identifies network segmentation gaps and lateral movement paths attackers could exploit across your environment.</p>
+    <a href="https://github.com/WarrantBdoesZT/warrantbdoeszt.github.io" class="cta">View on GitHub</a>
+</div>
+
+<div class="container">
+    <h2 class="section-title">📘 How to Use</h2>
+
+    <div class="step">
+        <h3>1 · Prerequisites</h3>
+        <ul>
+            <li>Windows 10 1809+ or Server 2019+ (domain-joined or with network access to the target domain)</li>
+            <li>.NET 8 SDK — download from <a href="https://dotnet.microsoft.com/download/dotnet/8.0" style="color: var(--accent);">dot.net/8</a> (SDK, not Runtime)</li>
+            <li>A standard Domain User account — no Domain Admin rights required</li>
+            <li>Remote Registry service running on target hosts (for registry-based checks; deploy via GPO)</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h3>2 · Run the executable</h3>
+        <p>Build from source or grab a pre-built release, then run from a PowerShell prompt:</p>
+<pre><code># Basic run — comma-separated hosts
+.\ZeroTrustAuditor.exe --hosts DC01,SRV01,SRV02 --domain corp.local
+
+# Using a targets file (one hostname per line)
+.\ZeroTrustAuditor.exe --hosts-file .\targets.txt --domain corp.local</code></pre>
+        <p style="margin-top:16px;">Common flags:</p>
+        <table>
+            <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>--hosts h1,h2</td><td>Comma-separated list of hostnames</td></tr>
+                <tr><td>--hosts-file file.txt</td><td>Path to text file with one hostname per line</td></tr>
+                <tr><td>--domain corp.local</td><td>Active Directory domain FQDN <strong>(required)</strong></td></tr>
+                <tr><td>--output ./reports</td><td>Output directory (default: <code>./reports</code>)</td></tr>
+                <tr><td>--skip-modules A,B</td><td>Skip modules: AdAuditor, ProtocolProbe, LateralPathAnalyzer, ShareAuditor, SegmentationChecker</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="step">
+        <h3>3 · Read the output</h3>
+        <p>Five audit modules run in parallel, then findings are deduplicated, scored, and boosted by correlation rules. Reports are written to the <code>--output</code> directory, timestamped in the filename:</p>
+        <table>
+            <thead><tr><th>Format</th><th>Use case</th></tr></thead>
+            <tbody>
+                <tr><td>HTML</td><td>Human-readable report — open in any browser</td></tr>
+                <tr><td>JSON</td><td>Machine-readable, API ingest, custom tooling</td></tr>
+                <tr><td>CSV</td><td>Ticket creation in ServiceNow / Jira</td></tr>
+                <tr><td>Splunk HEC</td><td>Push to Splunk HTTP Event Collector</td></tr>
+                <tr><td>Sentinel</td><td>Ingest to Microsoft Sentinel Log Analytics</td></tr>
+                <tr><td>CEF</td><td>Syslog forwarding to ArcSight, QRadar, or any CEF collector</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:16px;">Each finding carries a severity and risk score — prioritize by severity:</p>
+        <table>
+            <thead><tr><th>Severity</th><th>Score</th><th>Recommended SLA</th></tr></thead>
+            <tbody>
+                <tr><td><span class="sev critical">Critical</span></td><td>9.0</td><td>24–48 hours</td></tr>
+                <tr><td><span class="sev high">High</span></td><td>7.0</td><td>7 days</td></tr>
+                <tr><td><span class="sev medium">Medium</span></td><td>5.0</td><td>30 days</td></tr>
+                <tr><td>Low</td><td>3.0</td><td>90 days</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:16px; font-size: 0.85rem;">When two dangerous misconfigs appear on the <strong>same host</strong>, both scores get a +2.0 boost — the combination forms a complete attack chain.</p>
+    </div>
+</div>
+
+</body>
+</html>
