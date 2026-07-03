@@ -138,29 +138,63 @@
 
         .pillars {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
             margin-top: 24px;
         }
 
         .pillar {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 10px;
+            padding: 20px 12px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .pillar .num {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .pillar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #4fc3f7);
+            opacity: 0.7;
+        }
+
+        .pillar:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 217, 163, 0.1);
+        }
+
+        .pillar .p-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .pillar .p-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 217, 163, 0.15);
             color: var(--accent);
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
         }
 
-        .pillar .label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-top: 4px;
+        .pillar .p-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
         }
 
         footer {
@@ -175,6 +209,14 @@
             color: var(--accent);
             text-decoration: none;
         }
+
+        @media (max-width: 768px) {
+            .hero { padding: 50px 20px 40px; }
+            .hero h1 { font-size: 2rem; }
+            .pillars {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            }
+        }
     </style>
 </head>
 <body>
@@ -186,7 +228,7 @@
     <div class="badges">
         <span class="badge">🏛️ <strong>DoD</strong> Zero Trust</span>
         <span class="badge">📊 <strong>NIST 800-207</strong></span>
-        <span class="badge">🎯 <strong>CISA ZTMM 2.0</strong></span>
+        <span class="badge">📘 <strong>NIST SP 1800-35</strong></span>
         <span class="badge">🤖 <strong>AI Security</strong></span>
     </div>
 </div>
@@ -205,7 +247,7 @@
         <a href="#" class="tool-card">
             <div class="icon">📊</div>
             <h3>Maturity Calculator</h3>
-            <p>Self-assessment tool based on CISA Zero Trust Maturity Model 2.0. Score your org across 5 pillars and visualize gaps.</p>
+            <p>Self-assessment tool based on the DoD Zero Trust maturity model. Score your org across all 7 pillars and visualize gaps toward Target Level.</p>
             <div class="status">Coming Soon</div>
         </a>
 
@@ -245,32 +287,39 @@
     <h2 class="section-title">🏛️ DoD Zero Trust — 7 Pillars</h2>
     <div class="pillars">
         <div class="pillar">
-            <div class="num">1</div>
-            <div class="label">User</div>
+            <div class="p-icon">👤</div>
+            <div class="p-num">1</div>
+            <div class="p-label">User</div>
         </div>
         <div class="pillar">
-            <div class="num">2</div>
-            <div class="label">Device</div>
+            <div class="p-icon">💻</div>
+            <div class="p-num">2</div>
+            <div class="p-label">Device</div>
         </div>
         <div class="pillar">
-            <div class="num">3</div>
-            <div class="label">Application</div>
+            <div class="p-icon">🌐</div>
+            <div class="p-num">3</div>
+            <div class="p-label">Network /<br>Environment</div>
         </div>
         <div class="pillar">
-            <div class="num">4</div>
-            <div class="label">Workload</div>
+            <div class="p-icon">📦</div>
+            <div class="p-num">4</div>
+            <div class="p-label">Application<br>& Workload</div>
         </div>
         <div class="pillar">
-            <div class="num">5</div>
-            <div class="label">Network</div>
+            <div class="p-icon">🔒</div>
+            <div class="p-num">5</div>
+            <div class="p-label">Data</div>
         </div>
         <div class="pillar">
-            <div class="num">6</div>
-            <div class="label">Data</div>
+            <div class="p-icon">👁️</div>
+            <div class="p-num">6</div>
+            <div class="p-label">Visibility<br>& Analytics</div>
         </div>
         <div class="pillar">
-            <div class="num">7</div>
-            <div class="label">Visibility<br>& Analytics</div>
+            <div class="p-icon">⚙️</div>
+            <div class="p-num">7</div>
+            <div class="p-label">Automation<br>& Orchestration</div>
         </div>
     </div>
     <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 16px; text-align: center;">
