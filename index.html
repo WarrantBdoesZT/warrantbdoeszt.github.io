@@ -197,6 +197,111 @@
             line-height: 1.3;
         }
 
+        .pillar {
+            cursor: pointer;
+        }
+
+        /* Pillar modal overlay */
+        .pillar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 14, 20, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .pillar-overlay.active {
+            display: flex;
+        }
+        .pillar-modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            max-width: 560px;
+            width: 100%;
+            padding: 32px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modal-in 0.25s ease;
+        }
+        @keyframes modal-in {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pillar-modal .pm-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: none; border: none;
+            color: var(--text-dim); font-size: 1.4rem;
+            cursor: pointer; line-height: 1;
+            transition: color 0.2s;
+        }
+        .pillar-modal .pm-close:hover { color: var(--text); }
+        .pillar-modal .pm-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+        .pillar-modal .pm-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--accent);
+            font-weight: 700; font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+        .pillar-modal .pm-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--accent) 0%, #4fc3f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .pillar-modal .pm-desc {
+            color: var(--text-dim);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .pillar-modal .pm-importance {
+            background: var(--bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+        .pillar-modal .pm-importance strong {
+            color: var(--accent);
+        }
+        .pillar-modal .pm-caps {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .pillar-modal .pm-cap {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-dim);
+        }
+        .pillar-modal .pm-source {
+            margin-top: 16px;
+            font-size: 0.72rem;
+            color: var(--text-faint);
+            text-align: right;
+        }
+
         footer {
             text-align: center;
             padding: 40px 20px;
@@ -284,38 +389,39 @@
 
 <div class="container">
     <h2 class="section-title">🏛️ DoD Zero Trust — 7 Pillars</h2>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 4px;">Click any pillar to learn about its role in the DoD Zero Trust framework.</p>
     <div class="pillars">
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(0)">
             <div class="p-icon">👤</div>
             <div class="p-num">1</div>
             <div class="p-label">User</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(1)">
             <div class="p-icon">💻</div>
             <div class="p-num">2</div>
             <div class="p-label">Device</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(2)">
             <div class="p-icon">📦</div>
             <div class="p-num">3</div>
             <div class="p-label">Application<br>& Workload</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(3)">
             <div class="p-icon">🔒</div>
             <div class="p-num">4</div>
             <div class="p-label">Data</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(4)">
             <div class="p-icon">🌐</div>
             <div class="p-num">5</div>
             <div class="p-label">Network /<br>Environment</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(5)">
             <div class="p-icon">⚙️</div>
             <div class="p-num">6</div>
             <div class="p-label">Automation<br>& Orchestration</div>
         </div>
-        <div class="pillar">
+        <div class="pillar" onclick="showPillar(6)">
             <div class="p-icon">👁️</div>
             <div class="p-num">7</div>
             <div class="p-label">Visibility<br>& Analytics</div>
@@ -326,12 +432,101 @@
     </p>
 </div>
 
+<!-- Pillar Modal -->
+<div class="pillar-overlay" id="pillarOverlay" onclick="closePillar(event)">
+    <div class="pillar-modal" id="pillarModal">
+        <button class="pm-close" onclick="closePillarBtn()">&times;</button>
+        <div class="pm-icon" id="pmIcon"></div>
+        <div class="pm-num" id="pmNum"></div>
+        <div class="pm-title" id="pmTitle"></div>
+        <div class="pm-desc" id="pmDesc"></div>
+        <div class="pm-importance" id="pmImportance"></div>
+        <div class="pm-caps" id="pmCaps"></div>
+        <div class="pm-source">Source: DoD ZT Reference Architecture v2.0 (July 2022) — DISA/NSA</div>
+    </div>
+</div>
+
 <footer>
     <p>Built by <a href="https://github.com/WarrantBdoesZT">WarrantBdoesZT</a> · Zero Trust cybersecurity tooling · <span id="year"></span></p>
 </footer>
 
 <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // DoD Zero Trust Reference Architecture v2.0 — 7 Pillars data
+    const PILLAR_DATA = [
+        {
+            num: 1, icon: "👤", title: "User",
+            desc: "The User pillar ensures that all users — including regular, privileged, and non-person entities — are uniquely identified, authenticated, and authorized before accessing any resource. Access decisions are dynamic, context-aware, and continuously evaluated.",
+            importance: "The DoD ZT RA v2.0 designates User as Pillar 1 because identity is the new perimeter in Zero Trust. The DoD requires phishing-resistant MFA integrated with PKI (CAC/PIV), continuous authentication beyond initial login, and attribute-based access control (ABAC) replacing static role-based models. Without rigorous user identity controls, an adversary with stolen credentials becomes indistinguishable from a legitimate user — the most common attack vector against DoD networks.",
+            caps: ["User Inventory", "Conditional User Access", "MFA", "PAM", "Identity Federation", "Behavioral ID & Biometrics", "Least Privilege", "Continuous Auth", "Integrated ICAM"]
+        },
+        {
+            num: 2, icon: "💻", title: "Device",
+            desc: "The Device pillar requires comprehensive inventory, health attestation, and continuous compliance monitoring of every device — managed, unmanaged, and bring-your-own — before it is granted access to resources. Device posture is evaluated in real-time as a condition for every access decision.",
+            importance: "The DoD operates millions of endpoints across heterogeneous environments including classified networks, tactical edge, and CONUS facilities. The ZT RA mandates that no device is trusted based on network location alone — every device must prove its integrity continuously. This pillar is critical because compromised or non-compliant devices are the primary delivery mechanism for malware, ransomware, and lateral movement tools targeting DoD information systems.",
+            caps: ["Device Inventory", "Device Detection & Compliance", "Real-Time Device Authorization", "Remote Access", "Automated Patch Management", "UEM & MDM", "EDR & XDR"]
+        },
+        {
+            num: 3, icon: "📦", title: "Application & Workload",
+            desc: "The Application & Workload pillar secures all applications, APIs, containers, and serverless functions through continuous monitoring, secure development practices, and risk-based authorization. Applications must integrate with the enterprise identity provider and policy engine for centralized access decisions.",
+            importance: "DoD applications span legacy mainframes, cloud-native microservices, and tactical edge apps. The ZT RA requires moving from point-in-time ATO (Authority to Operate) to continuous monitoring and ongoing authorization (cATO). This pillar is essential because application-layer vulnerabilities — including OWASP Top 10, API abuse, and supply chain compromises — are the primary vector for data breaches. Secure SDLC and SBOM requirements directly address the Executive Order 14028 software supply chain mandates.",
+            caps: ["Application Inventory", "Secure SDLC", "Software Risk Management", "Resource Authorization", "Continuous Monitoring & cATO"]
+        },
+        {
+            num: 4, icon: "🔒", title: "Data",
+            desc: "The Data pillar is the core of Zero Trust: protecting the data itself, not just the perimeter. It requires data discovery, classification, labeling, encryption (at rest, in transit, and in use), and granular access controls that follow the data wherever it goes — enforced by DLP, DRM, and rights management.",
+            importance: "The DoD ZT RA v2.0 states that data is the ultimate asset and the focal point of all Zero Trust protections. In a Zero Trust model, if an adversary breaches every other layer, the Data pillar must still prevent unauthorized access to sensitive information. This pillar directly enables CUI (Controlled Unclassified Information) protection, cross-domain data sharing, and compliance with classification guides — the fundamental mission of DoD information security.",
+            caps: ["Data Catalog & Risk Alignment", "Enterprise Data Governance", "Data Labeling & Tagging", "Data Monitoring & Sensing", "Encryption & Rights Mgmt", "Data Loss Prevention", "Data Access Control"]
+        },
+        {
+            num: 5, icon: "🌐", title: "Network / Environment",
+            desc: "The Network/Environment pillar requires that all network traffic — internal, external, cloud, and tactical edge — is treated as untrusted. The DoD mandates macro and microsegmentation, software-defined networking (SDN), and data flow mapping to shrink the attack surface and contain blast radius.",
+            importance: "The DoD operates one of the world's largest and most targeted networks. The ZT RA v2.0 explicitly calls for eliminating flat networks — the architectural failure that enabled devastating breaches like those requiring massive remediation across DoD. Macro and microsegmentation directly limit an adversary's ability to move laterally after initial compromise, reducing the blast radius of any successful attack. This pillar is the architectural backbone that makes all other pillars enforceable at the network layer.",
+            caps: ["Data Flow Mapping", "Software Defined Networking", "Macro Segmentation", "Micro Segmentation"]
+        },
+        {
+            num: 6, icon: "⚙️", title: "Automation & Orchestration",
+            desc: "The Automation & Orchestration pillar uses policy engines, SOAR platforms, AI/ML, and standardized APIs to automate security decision-making and response at machine speed. It transforms Zero Trust from a set of static controls into a dynamic, self-healing defense system.",
+            importance: "The DoD faces a severe cybersecurity workforce shortage and must defend against adversaries operating at machine speed. The ZT RA v2.0 mandates automated policy orchestration so that access decisions, threat responses, and compliance verification happen without human latency. This pillar is the force multiplier — without it, the other six pillars require manual effort that does not scale to the size and tempo of DoD operations. The DoD's Target Level requires SOAR-driven incident response and AI-assisted policy tuning by FY2027.",
+            caps: ["Policy Decision Point & Orchestration", "Critical Process Automation", "Machine Learning", "Artificial Intelligence", "SOAR", "API Standardization", "SOC & Incident Response"]
+        },
+        {
+            num: 7, icon: "👁️", title: "Visibility & Analytics",
+            desc: "The Visibility & Analytics pillar provides continuous monitoring, logging, and behavioral analytics across all pillars. It aggregates telemetry from users, devices, networks, applications, and data into a unified view — enabling threat detection, risk scoring, and dynamic policy adjustment.",
+            importance: "The DoD ZT RA v2.0 states that you cannot protect what you cannot see. This pillar provides the evidence base for every Zero Trust decision — without comprehensive visibility and analytics, access decisions are blind. The DoD requires SIEM, UEBA, and threat intelligence integration to detect the advanced persistent threats (APTs) that specifically target DoD networks. Visibility is also the foundation for automated dynamic policies (Pillar 6), feeding real-time risk signals that adjust access decisions as conditions change.",
+            caps: ["Log All Traffic", "SIEM", "Common Security & Risk Analytics", "User & Entity Behavior Analytics", "Threat Intelligence Integration", "Automated Dynamic Policies"]
+        },
+    ];
+
+    function showPillar(index) {
+        const p = PILLAR_DATA[index];
+        document.getElementById("pmIcon").textContent = p.icon;
+        document.getElementById("pmNum").textContent = p.num;
+        document.getElementById("pmTitle").textContent = p.title;
+        document.getElementById("pmDesc").textContent = p.desc;
+        document.getElementById("pmImportance").innerHTML = "<strong>Why it matters (DoD context):</strong> " + p.importance;
+        document.getElementById("pmCaps").innerHTML = p.caps.map(function(c) {
+            return '<span class="pm-cap">' + c + "</span>";
+        }).join("");
+        document.getElementById("pillarOverlay").classList.add("active");
+    }
+
+    function closePillar(event) {
+        if (event.target === event.currentTarget) {
+            document.getElementById("pillarOverlay").classList.remove("active");
+        }
+    }
+
+    function closePillarBtn() {
+        document.getElementById("pillarOverlay").classList.remove("active");
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            document.getElementById("pillarOverlay").classList.remove("active");
+        }
+    });
 </script>
 
 </body>
