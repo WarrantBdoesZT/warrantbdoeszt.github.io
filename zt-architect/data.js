@@ -2587,6 +2587,49 @@ const ZT_DATA = {
       "builds": "N/A",
       "description": "Unified data governance — data map, catalog, lineage, and sensitivity classification across the estate.",
       "zt_role": "PIP for data estate governance and classification metadata."
+    },
+    {
+      "id": "xage-fabric",
+      "name": "Xage Security",
+      "product": "Xage Fabric / Zero Trust Access (ZTA)",
+      "category": "Zero Trust Segmentation / ZTNA",
+      "icon": "🕸️",
+      "roles": [
+        "PE",
+        "PEP"
+      ],
+      "pillar": "Network/Environment",
+      "capabilities": [
+        "5.1",
+        "5.3",
+        "5.4"
+      ],
+      "nist_1800_35": false,
+      "builds": "N/A",
+      "description": "Identity-based zero trust segmentation and microsegmentation mesh for IT, OT, and cloud. Agentless overlay enforcing per-identity, per-workload access policies to prevent lateral movement. Operates in DDIL environments without cloud dependency.",
+      "zt_role": "PDP for per-identity access decisions via centralized policy on the Fabric. PEP at each Xage Node enforcing segmentation, MFA, and deny-by-default access at the asset/workload level."
+    },
+    {
+      "id": "xage-xpam",
+      "name": "Xage Security",
+      "product": "Extended Privileged Access Management (XPAM)",
+      "category": "Privileged Access Management",
+      "icon": "🏰",
+      "roles": [
+        "PEP",
+        "PE"
+      ],
+      "pillar": "User",
+      "capabilities": [
+        "1.3",
+        "1.4",
+        "1.7",
+        "1.8"
+      ],
+      "nist_1800_35": false,
+      "builds": "N/A",
+      "description": "Modern PAM with distributed quantum-resistant password vault, JIT access, session recording, and MFA at every layer. Covers IT, OT, and cloud privileged accounts with no single point of failure.",
+      "zt_role": "PEP for privileged session brokering, recording, and credential vaulting. PDP for just-in-time privileged access decisions with time-limited, least-privilege elevation."
     }
   ],
   "capabilities_simple": {
