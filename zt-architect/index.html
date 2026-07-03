@@ -426,9 +426,9 @@ if (ZT_DATA.capabilities) {
 }
 
 const PILLAR_ICONS = {
-    'User': '👤', 'Device': '💻', 'Network/Environment': '🌐',
-    'Application & Workload': '📦', 'Data': '🔒',
-    'Visibility & Analytics': '👁️', 'Automation & Orchestration': '⚙️'
+    'User': '👤', 'Device': '💻',
+    'Application & Workload': '📦', 'Data': '🔒', 'Network/Environment': '🌐',
+    'Automation & Orchestration': '⚙️', 'Visibility & Analytics': '👁️'
 };
 
 // ===== RENDER CAPABILITY MAP =====
@@ -442,7 +442,12 @@ function renderCapabilityMap() {
 
     const capsData = ZT_DATA.capabilities;
 
-    fan.innerHTML = Object.entries(capsData).map(([pillar, caps]) => {
+    // Sort pillars in DoD ZT RA v2.0 order
+    const PILLAR_ORDER = ['User','Device','Application & Workload','Data','Network/Environment','Automation & Orchestration','Visibility & Analytics'];
+
+    fan.innerHTML = Object.entries(capsData).sort((a,b) =>
+        PILLAR_ORDER.indexOf(a[0]) - PILLAR_ORDER.indexOf(b[0])
+    ).map(([pillar, caps]) => {
         const covered = caps.filter(c => coveredCaps.has(c.id));
         const hasCoverage = covered.length > 0;
 

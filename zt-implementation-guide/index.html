@@ -884,28 +884,6 @@ const pillars = [
     },
     {
         num: 3,
-        name: 'Network/Environment',
-        icon: '🌐',
-        sub: 'Segmentation and Data Flow Control',
-        desc: 'Segment (both logically and physically), isolate, and control the network/environment with granular access and policy restrictions. Macro-segmentation evolves into micro-segmentation for greater protection of DAAS.',
-        capabilities: [
-            'Macro-segmentation of network enclaves',
-            'Micro-segmentation down to individual workloads',
-            'Software-Defined Perimeter (SDP) deployment',
-            'Internal and external data flow management',
-            'Prevention of lateral movement between segments',
-            'Software-Defined Networking (SDN) infrastructure'
-        ],
-        technologies: [
-            'Software-Defined Perimeter (SDP) / ZTNA',
-            'Network microsegmentation platforms',
-            'SDN controllers (e.g., Cisco ACI, VMware NSX)',
-            'Next-gen firewalls with identity-aware policy'
-        ],
-        nist: '<strong>NIST SP 800-207:</strong> The protect surface concept defines what needs protecting — data, applications, assets, and services. Networks become implicit — location no longer grants trust. NIST SP 1800-35 demonstrates SDP and microsegmentation as key implementation patterns.'
-    },
-    {
-        num: 4,
         name: 'Application & Workload',
         icon: '📦',
         sub: 'Secure Application Lifecycle',
@@ -927,7 +905,7 @@ const pillars = [
         nist: '<strong>NIST SP 800-207:</strong> Applications and workloads are resources protected by the ZTA. Access must be mediated by the Policy Enforcement Point (PEP). NIST SP 1800-35 demonstrates application-level access brokers and API gateways as PEPs.'
     },
     {
-        num: 5,
+        num: 4,
         name: 'Data',
         icon: '🔒',
         sub: 'Data-Centric Protection',
@@ -949,29 +927,29 @@ const pillars = [
         nist: '<strong>NIST SP 800-207:</strong> Data-centric security is the core principle — "protect the data, not the perimeter." Data sensitivity determines the trust algorithm risk threshold. NIST SP 1800-35 shows DLP, DRM, and encryption integrated into ZTA deployments.'
     },
     {
-        num: 6,
-        name: 'Visibility & Analytics',
-        icon: '👁️',
-        sub: 'Continuous Monitoring and Threat Detection',
-        desc: 'Vital, contextual details provide greater understanding of performance, behavior, and activity baselines across all other pillars. This visibility improves detection of anomalous behavior and enables dynamic changes to security policy in real time.',
+        num: 5,
+        name: 'Network/Environment',
+        icon: '🌐',
+        sub: 'Segmentation and Data Flow Control',
+        desc: 'Segment (both logically and physically), isolate, and control the network/environment with granular access and policy restrictions. Macro-segmentation evolves into micro-segmentation for greater protection of DAAS.',
         capabilities: [
-            'Enterprise SIEM aggregating logs from all pillars',
-            'User & Entity Behavior Analytics (UEBA)',
-            'Transaction-level logging for every access event',
-            'Real-time anomaly detection with alerting',
-            'Sensor data and telemetry correlation',
-            'Dashboards for ZT posture and compliance monitoring'
+            'Macro-segmentation of network enclaves',
+            'Micro-segmentation down to individual workloads',
+            'Software-Defined Perimeter (SDP) deployment',
+            'Internal and external data flow management',
+            'Prevention of lateral movement between segments',
+            'Software-Defined Networking (SDN) infrastructure'
         ],
         technologies: [
-            'SIEM (Splunk, Microsoft Sentinel, Elastic)',
-            'UEBA platforms',
-            'Network Detection and Response (NDR)',
-            'Security analytics and threat intelligence platforms'
+            'Software-Defined Perimeter (SDP) / ZTNA',
+            'Network microsegmentation platforms',
+            'SDN controllers (e.g., Cisco ACI, VMware NSX)',
+            'Next-gen firewalls with identity-aware policy'
         ],
-        nist: '<strong>NIST SP 800-207:</strong> The trust algorithm requires continuous input — the PE and Policy Administrator (PA) need real-time telemetry to make and maintain access decisions. NIST SP 1800-35 integrates SIEM and analytics platforms as core ZTA components.'
+        nist: '<strong>NIST SP 800-207:</strong> The protect surface concept defines what needs protecting — data, applications, assets, and services. Networks become implicit — location no longer grants trust. NIST SP 1800-35 demonstrates SDP and microsegmentation as key implementation patterns.'
     },
     {
-        num: 7,
+        num: 6,
         name: 'Automation & Orchestration',
         icon: '⚙️',
         sub: 'Automated Security Operations',
@@ -991,6 +969,28 @@ const pillars = [
             'API orchestration and webhooks'
         ],
         nist: '<strong>NIST SP 800-207:</strong> The Policy Engine automates access decisions based on inputs from all pillars. The PA enforces those decisions through PEPs. NIST SP 1800-35 demonstrates SOAR-integrated ZTA implementations with automated response workflows.'
+    },
+    {
+        num: 7,
+        name: 'Visibility & Analytics',
+        icon: '👁️',
+        sub: 'Continuous Monitoring and Threat Detection',
+        desc: 'Vital, contextual details provide greater understanding of performance, behavior, and activity baselines across all other pillars. This visibility improves detection of anomalous behavior and enables dynamic changes to security policy in real time.',
+        capabilities: [
+            'Enterprise SIEM aggregating logs from all pillars',
+            'User & Entity Behavior Analytics (UEBA)',
+            'Transaction-level logging for every access event',
+            'Real-time anomaly detection with alerting',
+            'Sensor data and telemetry correlation',
+            'Dashboards for ZT posture and compliance monitoring'
+        ],
+        technologies: [
+            'SIEM (Splunk, Microsoft Sentinel, Elastic)',
+            'UEBA platforms',
+            'Network Detection and Response (NDR)',
+            'Security analytics and threat intelligence platforms'
+        ],
+        nist: '<strong>NIST SP 800-207:</strong> The trust algorithm requires continuous input — the PE and Policy Administrator (PA) need real-time telemetry to make and maintain access decisions. NIST SP 1800-35 integrates SIEM and analytics platforms as core ZTA components.'
     }
 ];
 
