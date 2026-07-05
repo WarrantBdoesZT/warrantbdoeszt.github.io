@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEC530 · Defensible Architecture Corridor</title>
+<meta name="description" content="Interactive defensible architecture map from SANS SEC530: security controls clustered by trust zone from the hostile internet to the data crown jewels, an Attacker View overlay showing the kill chain hitting each gate, and mappings to the DoD Zero Trust Reference Architecture v2.0 (7 pillars, 45 capabilities).">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SEC530 · Defensible Architecture Corridor">
+<meta property="og:description" content="Interactive defensible architecture map from SANS SEC530: security controls clustered by trust zone from the hostile internet to the data crown jewels, an Attacker View overlay showing the kill chain hitting each gate, and mappings to the DoD Zero Trust Reference Architecture v2.0 (7 pillars, 45 capabilities).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#080B14;
+  --panel:#0F1524;
+  --panel-2:#0C111D;
+  --raise:#161E30;
+  --line:rgba(125,145,185,.14);
+  --line-strong:rgba(125,145,185,.28);
+  --text:#E7ECF6;
+  --muted:#8590A8;
+  --faint:#5B6478;
+  /* trust gradient — encodes how trust is *earned* moving inward */
+  --hostile:#FF6B5B;   /* internet / untrusted */
+  --guard:#F2A65A;     /* perimeter control gates */
+  --transit:#3FD0C9;   /* internal transit / L2-L3 */
+  --core:#6EA8FE;      /* trusted core / identity */
+  --crown:#E9C46A;     /* data crown jewels */
+  --detect:#B98CFF;    /* detection plane */
+  --ok:#54D98C;
+  --bad:#FF6B5B;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--void);color:var(--text);
+  font-family:"Inter",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    linear-gradient(rgba(125,145,185,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(125,145,185,.035) 1px,transparent 1px);
+  background-size:34px 34px;
+}
+.wrap{max-width:1320px;margin:0 auto;padding:0 20px}
+
+/* ---------- header ---------- */
+header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
+  background:rgba(8,11,20,.82);backdrop-filter:blur(10px)}
+.head-inner{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 0}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand-nav{display:flex;flex-direction:column;gap:2px}
+.brand-nav .hub-link{color:var(--guard);font-weight:600;font-size:.85rem;text-decoration:none}
+.brand-nav .site-logo{color:var(--text);font-weight:700;font-size:.8rem;text-decoration:none}
+.brand-nav .site-logo span{color:var(--guard)}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
+  color:var(--guard);border:1px solid var(--line-strong);padding:4px 8px;border-radius:4px;text-transform:uppercase}
+.brand h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em}
+.brand h1 b{color:var(--guard);font-weight:600}
+.head-spacer{flex:1}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chip{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;
+  background:var(--panel);border:1px solid var(--line);color:var(--muted);
+  padding:6px 10px;border-radius:20px;cursor:pointer;transition:.15s;white-space:nowrap}
+.chip:hover{border-color:var(--line-strong);color:var(--text)}
+.chip.on{background:var(--raise);color:var(--text);border-color:var(--line-strong)}
+.chip[data-day="1"].on{box-shadow:inset 0 0 0 1px var(--hostile)}
+.chip[data-day="2"].on{box-shadow:inset 0 0 0 1px var(--guard)}
+.chip[data-day="3"].on{box-shadow:inset 0 0 0 1px var(--transit)}
+.chip[data-day="4"].on{box-shadow:inset 0 0 0 1px var(--crown)}
+.chip[data-day="5"].on{box-shadow:inset 0 0 0 1px var(--core)}
+.attack-toggle{display:flex;align-items:center;gap:9px;cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+  border:1px solid var(--line-strong);padding:6px 12px;border-radius:20px;color:var(--muted);transition:.15s}
+.attack-toggle:hover{color:var(--text)}
+.attack-toggle.on{color:var(--hostile);border-color:var(--hostile);background:rgba(255,107,91,.07)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.attack-toggle.on .dot{background:var(--hostile);box-shadow:0 0 8px var(--hostile);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.4}}
+
+/* ---------- hero / kill chain rail ---------- */
+.hero{padding:30px 0 8px}
+.course-badge{display:inline-flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--line-strong);
+  border-radius:20px;padding:6px 16px;font-size:12px;color:var(--muted);margin-bottom:18px}
+.course-badge strong{color:var(--guard)}
+.hero h2{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:clamp(22px,3.4vw,38px);
+  line-height:1.08;margin:0 0 12px;letter-spacing:-.02em;max-width:780px}
+.hero h2 em{font-style:normal;color:var(--guard)}
+.hero p{color:var(--muted);max-width:660px;margin:0 0 22px;font-size:15px;line-height:1.6}
+.killrail{display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.02em}
+.kc{display:flex;align-items:center;gap:6px;color:var(--faint)}
+.kc b{color:var(--muted);font-weight:500}
+.kc .arr{color:var(--line-strong)}
+.killrail.live .kc{color:var(--hostile)}
+.killrail .kc.broken b{color:var(--ok);text-decoration:line-through;text-decoration-color:rgba(84,217,140,.5)}
+
+/* ---------- corridor ---------- */
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:26px 0 14px;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:7px}
+.swatch{width:11px;height:11px;border-radius:3px}
+
+.corridor{display:flex;gap:0;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x proximity}
+.corridor::-webkit-scrollbar{height:8px}
+.corridor::-webkit-scrollbar-thumb{background:var(--raise);border-radius:8px}
+
+.zone{min-width:236px;flex:1;scroll-snap-align:start;position:relative;padding:0 13px}
+.zone:not(:last-child)::after{content:"";position:absolute;top:46px;right:-1px;bottom:18px;width:1px;
+  background:linear-gradient(var(--line),transparent)}
+.zone-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.zbar{width:4px;height:26px;border-radius:3px}
+.zone-head h3{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:600;margin:0;letter-spacing:-.01em}
+.zone-sub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);
+  letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px 12px}
+
+.node{position:relative;background:var(--panel);border:1px solid var(--line);
+  border-radius:9px;padding:12px 12px 11px;margin-bottom:9px;cursor:pointer;
+  transition:transform .14s,border-color .14s,background .14s}
+.node:hover{transform:translateY(-2px);border-color:var(--line-strong);background:var(--raise)}
+.node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
+.node .nkind{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:3px}
+.node .nname{font-weight:600;font-size:13.5px;line-height:1.25;display:flex;gap:7px;align-items:flex-start}
+.node .ic{font-size:14px;line-height:1;margin-top:1px;flex:none}
+.node .ntools{margin-top:7px;display:flex;flex-wrap:wrap;gap:4px}
+.pill{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);
+  background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:2px 5px}
+.node.gate{border-style:dashed;border-color:var(--guard);background:rgba(242,166,90,.05)}
+.node.gate .nkind{color:var(--guard)}
+.node.gate::before{content:"⛓ GATE";position:absolute;top:-8px;right:9px;
+  font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;
+  color:var(--guard);background:var(--void);padding:0 5px}
+
+/* attacker-view: nodes that break the chain glow */
+body.attack .node[data-kills]{box-shadow:0 0 0 1px rgba(84,217,140,.0)}
+body.attack .node.blocks{border-color:var(--ok);box-shadow:0 0 16px -4px rgba(84,217,140,.5)}
+body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7px;left:10px;
+  font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.1em;color:var(--ok);
+  background:var(--void);padding:0 5px}
+
+/* dimmed by filter */
+.node.dim,.zone.dim .node{opacity:.22;filter:saturate(.3)}
+.zone.dim .zone-head,.zone.dim .zone-sub{opacity:.4}
+
+/* ---------- cross-cutting planes ---------- */
+.planes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 50px}
+.plane{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:16px 17px}
+.plane h4{font-family:"Space Grotesk",sans-serif;margin:0 0 3px;font-size:14px;display:flex;align-items:center;gap:8px}
+.plane .psub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);
+  letter-spacing:.06em;text-transform:uppercase;margin:0 0 13px}
+.plane-grid{display:flex;flex-wrap:wrap;gap:8px}
+.plane .node{margin:0;min-width:140px;flex:1 1 140px}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(4,6,12,.6);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:.2s;z-index:50}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(460px,92vw);
+  background:var(--panel);border-left:1px solid var(--line-strong);z-index:60;
+  transform:translateX(102%);transition:transform .26s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:-24px 0 60px -20px rgba(0,0,0,.7)}
+.drawer.open{transform:translateX(0)}
+.dr-head{padding:20px 22px 16px;border-bottom:1px solid var(--line);position:relative}
+.dr-accent{position:absolute;left:0;top:0;bottom:0;width:4px}
+.dr-kind{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted)}
+.dr-head h3{font-family:"Space Grotesk",sans-serif;font-size:21px;margin:6px 0 8px;letter-spacing:-.01em;line-height:1.15}
+.dr-meta{display:flex;gap:8px;flex-wrap:wrap}
+.dr-meta .pill{font-size:10px}
+.dr-close{position:absolute;top:16px;right:16px;background:var(--raise);border:1px solid var(--line);
+  color:var(--muted);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:15px;line-height:1}
+.dr-close:hover{color:var(--text);border-color:var(--line-strong)}
+.dr-body{padding:18px 22px 40px;overflow-y:auto;flex:1}
+.dr-body p.lede{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 22px}
+.dsec{margin-bottom:22px}
+.dsec h5{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.dsec h5::after{content:"";flex:1;height:1px;background:var(--line)}
+.dsec.threats h5{color:var(--hostile)}
+.dsec.controls h5{color:var(--ok)}
+.dsec.tools h5{color:var(--core)}
+.dsec ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.dsec li{font-size:13.5px;line-height:1.45;padding-left:18px;position:relative;color:var(--text)}
+.dsec li::before{position:absolute;left:0;top:1px;font-family:"IBM Plex Mono",monospace;font-size:11px}
+.dsec.threats li::before{content:"✕";color:var(--hostile)}
+.dsec.controls li::before{content:"→";color:var(--ok)}
+.dsec.tools li::before{content:"#";color:var(--core)}
+.kc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.kc-tags .pill{border-color:var(--hostile);color:var(--hostile);background:rgba(255,107,91,.06)}
+
+/* ---------- topology diagram ---------- */
+.topo-section{margin:30px 0 14px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.topo-title{font-family:"Space Grotesk",sans-serif;font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.topo-sub{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:720px}
+.topo-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted)}
+.topo-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2)}
+.topo-svg{width:100%;min-width:960px;height:auto;display:block}
+.topo-node{cursor:default;transition:opacity .15s}
+.topo-node:hover rect{filter:brightness(1.25)}
+.topo-node:hover text{filter:brightness(1.15)}
+.topo-node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
+.topo-node:focus-visible rect{filter:brightness(1.25)}
+.topo-tooltip{position:absolute;background:var(--raise);border:1px solid var(--line-strong);border-radius:8px;
+  padding:8px 12px;font-size:12px;color:var(--text);max-width:320px;pointer-events:none;z-index:30;
+  opacity:0;transition:opacity .15s;box-shadow:0 6px 24px -6px rgba(0,0,0,.6);line-height:1.4}
+
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--faint);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.7}
+footer b{color:var(--muted);font-weight:500}
+
+@media(max-width:820px){
+  .planes{grid-template-columns:1fr}
+  .corridor{padding-bottom:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-inner">
+    <div class="brand">
+      <div class="brand-nav">
+        <a href="/" class="hub-link">← Back to Hub</a>
+        <a href="/" class="site-logo">WarrantB<span>doesZT</span></a>
+      </div>
+      <span class="tag">SEC530</span>
+      <h1>Defensible Architecture <b>Corridor</b></h1>
+    </div>
+    <div class="head-spacer"></div>
+    <div class="controls" role="group" aria-label="Filter by SEC530 day">
+      <span class="chip on" data-day="0" role="button" tabindex="0" aria-pressed="true">All</span>
+      <span class="chip" data-day="1" role="button" tabindex="0" aria-pressed="false" title="Defensible Security Architecture">.1</span>
+      <span class="chip" data-day="2" role="button" tabindex="0" aria-pressed="false" title="Network Security Architecture">.2</span>
+      <span class="chip" data-day="3" role="button" tabindex="0" aria-pressed="false" title="Network-Centric App Security">.3</span>
+      <span class="chip" data-day="4" role="button" tabindex="0" aria-pressed="false" title="Data-Centric App Security">.4</span>
+      <span class="chip" data-day="5" role="button" tabindex="0" aria-pressed="false" title="Zero Trust Architecture">.5</span>
+      <button class="attack-toggle" id="atk" aria-pressed="false">
+        <span class="dot"></span> ATTACKER VIEW
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="course-badge">
+      <strong>SANS SEC530</strong> — Defensible Architecture Corridor &nbsp;·&nbsp; Maps to <strong>DoD Zero Trust Reference Architecture v2.0</strong> (7 pillars, 45 capabilities)
+    </div>
+    <h2>Layered tooling turns a flat network into a <em>corridor of controls</em> the adversary can't walk through unchallenged.</h2>
+    <p>Every box below is a real control, asset, or gate from the SEC530 outline — clustered by trust zone from the hostile internet on the left to the data crown jewels on the right. Click any node for the threats it answers, how it's hardened, vendor examples, and which DoD ZT capabilities it maps to. Flip <b>Attacker View</b> to watch a kill chain hit each gate.</p>
+    <div class="killrail" id="killrail">
+      <span class="kc"><b>Recon</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>Weaponize</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>Deliver</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>Exploit</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>Install</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>C2</b></span><span class="arr kc">›</span>
+      <span class="kc"><b>Actions</b></span>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:8px">This rail follows the classic 7-stage Lockheed Martin Cyber Kill Chain. Prefer the MITRE ATT&CK Enterprise model? See it in the <a href="/segmentation-kill-chain/">Segmentation Kill Chain</a> mapper.</p>
+  </section>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:var(--hostile)"></i> Untrusted edge</span>
+    <span><i class="swatch" style="background:var(--guard)"></i> Control gate</span>
+    <span><i class="swatch" style="background:var(--transit)"></i> Network transit (L1–L3)</span>
+    <span><i class="swatch" style="background:var(--core)"></i> Trusted core / cloud</span>
+    <span><i class="swatch" style="background:var(--crown)"></i> Data crown jewels</span>
+  </div>
+
+  <div class="corridor" id="corridor"></div>
+
+  <!-- ============ NETWORK TOPOLOGY DIAGRAM ============ -->
+  <div class="topo-section">
+    <h2 class="topo-title">📡 Network Architecture — Tool Placement Map</h2>
+    <p class="topo-sub">Where each SEC530 control sits in a defensible enterprise. Follow the traffic flow from hostile internet (top) through every gate down to the data crown jewels (bottom). Hover any node for details.</p>
+    <div class="topo-legend">
+      <span><i class="swatch" style="background:var(--hostile)"></i> Threat</span>
+      <span><i class="swatch" style="background:var(--guard)"></i> Perimeter Gate</span>
+      <span><i class="swatch" style="background:var(--transit)"></i> L2/L3 Transit</span>
+      <span><i class="swatch" style="background:var(--core)"></i> Core/Endpoint</span>
+      <span><i class="swatch" style="background:var(--crown)"></i> Crown Jewels</span>
+      <span><i class="swatch" style="background:var(--detect)"></i> Detection Plane</span>
+    </div>
+    <div class="topo-wrap">
+      <svg viewBox="0 0 1200 860" class="topo-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+            <polygon points="0 0, 7 3.5, 0 7" fill="rgba(125,145,185,.4)"/>
+          </marker>
+          <marker id="arrow-red" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+            <polygon points="0 0, 7 3.5, 0 7" fill="var(--hostile)"/>
+          </marker>
+          <marker id="arrow-ok" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+            <polygon points="0 0, 7 3.5, 0 7" fill="var(--ok)"/>
+          </marker>
+        </defs>
+
+        <!-- Zone background bands -->
+        <rect x="0" y="10" width="1200" height="80" rx="6" fill="rgba(255,107,91,.05)" stroke="rgba(255,107,91,.15)"/>
+        <text x="14" y="34" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">HOSTILE INTERNET</text>
+        <rect x="0" y="100" width="1200" height="160" rx="6" fill="rgba(242,166,90,.04)" stroke="rgba(242,166,90,.12)"/>
+        <text x="14" y="124" fill="var(--guard)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">PERIMETER / DMZ · CONTROL GATES</text>
+        <rect x="0" y="270" width="1200" height="120" rx="6" fill="rgba(63,208,201,.04)" stroke="rgba(63,208,201,.12)"/>
+        <text x="14" y="294" fill="var(--transit)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">ROUTING & SWITCHING · L2–L3</text>
+        <rect x="0" y="400" width="1200" height="100" rx="6" fill="rgba(110,168,254,.04)" stroke="rgba(110,168,254,.12)"/>
+        <text x="14" y="424" fill="var(--core)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">INTERNAL CORE · SEGMENTATION</text>
+        <rect x="0" y="510" width="1200" height="100" rx="6" fill="rgba(110,168,254,.03)" stroke="rgba(110,168,254,.10)"/>
+        <text x="14" y="534" fill="var(--core)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">ENDPOINTS & VIRTUALIZATION</text>
+        <rect x="0" y="620" width="1200" height="120" rx="6" fill="rgba(233,196,106,.04)" stroke="rgba(233,196,106,.12)"/>
+        <text x="14" y="644" fill="var(--crown)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">DATA CROWN JEWELS · THE OBJECTIVE</text>
+        <rect x="0" y="750" width="1200" height="100" rx="6" fill="rgba(185,140,255,.03)" stroke="rgba(185,140,255,.10)"/>
+        <text x="14" y="774" fill="var(--detect)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">DETECTION & VISIBILITY · SPANS ALL ZONES</text>
+
+        <!-- Flow lines (main traffic path) -->
+        <line x1="600" y1="70" x2="600" y2="118" stroke="var(--hostile)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
+        <line x1="600" y1="220" x2="600" y2="270" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="600" y1="360" x2="600" y2="400" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="600" y1="460" x2="600" y2="510" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <line x1="600" y1="580" x2="600" y2="620" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+        <!-- ===== Row 1: Hostile Internet ===== -->
+        <g class="topo-node" tabindex="0" data-info="Adversary · Recon → Weaponize → Deliver → Exploit → Install → C2 → Actions">
+          <rect x="530" y="40" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--hostile)" stroke-width="1.5"/>
+          <text x="600" y="58" text-anchor="middle" fill="var(--hostile)" font-size="13" font-weight="600">☣ Adversary</text>
+          <text x="600" y="72" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="9">MITRE ATT&amp;CK</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Attacker sends: phishing, exploit attempts, C2 beacons, malware payloads">
+          <text x="380" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">phishing ▸</text>
+          <line x1="430" y1="60" x2="520" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
+          <text x="770" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">◂ C2 beacon</text>
+          <line x1="680" y1="60" x2="760" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
+        </g>
+
+        <!-- ===== Row 2: Perimeter Gates ===== -->
+        <!-- NGFW -->
+        <g class="topo-node" tabindex="0" data-info="NGFW — Deep packet inspection, IPS, TLS intercept, DNS filtering, threat feeds">
+          <rect x="260" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="340" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🛡 NGFW</text>
+          <text x="340" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Fortinet</text>
+          <text x="340" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DPI / IPS / TLS / DNS filter</text>
+        </g>
+        <!-- Web Proxy -->
+        <g class="topo-node" tabindex="0" data-info="Web Proxy — URL filtering, DLP/MIME inspection, sandbox analysis">
+          <rect x="440" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="515" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🌐 Web Proxy</text>
+          <text x="515" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zscaler ZIA · Umbrella</text>
+          <text x="515" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">URL filter / sandbox / DLP</text>
+        </g>
+        <!-- SMTP Proxy -->
+        <g class="topo-node" tabindex="0" data-info="SMTP Proxy — Bayesian analysis, SPF/DKIM/DMARC, per-email encryption">
+          <rect x="610" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="685" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">✉ SMTP Proxy</text>
+          <text x="685" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Proofpoint · Mimecast</text>
+          <text x="685" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">SPF/DKIM/DMARC / phishing</text>
+        </g>
+        <!-- WAF -->
+        <g class="topo-node" tabindex="0" data-info="WAF — Dynamic policy learning, templates, HSTS, CAPTCHA">
+          <rect x="780" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="855" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🧱 WAF</text>
+          <text x="855" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">F5 ASM · Imperva · CF</text>
+          <text x="855" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Dynamic learning / templates</text>
+        </g>
+        <!-- VPN/ZTNA -->
+        <g class="topo-node" tabindex="0" data-info="Remote Access / VPN — Full-tunnel, Always-On VPN, ZTNA for cloud apps">
+          <rect x="950" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="1030" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔐 VPN / ZTNA</text>
+          <text x="1030" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">GlobalProtect · ZPA · Appgate</text>
+          <text x="1030" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Full-tunnel / post-auth check</text>
+        </g>
+
+        <!-- gate label -->
+        <text x="100" y="170" fill="var(--guard)" font-family="IBM Plex Mono" font-size="10">⛓ GATES</text>
+        <text x="100" y="184" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">block: Deliver</text>
+        <text x="100" y="196" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Exploit · C2</text>
+
+        <!-- ===== Row 3: L3 Routing ===== -->
+        <g class="topo-node" tabindex="0" data-info="Hardened Router — AutoSecure/STIG, ACLs, routing auth, SNMPv3">
+          <rect x="200" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
+          <text x="285" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧭 Hardened Router</text>
+          <text x="285" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco IOS XE · Juniper Junos</text>
+          <text x="285" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">ACL / bogon filter / SNMPv3</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="IPv6 Controls — RA Guard, DHCPv6 snooping, protocol-41 block">
+          <rect x="390" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
+          <text x="475" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⑥ IPv6 Controls</text>
+          <text x="475" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">RA Guard · Zeek dns.log</text>
+          <text x="475" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Block tunnel / rogue RA</text>
+        </g>
+
+        <!-- ===== Row 3b: L2 Switching ===== -->
+        <g class="topo-node" tabindex="0" data-info="Switch Hardening — DAI, DHCP snooping, Private VLANs, 802.1X">
+          <rect x="580" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
+          <text x="665" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🔌 Switch Hardening</text>
+          <text x="665" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco Catalyst · Aruba CX</text>
+          <text x="665" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DAI / DHCP snooping / PVLAN</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Wireless — WPA3-Enterprise, WIPS, rogue detection">
+          <rect x="770" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
+          <text x="850" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📶 Wireless</text>
+          <text x="850" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Aruba · Cisco Meraki</text>
+          <text x="850" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">WPA3-Ent / WIPS / rogue AP</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Physical / NAC — 802.1X, MAC filter, disabled-VLAN, badge+biometric">
+          <rect x="950" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
+          <text x="1030" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🚪 NAC / Physical</text>
+          <text x="1030" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco ISE · Forescout</text>
+          <text x="1030" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">802.1X / posture check</text>
+        </g>
+
+        <!-- ===== Row 4: Internal Core / Segmentation ===== -->
+        <g class="topo-node" tabindex="0" data-info="Segmentation Gateway — NGFW as internal gate, MCAP trust zoning, data-centric rules">
+          <rect x="200" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="300" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🚧 Segmentation Gateway</text>
+          <text x="300" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Illumio</text>
+          <text x="300" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Tier 1 (DC) ▸ Tier 2 (PII) ▸ Tier 3 (Ext)</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="IPsec Domain Isolation — Windows Firewall IPsec, mutual auth, optional encryption">
+          <rect x="430" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
+          <text x="530" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔗 IPsec Domain Isolation</text>
+          <text x="530" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Windows Firewall IPsec</text>
+          <text x="530" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / non-domain blocked</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Cloud Conditional Access — Entra ID CA, Intune, risk-based decisions">
+          <rect x="660" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
+          <text x="760" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">☁ Conditional Access</text>
+          <text x="760" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Entra ID · Okta · Ping Identity</text>
+          <text x="760" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Risk-based / device compliance</text>
+        </g>
+
+        <!-- lateral movement arrows -->
+        <line x1="400" y1="452" x2="430" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
+        <line x1="630" y1="452" x2="660" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
+        <text x="415" y="448" fill="var(--ok)" font-family="IBM Plex Mono" font-size="7" opacity=".6">← blocks lateral →</text>
+
+        <!-- ===== Row 5: Endpoints & Virtualization ===== -->
+        <g class="topo-node" tabindex="0" data-info="Endpoint Telemetry — Sysmon, auditd, honeytokens, forward to SIEM">
+          <rect x="100" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
+          <text x="185" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🖥 Endpoint Telemetry</text>
+          <text x="185" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Defender · CrowdStrike · SentinelOne</text>
+          <text x="185" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Sysmon / auditd / honeytokens</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Attack Surface Reduction — Intune ASR rules, block Office macros, LSASS theft">
+          <rect x="290" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
+          <text x="375" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⛔ Attack Surface Reduction</text>
+          <text x="375" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Microsoft Intune ASR · Trellix</text>
+          <text x="375" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Block macros / LSASS / USB</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="DLP Agent — Auto file classification, policy enforcement, reason-for-action prompts">
+          <rect x="480" y="530" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
+          <text x="560" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📄 DLP Agent</text>
+          <text x="560" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Purview DLP · Symantec · Forcepoint</text>
+          <text x="560" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">File classification / exfil block</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Hypervisor / VM — vSwitch hardening, lockdown, port mirroring">
+          <rect x="660" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
+          <text x="745" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧰 Hypervisor / VM</text>
+          <text x="745" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">VMware vSphere · Hyper-V · Nutanix</text>
+          <text x="745" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">vSwitch reject MAC / lockdown</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Containers — AppArmor/SELinux, resource limits, trusted images">
+          <rect x="850" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
+          <text x="935" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📦 Containers</text>
+          <text x="935" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Kubernetes · Aqua · Sysdig</text>
+          <text x="935" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">AppArmor / resource limits</text>
+        </g>
+
+        <!-- ===== Row 6: Data Crown Jewels ===== -->
+        <g class="topo-node" tabindex="0" data-info="Database Security — Native logging, least privilege, anomaly alerts">
+          <rect x="250" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
+          <text x="350" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🗄 Database Security</text>
+          <text x="350" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">IBM Guardium · Imperva · Oracle DV</text>
+          <text x="350" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Least privilege / anomaly alert</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Encryption at Rest — FDE, TPM auto-boot, PIN unlock">
+          <rect x="480" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
+          <text x="580" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🔒 Encryption at Rest</text>
+          <text x="580" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">BitLocker · VeraCrypt · AWS KMS</text>
+          <text x="580" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">FDE / TPM / &lt;5% perf impact</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Cloud Data — Conditional access, BYOD protection, MAM policies">
+          <rect x="710" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
+          <text x="810" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">☁ Cloud Data Store</text>
+          <text x="810" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">AWS S3 · Azure Blob · GCP</text>
+          <text x="810" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">CA-gated / BYOD: no data pull</text>
+        </g>
+
+        <!-- crown jewels label -->
+        <text x="80" y="688" fill="var(--crown)" font-family="IBM Plex Mono" font-size="10">👑 OBJECTIVE</text>
+        <text x="80" y="702" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Actions on</text>
+        <text x="80" y="712" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Objectives</text>
+
+        <!-- ===== Row 7: Detection Plane (spans all) ===== -->
+        <g class="topo-node" tabindex="0" data-info="SIEM — Centralized log aggregation, correlation, alerting, compliance">
+          <rect x="60" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
+          <text x="160" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🧠 SIEM</text>
+          <text x="160" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Splunk · Sentinel · QRadar</text>
+          <text x="160" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Correlate all zones / alert engine</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Network Flow & IDS — Zeek, Suricata/Snort, NetFlow analysis">
+          <rect x="280" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
+          <text x="380" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🔎 IDS / Network Flow</text>
+          <text x="380" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zeek · Suricata · ExtraHop</text>
+          <text x="380" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">dns/conn/files / NetFlow</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Honeypots & Tokens — T-Pot, Canarytokens, DCEPT, near-zero false positives">
+          <rect x="500" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
+          <text x="600" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🍯 Honeypots & Tokens</text>
+          <text x="600" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">T-Pot · Thinkst Canary · DCEPT</text>
+          <text x="600" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Deception / near-zero FP</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="PKI & mTLS — Root→Intermediate→Sub CA, mutual cert auth, cert lifecycle">
+          <rect x="720" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
+          <text x="820" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">📜 PKI & mTLS</text>
+          <text x="820" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DigiCert · Microsoft ADCS · Entrust</text>
+          <text x="820" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / cert lifecycle</text>
+        </g>
+        <g class="topo-node" tabindex="0" data-info="Zero Trust Model — DoD ZT RA v2.0 (7 pillars), never trust always verify">
+          <rect x="940" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
+          <text x="1040" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">⊘ Zero Trust Model</text>
+          <text x="1040" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DoD ZT RA v2.0 · NIST SP 800-207</text>
+          <text x="1040" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">7 pillars / 45 capabilities</text>
+        </g>
+
+        <!-- Vertical detection feed arrows (spanning zones) -->
+        <line x1="160" y1="760" x2="160" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
+        <line x1="380" y1="760" x2="380" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
+        <line x1="600" y1="760" x2="600" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
+        <line x1="820" y1="760" x2="820" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
+        <line x1="1040" y1="760" x2="1040" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
+
+      </svg>
+    </div>
+  </div>
+
+  <div class="planes">
+    <div class="plane" id="plane-detect"></div>
+    <div class="plane" id="plane-identity"></div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title">
+  <div class="dr-head">
+    <div class="dr-accent" id="dr-accent"></div>
+    <button class="dr-close" id="dr-close" aria-label="Close">✕</button>
+    <span class="dr-kind" id="dr-kind"></span>
+    <h3 id="dr-title"></h3>
+    <div class="dr-meta" id="dr-meta"></div>
+  </div>
+  <div class="dr-body" id="dr-body"></div>
+</aside>
+
+<footer class="wrap">
+  Built from a <b>SANS SEC530 / GDSA</b> cheat sheet · 530.1 Defensible Architecture · 530.2 Network Security · 530.3 Network-Centric App Security · 530.4 Data-Centric App Security · 530.5 Zero Trust.<br>
+  Kill-chain mapping is illustrative — a single gate rarely stops every phase, which is exactly why depth matters.
+</footer>
+
+<script>
+/* ============ DATA MODEL — distilled from the SEC530 cheat sheet ============ */
+const KC = ["Recon","Weaponize","Deliver","Exploit","Install","C2","Actions"];
+
+const ZONES = [
+  {
+    id:"edge", name:"Hostile Internet", trust:"hostile", sub:"Assume breach",
+    nodes:[
+      {kind:"Threat surface",name:"Adversary",ic:"☣",day:5,
+        lede:"Zero Trust starts here: the network is always hostile and internal ≠ trusted. Everything inward must be proven, logged and inspected.",
+        tools:["Intrusion Kill Chain","MITRE ATT&CK","Time-based security P>D+R"],
+        threats:["Recon & fingerprinting","Phishing / weaponized payloads","C2 beaconing","Lateral movement"],
+        controls:["Treat every network as untrusted","Log and inspect all traffic","Drive detect/react time below protection time"],
+        kills:[],
+        vendors:["MITRE ATT&CK","Mandiant","CrowdStrike Falcon X"],
+        dodcaps:["7.5 Threat Intel","6.7 SOC & IR"]},
+    ]
+  },
+  {
+    id:"perimeter", name:"Perimeter / DMZ", trust:"guard", sub:"530.3 · control gates",
+    nodes:[
+      {kind:"Gate",gate:true,name:"NGFW",ic:"🛡",day:3,
+        lede:"The primary L3–L7 gate. Deep packet + TLS inspection, user-based rules and threat feeds collapse many kill-chain phases at the edge.",
+        tools:["Deep packet inspection / TLS intercept","IPS + network AV","Malware sandboxing","External Dynamic / bogon block lists","DNS filtering & sinkholing","Geolocation rulesets"],
+        threats:["Inbound exploitation","Outbound C2","Data exfiltration","Malware delivery"],
+        controls:["Port-based outbound deny, then allow by business need","Authenticate outbound by user/subnet","URL category filtering & app rules","Threat-feed block lists (Team Cymru bogons)"],
+        kills:["Deliver","Exploit","C2","Actions"],
+        vendors:["Palo Alto Networks","Cisco Firepower","Fortinet FortiGate"],
+        dodcaps:["5.3 Macro Segmentation","5.4 Micro Segmentation","7.1 Log All Traffic"]},
+      {kind:"Gate",gate:true,name:"Web Proxy",ic:"🌐",day:2,
+        lede:"Inspects and controls web traffic by category, content and reputation — a choke point for both delivery and exfiltration.",
+        tools:["Site category & URL filtering","DLP / MIME / file-content inspection","Global reputation & sandbox analysis","Certificate & protocol-anomaly checks"],
+        threats:["Drive-by malware","Phishing domains","Web-channel data loss"],
+        controls:["DMZ, internal, VPN or cloud proxy access","Inspect status codes, cookies, form values","AV signatures + sandbox on downloads"],
+        kills:["Deliver","C2"],
+        vendors:["Zscaler ZIA","Cisco Umbrella","Symantec Web Security"],
+        dodcaps:["5.2 Software Defined Networking","7.5 Threat Intel"]},
+      {kind:"Gate",gate:true,name:"SMTP Proxy",ic:"✉",day:2,
+        lede:"Email is the top delivery vector — this gate authenticates senders and strips phishing before it lands.",
+        tools:["Bayesian analysis","Sender authentication (SPF/DKIM/DMARC)","Per-email encryption","Rate limiting & sender blocking"],
+        threats:["Phishing","Malicious attachments","Spoofed senders"],
+        controls:["Handle/route phishing domains","Rate-limit & block abusive senders","Auto-route and modify suspect mail"],
+        kills:["Deliver"],
+        vendors:["Proofpoint","Mimecast","Cisco Secure Email"],
+        dodcaps:["4.6 Data Loss Prevention"]},
+      {kind:"Gate",gate:true,name:"WAF",ic:"🧱",day:4,
+        lede:"Custom apps defeat signatures and DPI — the WAF is the realistic control, learning normal traffic then flipping to deny.",
+        tools:["Dynamic policy learning","Manual templates (OS/DB/lang)","HSTS headers & error-page control","CAPTCHA, rate limiting, MFA integration"],
+        threats:["App-layer exploits","WAF fingerprint & bypass","Encoding/path-interpretation tricks"],
+        controls:["Normalize paths & variables","Patch identified vulns","Centralized protection + detection","Move past pure allow/deny"],
+        kills:["Exploit","Actions"],
+        vendors:["F5 ASM","Imperva","Cloudflare WAF"],
+        dodcaps:["3.5 Continuous Monitoring","3.4 Resource Authorization"]},
+      {kind:"Gate",gate:true,name:"Remote Access / VPN",ic:"🔐",day:3,
+        lede:"Where outsiders become insiders. Full-tunnel funnels traffic through central security; post-auth checks keep sick devices out.",
+        tools:["VPN (split vs full tunnel)","Always-On VPN","ZTNA for cloud apps","Jump boxes for AAA"],
+        threats:["Compromised endpoints dialing in","Split-tunnel cross-infection","Stolen credentials"],
+        controls:["Prefer full-tunnel through central stack","Post-auth: AV, firewall, vuln scan, patch check","Modern phish-resistant auth (FIDO, SAML/OIDC)","Hybrid: VPN to on-prem, ZTNA to cloud"],
+        kills:["Deliver","Install"],
+        vendors:["Palo Alto GlobalProtect","Cisco AnyConnect","Zscaler ZPA","Appgate SDP"],
+        dodcaps:["2.4 Remote Access","1.8 Continuous Authentication"]},
+    ]
+  },
+  {
+    id:"l3", name:"Routing · L3", trust:"transit", sub:"530.2 · move it safely",
+    nodes:[
+      {kind:"Asset",name:"Hardened Router",ic:"🧭",day:2,
+        lede:"L3 control plane. Lock the device, filter the junk, authenticate the routing — or the map itself gets poisoned.",
+        tools:["Cisco AutoSecure / DISA STIG / CIS","Nipper-ng","SNMPv3 (auth+priv)","Type 9 SCRYPT passwords"],
+        threats:["IP spoofing / source routing","ICMP flooding & DoS","Routing-table poisoning","Unauthorized tunneling","IPv6 RA machine-in-the-middle"],
+        controls:["Bogon/fullbogon filters; darknet routing","Inbound/outbound ACLs","Routing-update authentication","Disable legacy svcs (fingerd, BOOTP, CDP)","Secure NTP, centralized logging, RBAC CLI"],
+        kills:["Recon","C2"],
+        vendors:["Cisco IOS XE","Juniper Junos","Arista EOS"],
+        dodcaps:["5.1 Data Flow Mapping","5.2 Software Defined Networking"]},
+      {kind:"Asset",name:"IPv6 Controls",ic:"⑥",day:2,
+        lede:"IPv6 is often invisible to IDS/IPS and rides tunnels past controls. Treat the v6 plane as deliberately as v4.",
+        tools:["RA Guard & DHCPv6 snooping","NGFW/IDS protocol-41 block/alert","Zeek dns.log / conn.log","Nmap NSE IPv6 scripts"],
+        threats:["Neighbor-ad spoofing","SLAAC & fake DHCPv6 attacks","6to4/Teredo/ISATAP tunneling","IDS/IPS blindness to v6"],
+        controls:["Follow NSA IPv6 guidance","Static host IP/DNS/GW; drop rogue RA","Log protocol 41 & UDP 3544","Switch RA Guard, no trusted interfaces"],
+        kills:["Deliver","C2"],
+        vendors:["Cisco","Juniper","Zeek"],
+        dodcaps:["5.1 Data Flow Mapping"]},
+    ]
+  },
+  {
+    id:"l2", name:"Switching · L2", trust:"transit", sub:"530.1 · the access fabric",
+    nodes:[
+      {kind:"Asset",name:"Switch Hardening",ic:"🔌",day:1,
+        lede:"L2 is where rogue devices land. Bind the fabric to known good MAC/IP pairs and the classic attacks fall apart.",
+        tools:["Dynamic ARP Inspection","DHCP snooping binding DB","Private VLANs (promisc/isolated/community)","802.1X / AAA"],
+        threats:["MAC flooding","VLAN hopping / double-tag 802.1Q","ARP spoofing & cache poisoning (Ettercap)","DHCP starvation → rogue server","Spanning-tree attacks"],
+        controls:["DAI validates against snooping DB","DHCP snooping: trust only DHCP interfaces","Disable unused ports → disabled VLAN","Segment classified data; flow analysis"],
+        kills:["Deliver","Install"],
+        vendors:["Cisco Catalyst","Aruba CX","Juniper EX"],
+        dodcaps:["5.3 Macro Segmentation","5.4 Micro Segmentation"]},
+      {kind:"Asset",name:"Wireless",ic:"📶",day:1,
+        lede:"RF is an uncontrolled edge. WPA3-Enterprise plus a WIPS turns the air into a monitored zone.",
+        tools:["WPA3-Enterprise + station isolation","WIPS (rogue/evil-twin detection)","Private cellular for IoT","Secured-mode Zigbee (encrypt+integrity)"],
+        threats:["Evil-twin / BSSID spoofing","Rogue APs & clients","Weak Zigbee/Z-Wave/BLE","RFID badge cloning"],
+        controls:["Deauth rogue APs/clients","Guest management & isolation","Shared-responsibility model","ACL/secured Zigbee modes"],
+        kills:["Deliver"],
+        vendors:["Aruba","Cisco Meraki","Fortinet"],
+        dodcaps:["2.6 UEM/MDM","5.3 Macro Segmentation"]},
+      {kind:"Asset",name:"Physical · L1",ic:"🚪",day:1,
+        lede:"The layer every other control assumes. A dropped box or malicious cable bypasses everything above it.",
+        tools:["802.1X NAC + MAC filters","Disabled-VLAN for dead ports","Badge + code + biometrics","Cable color-coding"],
+        threats:["Drop boxes & rogue devices","Weaponized USB / O.MG cables","Flipper Zero multi-tools","Tap on cabinets/server rooms"],
+        controls:["Secure facility, restricted areas","Track staff/visitor/contractor access","Background checks","Disable unused switch ports"],
+        kills:["Deliver"],
+        vendors:["Cisco ISE","Aruba ClearPass","Forescout"],
+        dodcaps:["2.2 Device Compliance","2.3 Device Authorization"]},
+    ]
+  },
+  {
+    id:"core", name:"Internal Core", trust:"core", sub:"530.2/.5 · segmentation",
+    nodes:[
+      {kind:"Gate",gate:true,name:"Segmentation Gateway",ic:"🚧",day:5,
+        lede:"The micro-perimeter. NGFWs as internal gates put inspected control points between every trust zone and tier.",
+        tools:["NGFW as segmentation GW","MCAP trust zoning","Data-centric port/app rules","API-driven automation"],
+        threats:["East-west lateral movement","Cross-tier pivoting","Unsegmented flat networks"],
+        controls:["Gate ingress/egress between zones","Network-agent access controls","Temporal/geo/behavioral conditions","Tier 1 (DC/infra) ▸ Tier 2 (PII/DB) ▸ Tier 3 (ext-facing)"],
+        kills:["Install","Actions"],
+        vendors:["Palo Alto Networks","Cisco Firepower","Illumio"],
+        dodcaps:["5.4 Micro Segmentation","5.3 Macro Segmentation"]},
+      {kind:"Asset",name:"IPsec Domain Isolation",ic:"🔗",day:5,
+        lede:"Windows-native mutual auth on every flow — non-domain devices simply can't talk, and MITM gets much harder.",
+        tools:["Windows Firewall IPsec","Mutual authentication","Optional encryption"],
+        threats:["Unauthorized non-domain access","Machine-in-the-middle","Service exploitation"],
+        controls:["Authenticate all traffic mutually","Block unauthorized hosts","Encrypt sensitive flows"],
+        kills:["Exploit","Install"],
+        vendors:["Windows Firewall","Cisco AnyConnect"],
+        dodcaps:["5.4 Micro Segmentation","4.5 Data Encryption"]},
+    ]
+  },
+  {
+    id:"endpoints", name:"Endpoints", trust:"core", sub:"530.4/.5 · last mile",
+    nodes:[
+      {kind:"Asset",name:"Endpoint Telemetry",ic:"🖥",day:5,
+        lede:"You can't catch install or C2 without host visibility. Sysmon and auditd are the granular eyes on every machine.",
+        tools:["Windows Sysmon (proc/net/DNS/DLL)","Linux auditd (syscalls/exec/file)","Honeytokens / SAT decoys"],
+        threats:["Malware install & persistence","Credential theft from LSASS","Lateral movement w/ stolen tokens"],
+        controls:["XML-config granular logging","Forward all logs to SIEM","Seed honeytokens (DCEPT, mimikatz decoy)"],
+        kills:["Install","C2","Actions"],
+        vendors:["Microsoft Defender for Endpoint","CrowdStrike Falcon","SentinelOne"],
+        dodcaps:["2.7 EDR/XDR","7.1 Log All Traffic","7.4 UEBA"]},
+      {kind:"Asset",name:"Attack Surface Reduction",ic:"⛔",day:5,
+        lede:"Microsoft ASR rules kill the most common exploitation behaviors before EDR even has to react.",
+        tools:["Intune Endpoint Protection policies","ASR rule set","Network protection"],
+        threats:["Office spawning child processes","Macro / script-launched payloads","LSASS credential stealing","USB-borne untrusted code"],
+        controls:["Block Office child processes & code injection","Block obfuscated / downloadable scripts","Block LSASS credential theft","Block untrusted USB execution"],
+        kills:["Exploit","Install"],
+        vendors:["Microsoft Intune","Microsoft ASR","Trellix"],
+        dodcaps:["2.6 UEM/MDM","2.5 Asset/Vuln/Patch Mgmt"]},
+      {kind:"Asset",name:"DLP Agent",ic:"📄",day:4,
+        lede:"On the host where data lives in cleartext — classifies files and stops the exfil that network DLP can't see.",
+        tools:["Auto file classification","On-screen policy violations","Reason-for-action prompts"],
+        threats:["Sensitive-data exfiltration","Mis-handled classified files","Insider data movement"],
+        controls:["Manual / location / content classification","Block or warn on risky sharing","Combine classification + policy + enforcement"],
+        kills:["Actions"],
+        vendors:["Microsoft Purview DLP","Symantec DLP","Forcepoint DLP"],
+        dodcaps:["4.6 Data Loss Prevention","4.3 Data Labeling & Tagging"]},
+    ]
+  },
+  {
+    id:"datacenter", name:"Servers · Virtualization", trust:"crown", sub:"530.4 · where it runs",
+    nodes:[
+      {kind:"Asset",name:"Hypervisor / VM",ic:"🧰",day:4,
+        lede:"One compromised host can see every VM on it. Segment virtual networks and harden the management plane.",
+        tools:["vSwitch: reject MAC change / forged transmits","Port mirroring / virtual taps","Lockdown mode + MFA to vCenter","Secure Boot, PAM for creds"],
+        threats:["VM-to-VM sniffing","Malicious vSphere install bundles / backdoors","Console & snapshot abuse"],
+        controls:["Segment VM nets (physical/VLAN)","Decouple ESXi/vCenter from AD; vCenter SSO","Isolated mgmt network only","Centralized SIEM logging"],
+        kills:["Install","Actions"],
+        vendors:["VMware vSphere","Microsoft Hyper-V","Nutanix AHV"],
+        dodcaps:["3.5 Continuous Monitoring","5.4 Micro Segmentation"]},
+      {kind:"Asset",name:"Containers",ic:"📦",day:4,
+        lede:"Shared-kernel workloads need escape protection and resource limits as table stakes.",
+        tools:["GRSEC / AppArmor / SELinux","Resource limits","Trusted-image policy"],
+        threats:["Container escape","Resource-exhaustion DoS","Untrusted images"],
+        controls:["Protect against escape","Limit resources to prevent DoS","Deploy trusted containers, collect logs"],
+        kills:["Exploit","Install"],
+        vendors:["Kubernetes","Aqua Security","Sysdig"],
+        dodcaps:["3.2 Secure SDLC","3.3 Software Risk Management"]},
+    ]
+  },
+  {
+    id:"data", name:"Data Crown Jewels", trust:"crown", sub:"530.4 · the objective",
+    nodes:[
+      {kind:"Asset",name:"Database Security",ic:"🗄",day:4,
+        lede:"The actual objective. Audit access, alert on abnormal pulls, and harden continuously — this is what 'Actions on Objectives' targets.",
+        tools:["Native logging (change/query/trigger)","AppDetective / MBSA / CIS benchmarks","DB authenticated vuln scans"],
+        threats:["Bulk data theft","Privilege abuse","SQL-layer attacks"],
+        controls:["Least-privilege per user/group","Data discovery + monitoring","Alert on abnormal data pulls","Continuously assess & harden"],
+        kills:["Actions"],
+        vendors:["IBM Guardium","Imperva Data Security","Oracle Database Vault"],
+        dodcaps:["4.4 Data Monitoring","4.7 Data Access Control"]},
+      {kind:"Asset",name:"Encryption at Rest",ic:"🔒",day:4,
+        lede:"The backstop when everything else fails and a disk walks out the door.",
+        tools:["Full Disk Encryption","TPM auto-boot","USB / PIN unlock keys"],
+        threats:["Stolen drives/laptops","Data at rest exposure"],
+        controls:["<10% perf impact, usually <5%","Mandated by insurance/compliance","Govern where data is expected vs ends up"],
+        kills:["Actions"],
+        vendors:["Microsoft BitLocker","VeraCrypt","AWS KMS"],
+        dodcaps:["4.5 Data Encryption & Rights Mgmt"]},
+    ]
+  },
+  {
+    id:"cloud", name:"Cloud / Hybrid", trust:"core", sub:"530.4/.5 · extend the model",
+    nodes:[
+      {kind:"Gate",gate:true,name:"Conditional Access",ic:"☁",day:5,
+        lede:"The cloud's policy gate. Context — user, device, location, risk — decides every request, the heart of treating everything as internet-accessible.",
+        tools:["Entra ID Conditional Access","Intune MAM (BYOD) + MDM","Mobile threat-defense risk signals"],
+        threats:["BYOD mobile malware (keylog/screen-scrape/TLS spoof)","Token theft & cloud pivot","Unmanaged-device data pull"],
+        controls:["Risk-based real-time access decisions","BYOD: no data pull, disable drive mapping, MFA","Compliance-gated WiFi/VPN access"],
+        kills:["Deliver","Actions"],
+        vendors:["Microsoft Entra ID","Okta","Ping Identity"],
+        dodcaps:["1.2 Conditional Access","1.7 Least Privilege","1.8 Continuous Auth"]},
+      {kind:"Asset",name:"Entra ID Sync Defense",ic:"🪪",day:5,
+        lede:"A documented attack chain: rogue cert + L2 spoofing hijacks on-prem→cloud sync. Layered defense raises the attacker's cost.",
+        tools:["PAM for AD Connect server","Cert-template restriction & monitoring","L2 hardening (DAI/DHCP snooping)"],
+        threats:["Fake TLS cert for login domain","Rogue DHCP / ARP / IPv6 RA during sync","Credential capture & cloud pivot"],
+        controls:["Endpoint security + secure workstations","Network segregation & monitoring","Restrict server-auth cert templates","Monitor enrollment activity"],
+        kills:["Exploit","C2"],
+        vendors:["Microsoft Entra Connect","Microsoft Defender for Identity"],
+        dodcaps:["1.5 Identity Federation","1.9 Integrated ICAM"]},
+    ]
+  },
+];
+
+const PLANES = [
+  {
+    id:"plane-detect", name:"Detection & Visibility", ic:"📡", color:"var(--detect)",
+    sub:"Cross-cutting · 530.1/.3/.5 · sees every zone above",
+    nodes:[
+      {kind:"Plane",name:"SIEM",ic:"🧠",day:5,
+        lede:"The centralized brain. Correlates disparate logs from every zone into alerting, automation and threat intel.",
+        tools:["Log collectors → aggregator → broker → storage","Search/report + alert engine","Big-data analytics, compliance repo"],
+        threats:["Blind spots from siloed logs","Slow/uncorrelated detection"],
+        controls:["Centralize collection (agent/agentless/syslog)","Mind syslog limits (UDP 1024B / TCP 4096B)","Use log agents: nxlog, fluentd"],
+        kills:["Recon","C2","Actions"],
+        vendors:["Splunk Enterprise","Microsoft Sentinel","IBM QRadar"],
+        dodcaps:["7.2 SIEM","7.3 Common Security Analytics"]},
+      {kind:"Plane",name:"Network Flow & IDS",ic:"🔎",day:3,
+        lede:"Signature + behavioral detection on the wire — Zeek, Suricata/Snort and NetFlow catch what passes between zones.",
+        tools:["Zeek (dns/conn/files/certs)","Snort/Suricata signatures","NetFlow from switches/routers/VPCs","Packetbeats / Sysmon untraditional flows"],
+        threats:["C2 & backdoors","Network scanning","IOC & odd-protocol activity"],
+        controls:["Snort rules: content/sid/classtype","PulledPork rule mgmt (enable/drop/disable)","Operationalize via SIEM or scripts"],
+        kills:["Recon","Deliver","C2"],
+        vendors:["Zeek","Suricata","ExtraHop"],
+        dodcaps:["7.1 Log All Traffic","7.3 Common Security Analytics"]},
+      {kind:"Plane",name:"Honeypots & Tokens",ic:"🍯",day:5,
+        lede:"Deception that only an intruder trips — near-zero false positives for high-confidence detection.",
+        tools:["T-Pot (20+ honeypots, Elastic)","ADHD distro","Canarytokens","DCEPT SAT honeytokens"],
+        threats:["Stealthy lateral movement","Credential reuse (mimikatz)"],
+        controls:["High vs low interaction trade-off","Seed tokens in repos/DBs/files","SAT honeytoken per system to pinpoint compromise"],
+        kills:["Install","Actions"],
+        vendors:["T-Pot","Canarytokens","Thinkst Canary"],
+        dodcaps:["7.5 Threat Intel Integration","7.4 UEBA"]},
+    ]
+  },
+  {
+    id:"plane-identity", name:"Identity & Trust", ic:"🪪", color:"var(--core)",
+    sub:"Cross-cutting · 530.5 · authenticates every flow",
+    nodes:[
+      {kind:"Plane",name:"NAC",ic:"🎫",day:5,
+        lede:"The admission desk. Authenticates and posture-checks every device before it reaches a production VLAN.",
+        tools:["802.1X cert port-auth","MAC OUI / DHCP fingerprint (Opt 55/60)","RADIUS + Intune integration","Inline vs out-of-band"],
+        threats:["Rogue/unmanaged devices","Non-compliant endpoints","Unenrolled BYOD"],
+        controls:["Production vs remediation VLAN","Compliance checks (vuln/patch/AV)","Conditional Access for WiFi/VPN","Out-of-band: dynamic ACL/VLAN"],
+        kills:["Deliver","Install"],
+        vendors:["Cisco ISE","Forescout","Aruba ClearPass"],
+        dodcaps:["2.2 Device Compliance","2.3 Device Authorization (Real-Time)"]},
+      {kind:"Plane",name:"PKI & mTLS",ic:"📜",day:5,
+        lede:"Mutual certificate auth so both ends prove identity — the backbone of authenticated, encrypted, perimeter-less traffic.",
+        tools:["Root ▸ Intermediate ▸ Subordinate CAs","Windows auto-enroll (802.1X/IPsec/LDAPS)","mTLS for APIs & microservices"],
+        threats:["Unauthenticated flows","MITM on cleartext","Cert-lifecycle gaps"],
+        controls:["Encrypt at device/app, not perimeter","Drop anything unencrypted at endpoints","mTLS handshake: mutual cert verify","Offline standalone root CA"],
+        kills:["Exploit","C2"],
+        vendors:["DigiCert CertCentral","Microsoft ADCS","Entrust"],
+        dodcaps:["1.9 Integrated ICAM","1.3 MFA","4.5 Data Encryption"]},
+      {kind:"Plane",name:"Zero Trust Model",ic:"⊘",day:5,
+        lede:"The governing philosophy: never trust, always verify, and let trust be earned and dynamically adapted.",
+        tools:["DoD ZT RA v2.0 (7 pillars)","DARIOM method","Single Packet Authorization"],
+        threats:["Implicit trust of internal hosts","Long-lived static credentials"],
+        controls:["Authenticate & authorize everywhere","Assume breach; know your architecture","Phish-resistant auth, start with admins","Adopt incrementally by org type"],
+        kills:["Recon","Exploit","Install","C2","Actions"],
+        vendors:["DoD ZT RA v2.0","NIST SP 800-207","NIST SP 1800-35"],
+        dodcaps:["All 45 Capabilities","7 Pillars"]},
+    ]
+  },
+];
+
+const TRUSTVAR={hostile:"--hostile",guard:"--guard",transit:"--transit",core:"--core",crown:"--crown"};
+
+/* ============ RENDER ============ */
+const corridor=document.getElementById('corridor');
+ZONES.forEach(z=>{
+  const col=document.createElement('div');
+  col.className='zone';col.dataset.zone=z.id;
+  const c=`var(${TRUSTVAR[z.trust]})`;
+  col.innerHTML=`<div class="zone-head"><span class="zbar" style="background:${c}"></span><h3>${z.name}</h3></div>
+    <div class="zone-sub">${z.sub}</div>`;
+  z.nodes.forEach((n,i)=>col.appendChild(makeNode(n,z,i)));
+  corridor.appendChild(col);
+});
+
+PLANES.forEach(p=>{
+  const el=document.getElementById(p.id);
+  el.style.borderColor='var(--line)';
+  el.innerHTML=`<h4><span style="color:${p.color}">${p.ic}</span> ${p.name}</h4><div class="psub">${p.sub}</div><div class="plane-grid"></div>`;
+  const grid=el.querySelector('.plane-grid');
+  p.nodes.forEach((n,i)=>grid.appendChild(makeNode(n,{name:p.name,trust:'core'},i,p.color)));
+});
+
+function makeNode(n,z,i,accentOverride){
+  const el=document.createElement('div');
+  el.className='node'+(n.gate?' gate':'');
+  el.tabIndex=0;el.dataset.day=n.day;
+  if(n.kills&&n.kills.length)el.dataset.kills=n.kills.join(',');
+  const tools=(n.tools||[]).slice(0,3).map(t=>`<span class="pill">${t.split(' ').slice(0,3).join(' ')}</span>`).join('');
+  el.innerHTML=`<span class="nkind">${n.kind} · 530.${n.day}</span>
+    <span class="nname"><span class="ic">${n.ic}</span>${n.name}</span>
+    <div class="ntools">${tools}</div>`;
+  const accent=accentOverride||`var(${TRUSTVAR[z.trust]})`;
+  el._data={n,z,accent};
+  el.addEventListener('click',()=>openDrawer(el._data));
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(el._data)}});
+  return el;
+}
+
+/* ============ DRAWER ============ */
+const scrim=document.getElementById('scrim'),drawer=document.getElementById('drawer');
+function sec(cls,title,items){
+  if(!items||!items.length)return'';
+  return `<div class="dsec ${cls}"><h5>${title}</h5><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+}
+function openDrawer({n,z,accent}){
+  document.getElementById('dr-accent').style.background=accent;
+  document.getElementById('dr-kind').textContent=`${n.kind} · ${z.name}`;
+  document.getElementById('dr-title').textContent=n.name;
+  const dodCaps = n.dodcaps ?
+    `<div class="dsec"><h5 style="color:var(--crown)">DoD ZT Capabilities</h5><div class="kc-tags">${n.dodcaps.map(c=>`<span class="pill" style="border-color:var(--crown);color:var(--crown);background:rgba(233,196,106,.06)">${c}</span>`).join('')}</div></div>` : '';
+  const vendors = n.vendors ?
+    `<div class="dsec"><h5 style="color:var(--core)">Vendor Examples</h5><div class="kc-tags">${n.vendors.map(v=>`<span class="pill" style="border-color:var(--detect);color:var(--detect);background:rgba(185,140,255,.06)">${v}</span>`).join('')}</div></div>` : '';
+  document.getElementById('dr-meta').innerHTML=
+    `<span class="pill">SEC530.${n.day}</span>`+(n.gate?`<span class="pill" style="border-color:var(--guard);color:var(--guard)">CONTROL GATE</span>`:'');
+  let kc='';
+  if(n.kills&&n.kills.length){
+    kc=`<div class="dsec"><h5 style="color:var(--hostile)">Disrupts kill chain</h5><div class="kc-tags">${n.kills.map(k=>`<span class="pill">${k}</span>`).join('')}</div></div>`;
+  }
+  document.getElementById('dr-body').innerHTML=
+    `<p class="lede">${n.lede}</p>`+
+    sec('threats','Threats it answers',n.threats)+
+    sec('controls','How it\'s hardened',n.controls)+
+    sec('tools','Tooling',n.tools)+
+    dodCaps+vendors+kc;
+  scrim.classList.add('open');drawer.classList.add('open');
+}
+function closeDrawer(){scrim.classList.remove('open');drawer.classList.remove('open')}
+scrim.addEventListener('click',closeDrawer);
+document.getElementById('dr-close').addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+
+/* ============ DAY FILTER ============ */
+function selectDayChip(chip){
+  document.querySelectorAll('.chip[data-day]').forEach(c=>{
+    c.classList.remove('on');
+    c.setAttribute('aria-pressed','false');
+  });
+  chip.classList.add('on');
+  chip.setAttribute('aria-pressed','true');
+  const d=chip.dataset.day;
+  document.querySelectorAll('.node').forEach(node=>{
+    const show=(d==='0'||node.dataset.day===d);
+    node.classList.toggle('dim',!show);
+  });
+}
+document.querySelectorAll('.chip[data-day]').forEach(chip=>{
+  chip.addEventListener('click',()=>selectDayChip(chip));
+  chip.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDayChip(chip);}
+  });
+});
+
+/* ============ ATTACKER VIEW ============ */
+const atk=document.getElementById('atk'),killrail=document.getElementById('killrail');
+let attacking=false,seq=null;
+atk.addEventListener('click',()=>{
+  attacking=!attacking;
+  atk.classList.toggle('on',attacking);
+  atk.setAttribute('aria-pressed',attacking);
+  document.body.classList.toggle('attack',attacking);
+  killrail.classList.toggle('live',attacking);
+  if(attacking)runSequence();else stopSequence();
+});
+function stopSequence(){
+  if(seq)clearTimeout(seq);
+  document.querySelectorAll('.node.blocks').forEach(n=>n.classList.remove('blocks'));
+  document.querySelectorAll('.killrail .kc').forEach(k=>k.classList.remove('broken'));
+}
+function runSequence(){
+  stopSequence();
+  const phases=KC.slice();let idx=0;
+  const step=()=>{
+    if(!attacking)return;
+    const phase=phases[idx];
+    // glow every node that blocks this phase
+    const blockers=[...document.querySelectorAll('.node[data-kills]')].filter(n=>n.dataset.kills.split(',').includes(phase));
+    blockers.forEach(n=>n.classList.add('blocks'));
+    // only mark the rail phase broken if something actually blocks it
+    if(blockers.length){
+      document.querySelectorAll('.killrail .kc b').forEach(b=>{
+        if(b.textContent===phase)b.closest('.kc').classList.add('broken');
+      });
+    }
+    idx++;
+    if(idx<phases.length)seq=setTimeout(step,900);
+  };
+  step();
+}
+
+/* ============ TOPOLOGY TOOLTIPS ============ */
+const topoWrap = document.querySelector('.topo-wrap');
+const tooltip = document.createElement('div');
+tooltip.className = 'topo-tooltip';
+topoWrap.appendChild(tooltip);
+document.querySelectorAll('.topo-node').forEach(node => {
+  const info = node.dataset.info;
+  if(!info) return;
+  node.style.cursor = 'help';
+  node.addEventListener('mouseenter', (e) => {
+    tooltip.textContent = info;
+    tooltip.style.opacity = '1';
+  });
+  node.addEventListener('mousemove', (e) => {
+    const rect = topoWrap.getBoundingClientRect();
+    let x = e.clientX - rect.left + 12;
+    let y = e.clientY - rect.top + 12;
+    if(x + 320 > rect.width) x = e.clientX - rect.left - 332;
+    if(y + 60 > rect.height) y = e.clientY - rect.top - 50;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  });
+  node.addEventListener('mouseleave', () => {
+    tooltip.style.opacity = '0';
+  });
+  node.addEventListener('focus', () => {
+    const rect = node.getBoundingClientRect();
+    const wrapRect = topoWrap.getBoundingClientRect();
+    let x = rect.left - wrapRect.left;
+    let y = rect.bottom - wrapRect.top + 10;
+    if(x + 320 > wrapRect.width) x = wrapRect.width - 330;
+    if(y + 60 > wrapRect.height) y = rect.top - wrapRect.top - 60;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    tooltip.textContent = info;
+    tooltip.style.opacity = '1';
+  });
+  node.addEventListener('blur', () => {
+    tooltip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
