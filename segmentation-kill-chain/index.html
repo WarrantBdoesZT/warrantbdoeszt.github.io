@@ -198,7 +198,7 @@ footer a{color:var(--accent)}
       <div class="blast-meter-label">💥 Blast Radius</div>
       <div class="blast-bar"><div class="blast-fill" id="blastFill" style="width:100%;background:var(--danger)"></div></div>
       <div class="blast-stats">
-        <div class="blast-stat"><strong id="blockedCount">0</strong> of 9 phases blocked</div>
+        <div class="blast-stat"><strong id="blockedCount">0</strong> of <span id="totalPhases">9</span> phases blocked</div>
         <div class="blast-stat">Blast Radius: <strong id="blastLabel" style="color:var(--danger)">FULL</strong></div>
         <div class="blast-stat">Active Toggles: <strong id="toggleCount">0</strong></div>
       </div>
@@ -466,7 +466,7 @@ const LATERAL_TECHNIQUES = [
   {icon:'🎟️',name:'Pass-the-Ticket (PtT)',mitre:'T1550.003',desc:'Stolen Kerberos tickets are injected into the attacker\'s session to impersonate users across the domain. Golden Ticket attacks forge a TGT using the krbtgt hash.',block:'Identity segmentation (tiered admin) limits ticket scope. Tier 0 isolation prevents DC access. PAM brokers all admin access — no direct tickets.'},
   {icon:'🔧',name:'PsExec / WMI / WinRM',mitre:'T1021',desc:'Living-off-the-land binaries built into Windows. Attacker uses native admin tools to execute code remotely — looks like legitimate admin activity.',block:'L4 port filtering blocks 445/135/5985/5986 between zones. Jump server/PAM enforces all admin through monitored channel. Service mesh for workloads.'},
   {icon:'🖥️',name:'RDP Pivoting',mitre:'T1021.001',desc:'Attacker chains RDP sessions through multiple hosts to obscure their trail and reach isolated systems. Double-hop pivoting bypasses perimeter monitoring.',block:'L3 firewall denies RDP (3389) between zones except through jump server. Conditional Access requires device compliance + MFA for each RDP hop.'},
-  {icon:'🎟️',name:'Overpass-the-Hash',mitre:'T1550.006',desc:'Attacker uses a stolen Kerberos AS-REQ to obtain a TGT, converting a valid credential into a Kerberos ticket for lateral movement without touching the DC directly.',block:'Identity segmentation with continuous MFA. Tiered admin model restricts which accounts can request tickets for Tier 0 resources. Network segmentation limits DC exposure.'},
+  {icon:'🎟️',name:'Overpass-the-Hash',mitre:'T1550.003',desc:'Attacker uses a stolen Kerberos AS-REQ to obtain a TGT, converting a valid credential into a Kerberos ticket for lateral movement without touching the DC directly.',block:'Identity segmentation with continuous MFA. Tiered admin model restricts which accounts can request tickets for Tier 0 resources. Network segmentation limits DC exposure.'},
   {icon:'🔗',name:'SSH Tunneling / Port Relay',mitre:'T1572',desc:'Attacker establishes SSH tunnels or port relays through compromised hosts, creating covert channels that bypass network segmentation and firewall rules.',block:'L4 deep packet inspection detects tunneling. Egress filtering denies outbound SSH. Internal NGFW with TLS inspection catches protocol abuse.'},
   {icon:'🔄',name:'NTLM Relay',mitre:'T1557.001',desc:'Attacker intercepts NTLM authentication attempts and relays them to other systems, authenticating as the victim without cracking the hash. Combined with LLMNR/NBT-NS poisoning.',block:'L2 controls (DAI, DHCP Snooping) prevent the poisoning phase. L3 segmentation limits relay targets. Disabling NTLMv1/v2 + enforcing SMB signing eliminates the vulnerability.'},
   {icon:'🕸️',name:'Internal Spearphishing',mitre:'T1534',desc:'Attacker uses a compromised mailbox to send targeted phishing emails to colleagues from a trusted internal address, harvesting credentials and spreading laterally.',block:'Identity segmentation limits compromised account scope. DLP and mail gateway policies flag anomalous internal messages. Conditional Access detects impossible travel.'},
@@ -582,6 +582,7 @@ function updateDemo(){
   const totalPhases = KC_PHASES.length;
   const blastPct = Math.round(100 * (1 - blockedCount/totalPhases));
   document.getElementById('blockedCount').textContent = blockedCount;
+  document.getElementById('totalPhases').textContent = totalPhases;
   document.getElementById('toggleCount').textContent = activeCount;
 
   const blastFill = document.getElementById('blastFill');
