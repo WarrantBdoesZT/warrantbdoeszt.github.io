@@ -201,6 +201,8 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 .topo-node{cursor:default;transition:opacity .15s}
 .topo-node:hover rect{filter:brightness(1.25)}
 .topo-node:hover text{filter:brightness(1.15)}
+.topo-node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
+.topo-node:focus-visible rect{filter:brightness(1.25)}
 .topo-tooltip{position:absolute;background:var(--raise);border:1px solid var(--line-strong);border-radius:8px;
   padding:8px 12px;font-size:12px;color:var(--text);max-width:320px;pointer-events:none;z-index:30;
   opacity:0;transition:opacity .15s;box-shadow:0 6px 24px -6px rgba(0,0,0,.6);line-height:1.4}
@@ -231,13 +233,13 @@ footer b{color:var(--muted);font-weight:500}
       <h1>Defensible Architecture <b>Corridor</b></h1>
     </div>
     <div class="head-spacer"></div>
-    <div class="controls">
-      <span class="chip on" data-day="0">All</span>
-      <span class="chip" data-day="1" title="Defensible Security Architecture">.1</span>
-      <span class="chip" data-day="2" title="Network Security Architecture">.2</span>
-      <span class="chip" data-day="3" title="Network-Centric App Security">.3</span>
-      <span class="chip" data-day="4" title="Data-Centric App Security">.4</span>
-      <span class="chip" data-day="5" title="Zero Trust Architecture">.5</span>
+    <div class="controls" role="group" aria-label="Filter by SEC530 day">
+      <span class="chip on" data-day="0" role="button" tabindex="0" aria-pressed="true">All</span>
+      <span class="chip" data-day="1" role="button" tabindex="0" aria-pressed="false" title="Defensible Security Architecture">.1</span>
+      <span class="chip" data-day="2" role="button" tabindex="0" aria-pressed="false" title="Network Security Architecture">.2</span>
+      <span class="chip" data-day="3" role="button" tabindex="0" aria-pressed="false" title="Network-Centric App Security">.3</span>
+      <span class="chip" data-day="4" role="button" tabindex="0" aria-pressed="false" title="Data-Centric App Security">.4</span>
+      <span class="chip" data-day="5" role="button" tabindex="0" aria-pressed="false" title="Zero Trust Architecture">.5</span>
       <button class="attack-toggle" id="atk" aria-pressed="false">
         <span class="dot"></span> ATTACKER VIEW
       </button>
@@ -324,12 +326,12 @@ footer b{color:var(--muted);font-weight:500}
         <line x1="600" y1="580" x2="600" y2="620" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
 
         <!-- ===== Row 1: Hostile Internet ===== -->
-        <g class="topo-node" data-info="Adversary · Recon → Weaponize → Deliver → Exploit → Install → C2 → Actions">
+        <g class="topo-node" tabindex="0" data-info="Adversary · Recon → Weaponize → Deliver → Exploit → Install → C2 → Actions">
           <rect x="530" y="40" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--hostile)" stroke-width="1.5"/>
           <text x="600" y="58" text-anchor="middle" fill="var(--hostile)" font-size="13" font-weight="600">☣ Adversary</text>
           <text x="600" y="72" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="9">MITRE ATT&amp;CK</text>
         </g>
-        <g class="topo-node" data-info="Attacker sends: phishing, exploit attempts, C2 beacons, malware payloads">
+        <g class="topo-node" tabindex="0" data-info="Attacker sends: phishing, exploit attempts, C2 beacons, malware payloads">
           <text x="380" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">phishing ▸</text>
           <line x1="430" y1="60" x2="520" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
           <text x="770" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">◂ C2 beacon</text>
@@ -338,35 +340,35 @@ footer b{color:var(--muted);font-weight:500}
 
         <!-- ===== Row 2: Perimeter Gates ===== -->
         <!-- NGFW -->
-        <g class="topo-node" data-info="NGFW — Deep packet inspection, IPS, TLS intercept, DNS filtering, threat feeds">
+        <g class="topo-node" tabindex="0" data-info="NGFW — Deep packet inspection, IPS, TLS intercept, DNS filtering, threat feeds">
           <rect x="260" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="340" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🛡 NGFW</text>
           <text x="340" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Fortinet</text>
           <text x="340" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DPI / IPS / TLS / DNS filter</text>
         </g>
         <!-- Web Proxy -->
-        <g class="topo-node" data-info="Web Proxy — URL filtering, DLP/MIME inspection, sandbox analysis">
+        <g class="topo-node" tabindex="0" data-info="Web Proxy — URL filtering, DLP/MIME inspection, sandbox analysis">
           <rect x="440" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="515" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🌐 Web Proxy</text>
           <text x="515" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zscaler ZIA · Umbrella</text>
           <text x="515" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">URL filter / sandbox / DLP</text>
         </g>
         <!-- SMTP Proxy -->
-        <g class="topo-node" data-info="SMTP Proxy — Bayesian analysis, SPF/DKIM/DMARC, per-email encryption">
+        <g class="topo-node" tabindex="0" data-info="SMTP Proxy — Bayesian analysis, SPF/DKIM/DMARC, per-email encryption">
           <rect x="610" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="685" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">✉ SMTP Proxy</text>
           <text x="685" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Proofpoint · Mimecast</text>
           <text x="685" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">SPF/DKIM/DMARC / phishing</text>
         </g>
         <!-- WAF -->
-        <g class="topo-node" data-info="WAF — Dynamic policy learning, templates, HSTS, CAPTCHA">
+        <g class="topo-node" tabindex="0" data-info="WAF — Dynamic policy learning, templates, HSTS, CAPTCHA">
           <rect x="780" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="855" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🧱 WAF</text>
           <text x="855" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">F5 ASM · Imperva · CF</text>
           <text x="855" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Dynamic learning / templates</text>
         </g>
         <!-- VPN/ZTNA -->
-        <g class="topo-node" data-info="Remote Access / VPN — Full-tunnel, Always-On VPN, ZTNA for cloud apps">
+        <g class="topo-node" tabindex="0" data-info="Remote Access / VPN — Full-tunnel, Always-On VPN, ZTNA for cloud apps">
           <rect x="950" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="1030" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔐 VPN / ZTNA</text>
           <text x="1030" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">GlobalProtect · ZPA · Appgate</text>
@@ -379,13 +381,13 @@ footer b{color:var(--muted);font-weight:500}
         <text x="100" y="196" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Exploit · C2</text>
 
         <!-- ===== Row 3: L3 Routing ===== -->
-        <g class="topo-node" data-info="Hardened Router — AutoSecure/STIG, ACLs, routing auth, SNMPv3">
+        <g class="topo-node" tabindex="0" data-info="Hardened Router — AutoSecure/STIG, ACLs, routing auth, SNMPv3">
           <rect x="200" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="285" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧭 Hardened Router</text>
           <text x="285" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco IOS XE · Juniper Junos</text>
           <text x="285" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">ACL / bogon filter / SNMPv3</text>
         </g>
-        <g class="topo-node" data-info="IPv6 Controls — RA Guard, DHCPv6 snooping, protocol-41 block">
+        <g class="topo-node" tabindex="0" data-info="IPv6 Controls — RA Guard, DHCPv6 snooping, protocol-41 block">
           <rect x="390" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="475" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⑥ IPv6 Controls</text>
           <text x="475" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">RA Guard · Zeek dns.log</text>
@@ -393,19 +395,19 @@ footer b{color:var(--muted);font-weight:500}
         </g>
 
         <!-- ===== Row 3b: L2 Switching ===== -->
-        <g class="topo-node" data-info="Switch Hardening — DAI, DHCP snooping, Private VLANs, 802.1X">
+        <g class="topo-node" tabindex="0" data-info="Switch Hardening — DAI, DHCP snooping, Private VLANs, 802.1X">
           <rect x="580" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="665" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🔌 Switch Hardening</text>
           <text x="665" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco Catalyst · Aruba CX</text>
           <text x="665" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DAI / DHCP snooping / PVLAN</text>
         </g>
-        <g class="topo-node" data-info="Wireless — WPA3-Enterprise, WIPS, rogue detection">
+        <g class="topo-node" tabindex="0" data-info="Wireless — WPA3-Enterprise, WIPS, rogue detection">
           <rect x="770" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="850" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📶 Wireless</text>
           <text x="850" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Aruba · Cisco Meraki</text>
           <text x="850" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">WPA3-Ent / WIPS / rogue AP</text>
         </g>
-        <g class="topo-node" data-info="Physical / NAC — 802.1X, MAC filter, disabled-VLAN, badge+biometric">
+        <g class="topo-node" tabindex="0" data-info="Physical / NAC — 802.1X, MAC filter, disabled-VLAN, badge+biometric">
           <rect x="950" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="1030" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🚪 NAC / Physical</text>
           <text x="1030" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco ISE · Forescout</text>
@@ -413,19 +415,19 @@ footer b{color:var(--muted);font-weight:500}
         </g>
 
         <!-- ===== Row 4: Internal Core / Segmentation ===== -->
-        <g class="topo-node" data-info="Segmentation Gateway — NGFW as internal gate, MCAP trust zoning, data-centric rules">
+        <g class="topo-node" tabindex="0" data-info="Segmentation Gateway — NGFW as internal gate, MCAP trust zoning, data-centric rules">
           <rect x="200" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="300" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🚧 Segmentation Gateway</text>
           <text x="300" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Illumio</text>
           <text x="300" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Tier 1 (DC) ▸ Tier 2 (PII) ▸ Tier 3 (Ext)</text>
         </g>
-        <g class="topo-node" data-info="IPsec Domain Isolation — Windows Firewall IPsec, mutual auth, optional encryption">
+        <g class="topo-node" tabindex="0" data-info="IPsec Domain Isolation — Windows Firewall IPsec, mutual auth, optional encryption">
           <rect x="430" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="530" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔗 IPsec Domain Isolation</text>
           <text x="530" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Windows Firewall IPsec</text>
           <text x="530" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / non-domain blocked</text>
         </g>
-        <g class="topo-node" data-info="Cloud Conditional Access — Entra ID CA, Intune, risk-based decisions">
+        <g class="topo-node" tabindex="0" data-info="Cloud Conditional Access — Entra ID CA, Intune, risk-based decisions">
           <rect x="660" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="760" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">☁ Conditional Access</text>
           <text x="760" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Entra ID · Okta · Ping Identity</text>
@@ -438,31 +440,31 @@ footer b{color:var(--muted);font-weight:500}
         <text x="415" y="448" fill="var(--ok)" font-family="IBM Plex Mono" font-size="7" opacity=".6">← blocks lateral →</text>
 
         <!-- ===== Row 5: Endpoints & Virtualization ===== -->
-        <g class="topo-node" data-info="Endpoint Telemetry — Sysmon, auditd, honeytokens, forward to SIEM">
+        <g class="topo-node" tabindex="0" data-info="Endpoint Telemetry — Sysmon, auditd, honeytokens, forward to SIEM">
           <rect x="100" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="185" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🖥 Endpoint Telemetry</text>
           <text x="185" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Defender · CrowdStrike · SentinelOne</text>
           <text x="185" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Sysmon / auditd / honeytokens</text>
         </g>
-        <g class="topo-node" data-info="Attack Surface Reduction — Intune ASR rules, block Office macros, LSASS theft">
+        <g class="topo-node" tabindex="0" data-info="Attack Surface Reduction — Intune ASR rules, block Office macros, LSASS theft">
           <rect x="290" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="375" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⛔ Attack Surface Reduction</text>
           <text x="375" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Microsoft Intune ASR · Trellix</text>
           <text x="375" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Block macros / LSASS / USB</text>
         </g>
-        <g class="topo-node" data-info="DLP Agent — Auto file classification, policy enforcement, reason-for-action prompts">
+        <g class="topo-node" tabindex="0" data-info="DLP Agent — Auto file classification, policy enforcement, reason-for-action prompts">
           <rect x="480" y="530" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="560" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📄 DLP Agent</text>
           <text x="560" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Purview DLP · Symantec · Forcepoint</text>
           <text x="560" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">File classification / exfil block</text>
         </g>
-        <g class="topo-node" data-info="Hypervisor / VM — vSwitch hardening, lockdown, port mirroring">
+        <g class="topo-node" tabindex="0" data-info="Hypervisor / VM — vSwitch hardening, lockdown, port mirroring">
           <rect x="660" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
           <text x="745" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧰 Hypervisor / VM</text>
           <text x="745" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">VMware vSphere · Hyper-V · Nutanix</text>
           <text x="745" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">vSwitch reject MAC / lockdown</text>
         </g>
-        <g class="topo-node" data-info="Containers — AppArmor/SELinux, resource limits, trusted images">
+        <g class="topo-node" tabindex="0" data-info="Containers — AppArmor/SELinux, resource limits, trusted images">
           <rect x="850" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
           <text x="935" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📦 Containers</text>
           <text x="935" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Kubernetes · Aqua · Sysdig</text>
@@ -470,19 +472,19 @@ footer b{color:var(--muted);font-weight:500}
         </g>
 
         <!-- ===== Row 6: Data Crown Jewels ===== -->
-        <g class="topo-node" data-info="Database Security — Native logging, least privilege, anomaly alerts">
+        <g class="topo-node" tabindex="0" data-info="Database Security — Native logging, least privilege, anomaly alerts">
           <rect x="250" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="350" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🗄 Database Security</text>
           <text x="350" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">IBM Guardium · Imperva · Oracle DV</text>
           <text x="350" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Least privilege / anomaly alert</text>
         </g>
-        <g class="topo-node" data-info="Encryption at Rest — FDE, TPM auto-boot, PIN unlock">
+        <g class="topo-node" tabindex="0" data-info="Encryption at Rest — FDE, TPM auto-boot, PIN unlock">
           <rect x="480" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="580" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🔒 Encryption at Rest</text>
           <text x="580" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">BitLocker · VeraCrypt · AWS KMS</text>
           <text x="580" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">FDE / TPM / &lt;5% perf impact</text>
         </g>
-        <g class="topo-node" data-info="Cloud Data — Conditional access, BYOD protection, MAM policies">
+        <g class="topo-node" tabindex="0" data-info="Cloud Data — Conditional access, BYOD protection, MAM policies">
           <rect x="710" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="810" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">☁ Cloud Data Store</text>
           <text x="810" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">AWS S3 · Azure Blob · GCP</text>
@@ -495,31 +497,31 @@ footer b{color:var(--muted);font-weight:500}
         <text x="80" y="712" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Objectives</text>
 
         <!-- ===== Row 7: Detection Plane (spans all) ===== -->
-        <g class="topo-node" data-info="SIEM — Centralized log aggregation, correlation, alerting, compliance">
+        <g class="topo-node" tabindex="0" data-info="SIEM — Centralized log aggregation, correlation, alerting, compliance">
           <rect x="60" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="160" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🧠 SIEM</text>
           <text x="160" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Splunk · Sentinel · QRadar</text>
           <text x="160" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Correlate all zones / alert engine</text>
         </g>
-        <g class="topo-node" data-info="Network Flow & IDS — Zeek, Suricata/Snort, NetFlow analysis">
+        <g class="topo-node" tabindex="0" data-info="Network Flow & IDS — Zeek, Suricata/Snort, NetFlow analysis">
           <rect x="280" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="380" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🔎 IDS / Network Flow</text>
           <text x="380" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zeek · Suricata · ExtraHop</text>
           <text x="380" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">dns/conn/files / NetFlow</text>
         </g>
-        <g class="topo-node" data-info="Honeypots & Tokens — T-Pot, Canarytokens, DCEPT, near-zero false positives">
+        <g class="topo-node" tabindex="0" data-info="Honeypots & Tokens — T-Pot, Canarytokens, DCEPT, near-zero false positives">
           <rect x="500" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="600" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🍯 Honeypots & Tokens</text>
           <text x="600" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">T-Pot · Thinkst Canary · DCEPT</text>
           <text x="600" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Deception / near-zero FP</text>
         </g>
-        <g class="topo-node" data-info="PKI & mTLS — Root→Intermediate→Sub CA, mutual cert auth, cert lifecycle">
+        <g class="topo-node" tabindex="0" data-info="PKI & mTLS — Root→Intermediate→Sub CA, mutual cert auth, cert lifecycle">
           <rect x="720" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="820" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">📜 PKI & mTLS</text>
           <text x="820" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DigiCert · Microsoft ADCS · Entrust</text>
           <text x="820" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / cert lifecycle</text>
         </g>
-        <g class="topo-node" data-info="Zero Trust Model — DoD ZT RA v2.0 (7 pillars), never trust always verify">
+        <g class="topo-node" tabindex="0" data-info="Zero Trust Model — DoD ZT RA v2.0 (7 pillars), never trust always verify">
           <rect x="940" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="1040" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">⊘ Zero Trust Model</text>
           <text x="1040" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DoD ZT RA v2.0 · NIST SP 800-207</text>
@@ -596,7 +598,7 @@ const ZONES = [
         controls:["DMZ, internal, VPN or cloud proxy access","Inspect status codes, cookies, form values","AV signatures + sandbox on downloads"],
         kills:["Deliver","C2"],
         vendors:["Zscaler ZIA","Cisco Umbrella","Symantec Web Security"],
-        dodcaps:["5.2 Software Defined Networking","7.3 Threat Intel"]},
+        dodcaps:["5.2 Software Defined Networking","7.5 Threat Intel"]},
       {kind:"Gate",gate:true,name:"SMTP Proxy",ic:"✉",day:2,
         lede:"Email is the top delivery vector — this gate authenticates senders and strips phishing before it lands.",
         tools:["Bayesian analysis","Sender authentication (SPF/DKIM/DMARC)","Per-email encryption","Rate limiting & sender blocking"],
@@ -923,15 +925,23 @@ document.getElementById('dr-close').addEventListener('click',closeDrawer);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 
 /* ============ DAY FILTER ============ */
+function selectDayChip(chip){
+  document.querySelectorAll('.chip[data-day]').forEach(c=>{
+    c.classList.remove('on');
+    c.setAttribute('aria-pressed','false');
+  });
+  chip.classList.add('on');
+  chip.setAttribute('aria-pressed','true');
+  const d=chip.dataset.day;
+  document.querySelectorAll('.node').forEach(node=>{
+    const show=(d==='0'||node.dataset.day===d);
+    node.classList.toggle('dim',!show);
+  });
+}
 document.querySelectorAll('.chip[data-day]').forEach(chip=>{
-  chip.addEventListener('click',()=>{
-    document.querySelectorAll('.chip[data-day]').forEach(c=>c.classList.remove('on'));
-    chip.classList.add('on');
-    const d=chip.dataset.day;
-    document.querySelectorAll('.node').forEach(node=>{
-      const show=(d==='0'||node.dataset.day===d);
-      node.classList.toggle('dim',!show);
-    });
+  chip.addEventListener('click',()=>selectDayChip(chip));
+  chip.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDayChip(chip);}
   });
 });
 
@@ -957,14 +967,15 @@ function runSequence(){
   const step=()=>{
     if(!attacking)return;
     const phase=phases[idx];
-    // mark this phase broken on the rail
-    document.querySelectorAll('.killrail .kc b').forEach(b=>{
-      if(b.textContent===phase||(phase==='Actions'&&b.textContent==='Actions'))b.closest('.kc').classList.add('broken');
-    });
     // glow every node that blocks this phase
-    document.querySelectorAll('.node[data-kills]').forEach(n=>{
-      if(n.dataset.kills.split(',').includes(phase))n.classList.add('blocks');
-    });
+    const blockers=[...document.querySelectorAll('.node[data-kills]')].filter(n=>n.dataset.kills.split(',').includes(phase));
+    blockers.forEach(n=>n.classList.add('blocks'));
+    // only mark the rail phase broken if something actually blocks it
+    if(blockers.length){
+      document.querySelectorAll('.killrail .kc b').forEach(b=>{
+        if(b.textContent===phase)b.closest('.kc').classList.add('broken');
+      });
+    }
     idx++;
     if(idx<phases.length)seq=setTimeout(step,900);
   };
@@ -994,6 +1005,21 @@ document.querySelectorAll('.topo-node').forEach(node => {
     tooltip.style.top = y + 'px';
   });
   node.addEventListener('mouseleave', () => {
+    tooltip.style.opacity = '0';
+  });
+  node.addEventListener('focus', () => {
+    const rect = node.getBoundingClientRect();
+    const wrapRect = topoWrap.getBoundingClientRect();
+    let x = rect.left - wrapRect.left;
+    let y = rect.bottom - wrapRect.top + 10;
+    if(x + 320 > wrapRect.width) x = wrapRect.width - 330;
+    if(y + 60 > wrapRect.height) y = rect.top - wrapRect.top - 60;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+    tooltip.textContent = info;
+    tooltip.style.opacity = '1';
+  });
+  node.addEventListener('blur', () => {
     tooltip.style.opacity = '0';
   });
 });
