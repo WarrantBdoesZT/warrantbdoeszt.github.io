@@ -191,6 +191,71 @@
         .nav-logo span { color: var(--accent); }
         .nav-title { font-weight: 700; font-size: 1rem; }
         .nav-title span { color: var(--accent); }
+
+        .why-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .why-card p {
+            color: var(--text-dim);
+            line-height: 1.7;
+            font-size: 0.98rem;
+            margin-bottom: 16px;
+        }
+
+        .why-card .not-heading {
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .not-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 16px;
+        }
+
+        .not-list li {
+            padding: 4px 0 4px 24px;
+            position: relative;
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .not-list li::before {
+            content: '✕';
+            position: absolute;
+            left: 0;
+            color: var(--danger);
+        }
+
+        .not-footnote {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 0;
+        }
+
+        .screenshot-placeholder {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 48px 20px;
+            text-align: center;
+            color: var(--text-dim);
+        }
+
+        .screenshot-placeholder .ss-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .screenshot-placeholder p {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -208,6 +273,27 @@
     <h1>ZTAuditor</h1>
     <p>Identifies network segmentation gaps and lateral movement paths attackers could exploit across your environment.</p>
     <a href="https://github.com/WarrantBdoesZT/ZeroTrustAuditor" class="cta">View on GitHub</a>
+</div>
+
+<div class="container">
+    <h2 class="section-title">💡 Why I Built This</h2>
+    <div class="why-card">
+        <p>In a Zero Trust environment, you assume an attacker is already inside — the question isn't <em>if</em> they got in, it's <em>how far can they go</em>. ZTAuditor answers that by reading the configuration of your Active Directory, servers, and network, then flagging every misconfiguration that would let an attacker move laterally, escalate privileges, or reach a Domain Controller.</p>
+        <p>Think of it as a thorough checklist that never forgets a question: it tells you what's wrong, how dangerous it is, which MITRE ATT&amp;CK technique it maps to, and exactly how to fix it.</p>
+        <p class="not-heading">What it is NOT:</p>
+        <ul class="not-list">
+            <li>Does not exploit vulnerabilities</li>
+            <li>Does not capture credentials</li>
+            <li>Does not make any changes to the environment</li>
+            <li>Does not require Domain Admin rights</li>
+        </ul>
+        <p class="not-footnote">Every check is equivalent to reading configuration data that a standard domain user already has access to.</p>
+    </div>
+
+    <div class="screenshot-placeholder">
+        <div class="ss-icon">🖼️</div>
+        <p><strong>TODO:</strong> add a screenshot of the HTML report output here.</p>
+    </div>
 </div>
 
 <div class="container">
