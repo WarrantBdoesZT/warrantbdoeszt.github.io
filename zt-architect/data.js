@@ -1,6 +1,6 @@
 // DoD ZT Architect — Vendor-to-Capability Mapping Data
 // Capabilities: DoD ZT RA v2.0 (45 Capabilities, 152 Activities)
-// Vendors: 117 products mapped to all 45 capabilities
+// Vendors: 120 products mapped to all 45 capabilities
 // NIST SP 1800-35 Collaborators: 51
 // Generated: 2026-07-02
 
@@ -9,7 +9,7 @@ const ZT_DATA = {
     "capability_source": "DoD Zero Trust Reference Architecture v2.0 — Capability Execution Roadmap (45 Capabilities, 152 Activities)",
     "vendor_source": "NIST SP 1800-35 (Final, June 2025) + comprehensive industry analysis",
     "nist_collaborators": 51,
-    "total_vendors": 117,
+    "total_vendors": 120,
     "total_capabilities": 45,
     "pillars": 7,
     "note": "Vendors marked nist_1800_35=true are actual SP 1800-35 collaborators. Others are leading industry ZT tools mapped to DoD capabilities."
@@ -1000,6 +1000,7 @@ const ZT_DATA = {
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "5.1",
         "5.4"
       ],
       "nist_1800_35": false,
@@ -1136,7 +1137,8 @@ const ZT_DATA = {
       ],
       "pillar": "Network/Environment",
       "capabilities": [
-        "5.2"
+        "5.2",
+        "5.3"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1154,7 +1156,8 @@ const ZT_DATA = {
       ],
       "pillar": "Network/Environment",
       "capabilities": [
-        "5.2"
+        "5.2",
+        "5.3"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1212,7 +1215,9 @@ const ZT_DATA = {
       ],
       "pillar": "Network/Environment",
       "capabilities": [
-        "5.3"
+        "2.4",
+        "5.3",
+        "5.4"
       ],
       "nist_1800_35": true,
       "builds": "E2B1",
@@ -1368,7 +1373,8 @@ const ZT_DATA = {
       ],
       "pillar": "Application & Workload",
       "capabilities": [
-        "3.2"
+        "3.2",
+        "3.3"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1830,6 +1836,7 @@ const ZT_DATA = {
       ],
       "pillar": "Visibility & Analytics",
       "capabilities": [
+        "7.3",
         "7.5"
       ],
       "nist_1800_35": false,
@@ -2066,6 +2073,7 @@ const ZT_DATA = {
       ],
       "pillar": "Automation & Orchestration",
       "capabilities": [
+        "6.2",
         "6.6"
       ],
       "nist_1800_35": false,
@@ -2297,7 +2305,8 @@ const ZT_DATA = {
       ],
       "pillar": "Device",
       "capabilities": [
-        "2.4"
+        "2.4",
+        "5.4"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -2316,7 +2325,8 @@ const ZT_DATA = {
       ],
       "pillar": "Device",
       "capabilities": [
-        "2.4"
+        "2.4",
+        "5.4"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -2334,6 +2344,7 @@ const ZT_DATA = {
       ],
       "pillar": "Device",
       "capabilities": [
+        "2.3",
         "2.4"
       ],
       "nist_1800_35": true,
@@ -2352,6 +2363,7 @@ const ZT_DATA = {
       ],
       "pillar": "Device",
       "capabilities": [
+        "2.3",
         "2.4"
       ],
       "nist_1800_35": true,
@@ -2574,6 +2586,8 @@ const ZT_DATA = {
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "4.1",
+        "4.3",
         "5.1"
       ],
       "nist_1800_35": false,
