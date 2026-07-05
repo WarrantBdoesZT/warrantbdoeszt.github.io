@@ -191,6 +191,7 @@ footer a{color:var(--accent)}
 <div class="section">
   <h2 class="section-title">🎮 Interactive Kill Chain Demo</h2>
   <p class="section-sub">Toggle segmentation layers on the right. Watch how each layer breaks specific phases of the MITRE ATT&CK kill chain. The blast radius shrinks as you add controls.</p>
+  <p style="font-size:.78rem;color:var(--text-faint);margin-top:-16px;margin-bottom:28px">Phases here follow the MITRE ATT&CK Enterprise framework (10 tactics). Prefer the classic 7-stage Lockheed Martin Cyber Kill Chain? See it in the <a href="/sec530-defense-map/">SEC530 Defense Map</a>.</p>
 
   <div class="demo-container">
     <!-- Blast Radius Meter -->
@@ -198,7 +199,7 @@ footer a{color:var(--accent)}
       <div class="blast-meter-label">💥 Blast Radius</div>
       <div class="blast-bar"><div class="blast-fill" id="blastFill" style="width:100%;background:var(--danger)"></div></div>
       <div class="blast-stats">
-        <div class="blast-stat"><strong id="blockedCount">0</strong> of <span id="totalPhases">9</span> phases blocked</div>
+        <div class="blast-stat"><strong id="blockedCount">0</strong> of <span id="totalPhases">10</span> phases blocked</div>
         <div class="blast-stat">Blast Radius: <strong id="blastLabel" style="color:var(--danger)">FULL</strong></div>
         <div class="blast-stat">Active Toggles: <strong id="toggleCount">0</strong></div>
       </div>
@@ -415,6 +416,7 @@ const KC_PHASES = [
   {id:'discovery',name:'Discovery',num:'TA0007'},
   {id:'lateral-movement',name:'Lateral Movement',num:'TA0008'},
   {id:'collection',name:'Collection',num:'TA0009'},
+  {id:'command-and-control',name:'Command & Control',num:'TA0011'},
   {id:'exfiltration',name:'Exfiltration',num:'TA0010'},
   {id:'impact',name:'Impact',num:'TA0040'},
 ];
@@ -424,8 +426,8 @@ const SEG_TOGGLES = {
   network: [
     {id:'l2-vlan',name:'L2 VLAN + PVLAN',icon:'🔌',group:'Network',blocks:['lateral-movement']},
     {id:'l3-microseg',name:'L3 Micro-segmentation',icon:'🛡',group:'Network',blocks:['lateral-movement','discovery','collection']},
-    {id:'l4-port-filter',name:'L4 Port Filtering',icon:'🚧',group:'Network',blocks:['lateral-movement']},
-    {id:'l3-firewall',name:'Internal Firewall (NGFW)',icon:'🔥',group:'Network',blocks:['lateral-movement','exfiltration']},
+    {id:'l4-port-filter',name:'L4 Port Filtering',icon:'🚧',group:'Network',blocks:['lateral-movement','command-and-control']},
+    {id:'l3-firewall',name:'Internal Firewall (NGFW)',icon:'🔥',group:'Network',blocks:['lateral-movement','exfiltration','command-and-control']},
   ],
   identity: [
     {id:'conditional-access',name:'Conditional Access',icon:'🔑',group:'Identity',blocks:['initial-access','privilege-escalation']},
@@ -442,7 +444,7 @@ const SEG_TOGGLES = {
   data: [
     {id:'data-classification',name:'Data Classification + DLP',icon:'📄',group:'Data',blocks:['exfiltration','collection']},
     {id:'encryption-zones',name:'Encryption Zones',icon:'🔒',group:'Data',blocks:['collection','impact']},
-    {id:'cloud-seg',name:'VPC/VNet + Security Groups',icon:'☁',group:'Data',blocks:['lateral-movement','discovery','exfiltration']},
+    {id:'cloud-seg',name:'VPC/VNet + Security Groups',icon:'☁',group:'Data',blocks:['lateral-movement','discovery','exfiltration','command-and-control']},
     {id:'db-row-security',name:'Database Row-Level Security',icon:'🗄',group:'Data',blocks:['collection','exfiltration']},
   ],
 };
@@ -541,7 +543,7 @@ function renderToggles(){
       togglesState[t.id] = false;
     });
     document.getElementById(g.container).innerHTML = SEG_TOGGLES[g.key].map(t=>`
-      <div class="toggle-chip" id="tc-${t.id}" onclick="toggleSeg('${t.id}')">
+      <div class="toggle-chip" id="tc-${t.id}" role="switch" aria-checked="false" tabindex="0" onclick="toggleSeg('${t.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSeg('${t.id}')}">
         <div class="tc-name">${t.icon} ${t.name}</div>
         <div class="tc-switch"></div>
       </div>
@@ -551,7 +553,9 @@ function renderToggles(){
 
 function toggleSeg(id){
   togglesState[id] = !togglesState[id];
-  document.getElementById('tc-'+id).classList.toggle('on',togglesState[id]);
+  const el = document.getElementById('tc-'+id);
+  el.classList.toggle('on',togglesState[id]);
+  el.setAttribute('aria-checked', togglesState[id]);
   updateDemo();
 }
 
@@ -633,7 +637,7 @@ function renderOSI(){
 function renderScenarios(){
   document.getElementById('scenarios').innerHTML = SCENARIOS.map((s,i)=>`
     <div class="scenario-card ${i===0?'open':''}" id="scn-${i}">
-      <div class="scenario-header" onclick="document.getElementById('scn-${i}').classList.toggle('open')">
+      <div class="scenario-header" role="button" tabindex="0" aria-expanded="${i===0}" onclick="toggleScenario(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleScenario(${i})}">
         <h4>${s.icon} ${s.title}</h4>
         <span class="sh-toggle">▼</span>
       </div>
@@ -652,11 +656,17 @@ function renderScenarios(){
   `).join('');
 }
 
+function toggleScenario(i){
+  const card = document.getElementById('scn-'+i);
+  const isOpen = card.classList.toggle('open');
+  card.querySelector('.scenario-header').setAttribute('aria-expanded', isOpen);
+}
+
 // --- Maturity assessment ---
 let maturityState = {};
 function renderMaturity(){
   document.getElementById('matChecks').innerHTML = MATURITY_ITEMS.map((m,i)=>`
-    <div class="maturity-item" id="mat-${i}" onclick="toggleMaturity(${i})">
+    <div class="maturity-item" id="mat-${i}" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleMaturity(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMaturity(${i})}">
       <span class="mi-box">✓</span>
       <span class="mi-text"><strong style="color:var(--blue);font-size:.72rem">${m.layer}</strong> ${m.text}</span>
     </div>
@@ -666,7 +676,9 @@ function renderMaturity(){
 }
 function toggleMaturity(i){
   maturityState[i] = !maturityState[i];
-  document.getElementById('mat-'+i).classList.toggle('checked',maturityState[i]);
+  const el = document.getElementById('mat-'+i);
+  el.classList.toggle('checked',maturityState[i]);
+  el.setAttribute('aria-checked', maturityState[i]);
   updateMaturity();
 }
 function updateMaturity(){
@@ -686,7 +698,9 @@ function updateMaturity(){
 function resetMaturity(){
   MATURITY_ITEMS.forEach((m,i)=>{
     maturityState[i]=false;
-    document.getElementById('mat-'+i).classList.remove('checked');
+    const el = document.getElementById('mat-'+i);
+    el.classList.remove('checked');
+    el.setAttribute('aria-checked', false);
   });
   updateMaturity();
 }
