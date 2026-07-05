@@ -1,6 +1,6 @@
 // DoD ZT Architect — Vendor-to-Capability Mapping Data
 // Capabilities: DoD ZT RA v2.0 (45 Capabilities, 152 Activities)
-// Vendors: 120 products mapped to all 45 capabilities
+// Vendors: 119 products mapped to all 45 capabilities
 // NIST SP 1800-35 Collaborators: 51
 // Generated: 2026-07-02
 
@@ -9,7 +9,7 @@ const ZT_DATA = {
     "capability_source": "DoD Zero Trust Reference Architecture v2.0 — Capability Execution Roadmap (45 Capabilities, 152 Activities)",
     "vendor_source": "NIST SP 1800-35 (Final, June 2025) + comprehensive industry analysis",
     "nist_collaborators": 51,
-    "total_vendors": 120,
+    "total_vendors": 119,
     "total_capabilities": 45,
     "pillars": 7,
     "note": "Vendors marked nist_1800_35=true are actual SP 1800-35 collaborators. Others are leading industry ZT tools mapped to DoD capabilities."
@@ -335,7 +335,7 @@ const ZT_DATA = {
       "icon": "🟡",
       "roles": [
         "PE",
-        "PA"
+        "PIP"
       ],
       "pillar": "User",
       "capabilities": [
@@ -367,6 +367,7 @@ const ZT_DATA = {
         "1.2",
         "1.3",
         "1.5",
+        "1.7",
         "1.8",
         "1.9"
       ],
@@ -613,7 +614,7 @@ const ZT_DATA = {
       "icon": "💻",
       "roles": [
         "PIP",
-        "PDP",
+        "PE",
         "PEP"
       ],
       "pillar": "Device",
@@ -638,7 +639,7 @@ const ZT_DATA = {
       "icon": "👁️",
       "roles": [
         "PIP",
-        "PDP",
+        "PE",
         "PEP"
       ],
       "pillar": "Device",
@@ -665,6 +666,7 @@ const ZT_DATA = {
       "capabilities": [
         "2.1",
         "2.2",
+        "2.5",
         "2.6"
       ],
       "nist_1800_35": true,
@@ -765,6 +767,7 @@ const ZT_DATA = {
       "pillar": "Device",
       "capabilities": [
         "2.2",
+        "2.3",
         "2.7"
       ],
       "nist_1800_35": false,
@@ -805,8 +808,9 @@ const ZT_DATA = {
       ],
       "pillar": "Device",
       "capabilities": [
-        "2.7",
-        "2.2"
+        "2.2",
+        "2.3",
+        "2.7"
       ],
       "nist_1800_35": true,
       "builds": "E2B5",
@@ -1624,7 +1628,9 @@ const ZT_DATA = {
       "pillar": "Data",
       "capabilities": [
         "4.3",
-        "4.6"
+        "4.4",
+        "4.6",
+        "4.7"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1831,7 +1837,8 @@ const ZT_DATA = {
         "7.1",
         "7.2",
         "7.3",
-        "7.4"
+        "7.4",
+        "7.5"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1849,8 +1856,10 @@ const ZT_DATA = {
       ],
       "pillar": "Visibility & Analytics",
       "capabilities": [
+        "7.1",
         "7.2",
         "7.3",
+        "7.4",
         "7.5"
       ],
       "nist_1800_35": true,
@@ -2240,8 +2249,9 @@ const ZT_DATA = {
       ],
       "pillar": "Automation & Orchestration",
       "capabilities": [
+        "6.2",
         "6.5",
-        "6.2"
+        "6.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -2260,34 +2270,13 @@ const ZT_DATA = {
       "pillar": "Automation & Orchestration",
       "capabilities": [
         "6.2",
-        "6.5"
+        "6.5",
+        "6.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
       "description": "No-code security automation platform for workflow automation and alert triage.",
       "zt_role": "PDP for automated alert triage and response workflow execution."
-    },
-    {
-      "id": "opendifi",
-      "name": "OpenText",
-      "product": "ArcSight (ESM/Recon)",
-      "category": "SIEM / SOAR",
-      "icon": "🔍",
-      "roles": [
-        "PIP",
-        "PE"
-      ],
-      "pillar": "Visibility & Analytics",
-      "capabilities": [
-        "7.1",
-        "7.2",
-        "7.3",
-        "7.5"
-      ],
-      "nist_1800_35": false,
-      "builds": "N/A",
-      "description": "Enterprise SIEM — correlation engine, log management, and threat detection.",
-      "zt_role": "PIP providing log aggregation and correlation. PDP for risk-based alerting."
     },
     {
       "id": "vertex-ai-sec",
