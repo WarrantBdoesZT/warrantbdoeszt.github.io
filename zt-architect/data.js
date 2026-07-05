@@ -904,13 +904,24 @@ const ZT_DATA = {
       "category": "SSE / ZTNA",
       "icon": "☁️",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -925,13 +936,23 @@ const ZT_DATA = {
       "icon": "🌐",
       "roles": [
         "PE",
-        "PEP"
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
         "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": true,
       "builds": "E1B2, E1B3 (ZPA as PDP)",
@@ -1054,13 +1075,24 @@ const ZT_DATA = {
       "category": "SSE / CASB / ZTNA",
       "icon": "🔍",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1071,15 +1103,28 @@ const ZT_DATA = {
       "id": "cato",
       "name": "Cato Networks",
       "product": "Cato SASE Cloud Platform",
-      "category": "SASE / SD-WAN",
+      "category": "SASE / SD-WAN / ZTNA",
       "icon": "🔗",
       "roles": [
-        "PEP"
+        "PE",
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.2",
-        "5.3"
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1090,15 +1135,28 @@ const ZT_DATA = {
       "id": "versa",
       "name": "Versa Networks",
       "product": "VERSARO (SASE/SSE)",
-      "category": "SASE / SD-WAN",
+      "category": "SASE / SD-WAN / ZTNA",
       "icon": "🔀",
       "roles": [
-        "PEP"
+        "PE",
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.2",
-        "5.3"
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1171,13 +1229,24 @@ const ZT_DATA = {
       "category": "Edge Security / ZTNA",
       "icon": "🟠",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1191,13 +1260,24 @@ const ZT_DATA = {
       "category": "ZTNA / Microsegmentation",
       "icon": "🌐",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -1208,16 +1288,27 @@ const ZT_DATA = {
       "id": "cisco-secure",
       "name": "Cisco",
       "product": "Secure Access / Umbrella",
-      "category": "SSE / DNS Security",
+      "category": "SSE / ZTNA / DNS Security",
       "icon": "🛡️",
       "roles": [
-        "PEP"
+        "PE",
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
         "2.4",
+        "3.4",
+        "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": true,
       "builds": "E2B1",
@@ -2300,13 +2391,24 @@ const ZT_DATA = {
       "category": "ZTNA / Remote Access",
       "icon": "🔌",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Device",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
         "2.4",
-        "5.4"
+        "3.4",
+        "5.1",
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -2320,13 +2422,24 @@ const ZT_DATA = {
       "category": "Open Source ZTNA",
       "icon": "🔓",
       "roles": [
+        "PE",
         "PEP",
-        "PE"
+        "PIP"
       ],
       "pillar": "Device",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
         "2.4",
-        "5.4"
+        "3.4",
+        "5.1",
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
@@ -2340,12 +2453,24 @@ const ZT_DATA = {
       "category": "Remote Access / ZTNA",
       "icon": "🌐",
       "roles": [
-        "PEP"
+        "PE",
+        "PEP",
+        "PIP"
       ],
       "pillar": "Device",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
         "2.3",
-        "2.4"
+        "2.4",
+        "3.4",
+        "5.1",
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": true,
       "builds": "E2B1, E3B1, E3B2",
@@ -2359,12 +2484,24 @@ const ZT_DATA = {
       "category": "Remote Access / ZTNA",
       "icon": "🔐",
       "roles": [
-        "PEP"
+        "PE",
+        "PEP",
+        "PIP"
       ],
       "pillar": "Device",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
         "2.3",
-        "2.4"
+        "2.4",
+        "3.4",
+        "5.1",
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": true,
       "builds": "E2B1",
@@ -2622,13 +2759,23 @@ const ZT_DATA = {
       "icon": "🕸️",
       "roles": [
         "PE",
-        "PEP"
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
         "5.1",
         "5.3",
-        "5.4"
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": false,
       "builds": "N/A",
