@@ -8,9 +8,6 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="SEC530 · Defensible Architecture Corridor">
 <meta property="og:description" content="Interactive defensible architecture map from SANS SEC530: security controls clustered by trust zone from the hostile internet to the data crown jewels, an Attacker View overlay showing the kill chain hitting each gate, and mappings to the DoD Zero Trust Reference Architecture v2.0 (7 pillars, 45 capabilities).">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --void:#080B14;
@@ -21,7 +18,7 @@
   --line-strong:rgba(125,145,185,.28);
   --text:#E7ECF6;
   --muted:#8590A8;
-  --faint:#5B6478;
+  --faint:#7A86A0;
   /* trust gradient — encodes how trust is *earned* moving inward */
   --hostile:#FF6B5B;   /* internet / untrusted */
   --guard:#F2A65A;     /* perimeter control gates */
@@ -36,7 +33,7 @@
 html{scroll-behavior:smooth}
 body{
   margin:0;background:var(--void);color:var(--text);
-  font-family:"Inter",system-ui,sans-serif;
+  font-family:'Segoe UI','SF Pro Display',system-ui,-apple-system,sans-serif;
   -webkit-font-smoothing:antialiased;
   background-image:
     linear-gradient(rgba(125,145,185,.035) 1px,transparent 1px),
@@ -54,13 +51,13 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 .brand-nav .hub-link{color:var(--guard);font-weight:600;font-size:.85rem;text-decoration:none}
 .brand-nav .site-logo{color:var(--text);font-weight:700;font-size:.8rem;text-decoration:none}
 .brand-nav .site-logo span{color:var(--guard)}
-.tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
+.tag{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;letter-spacing:.18em;
   color:var(--guard);border:1px solid var(--line-strong);padding:4px 8px;border-radius:4px;text-transform:uppercase}
-.brand h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em}
+.brand h1{font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em}
 .brand h1 b{color:var(--guard);font-weight:600}
 .head-spacer{flex:1}
 .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.chip{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.04em;
+.chip{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;letter-spacing:.04em;
   background:var(--panel);border:1px solid var(--line);color:var(--muted);
   padding:6px 10px;border-radius:20px;cursor:pointer;transition:.15s;white-space:nowrap}
 .chip:hover{border-color:var(--line-strong);color:var(--text)}
@@ -71,7 +68,7 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 .chip[data-day="4"].on{box-shadow:inset 0 0 0 1px var(--crown)}
 .chip[data-day="5"].on{box-shadow:inset 0 0 0 1px var(--core)}
 .attack-toggle{display:flex;align-items:center;gap:9px;cursor:pointer;
-  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;letter-spacing:.06em;
   border:1px solid var(--line-strong);padding:6px 12px;border-radius:20px;color:var(--muted);transition:.15s}
 .attack-toggle:hover{color:var(--text)}
 .attack-toggle.on{color:var(--hostile);border-color:var(--hostile);background:rgba(255,107,91,.07)}
@@ -84,12 +81,12 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 .course-badge{display:inline-flex;align-items:center;gap:6px;background:var(--panel-2);border:1px solid var(--line-strong);
   border-radius:20px;padding:6px 16px;font-size:12px;color:var(--muted);margin-bottom:18px}
 .course-badge strong{color:var(--guard)}
-.hero h2{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:clamp(22px,3.4vw,38px);
+.hero h2{font-weight:500;font-size:clamp(22px,3.4vw,38px);
   line-height:1.08;margin:0 0 12px;letter-spacing:-.02em;max-width:780px}
 .hero h2 em{font-style:normal;color:var(--guard)}
 .hero p{color:var(--muted);max-width:660px;margin:0 0 22px;font-size:15px;line-height:1.6}
 .killrail{display:flex;gap:6px;flex-wrap:wrap;align-items:center;
-  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.02em}
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;letter-spacing:.02em}
 .kc{display:flex;align-items:center;gap:6px;color:var(--faint)}
 .kc b{color:var(--muted);font-weight:500}
 .kc .arr{color:var(--line-strong)}
@@ -98,11 +95,13 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 
 /* ---------- corridor ---------- */
 .legend{display:flex;gap:18px;flex-wrap:wrap;margin:26px 0 14px;
-  font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;color:var(--muted)}
 .legend span{display:flex;align-items:center;gap:7px}
 .swatch{width:11px;height:11px;border-radius:3px}
 
-.corridor{display:flex;gap:0;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x proximity}
+.corridor{display:flex;gap:0;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x proximity;
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%)}
 .corridor::-webkit-scrollbar{height:8px}
 .corridor::-webkit-scrollbar-thumb{background:var(--raise);border-radius:8px}
 
@@ -111,8 +110,8 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
   background:linear-gradient(var(--line),transparent)}
 .zone-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .zbar{width:4px;height:26px;border-radius:3px}
-.zone-head h3{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:600;margin:0;letter-spacing:-.01em}
-.zone-sub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);
+.zone-head h3{font-size:14px;font-weight:600;margin:0;letter-spacing:-.01em}
+.zone-sub{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--faint);
   letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px 12px}
 
 .node{position:relative;background:var(--panel);border:1px solid var(--line);
@@ -120,24 +119,24 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
   transition:transform .14s,border-color .14s,background .14s}
 .node:hover{transform:translateY(-2px);border-color:var(--line-strong);background:var(--raise)}
 .node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
-.node .nkind{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;
+.node .nkind{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:9.5px;letter-spacing:.1em;
   text-transform:uppercase;color:var(--faint);display:block;margin-bottom:3px}
 .node .nname{font-weight:600;font-size:13.5px;line-height:1.25;display:flex;gap:7px;align-items:flex-start}
 .node .ic{font-size:14px;line-height:1;margin-top:1px;flex:none}
 .node .ntools{margin-top:7px;display:flex;flex-wrap:wrap;gap:4px}
-.pill{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);
+.pill{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:9.5px;color:var(--muted);
   background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:2px 5px}
 .node.gate{border-style:dashed;border-color:var(--guard);background:rgba(242,166,90,.05)}
 .node.gate .nkind{color:var(--guard)}
 .node.gate::before{content:"⛓ GATE";position:absolute;top:-8px;right:9px;
-  font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.12em;
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:8px;letter-spacing:.12em;
   color:var(--guard);background:var(--void);padding:0 5px}
 
 /* attacker-view: nodes that break the chain glow */
 body.attack .node[data-kills]{box-shadow:0 0 0 1px rgba(84,217,140,.0)}
 body.attack .node.blocks{border-color:var(--ok);box-shadow:0 0 16px -4px rgba(84,217,140,.5)}
 body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7px;left:10px;
-  font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.1em;color:var(--ok);
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:8px;letter-spacing:.1em;color:var(--ok);
   background:var(--void);padding:0 5px}
 
 /* dimmed by filter */
@@ -147,8 +146,8 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 /* ---------- cross-cutting planes ---------- */
 .planes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 50px}
 .plane{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:16px 17px}
-.plane h4{font-family:"Space Grotesk",sans-serif;margin:0 0 3px;font-size:14px;display:flex;align-items:center;gap:8px}
-.plane .psub{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--faint);
+.plane h4{margin:0 0 3px;font-size:14px;display:flex;align-items:center;gap:8px}
+.plane .psub{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--faint);
   letter-spacing:.06em;text-transform:uppercase;margin:0 0 13px}
 .plane-grid{display:flex;flex-wrap:wrap;gap:8px}
 .plane .node{margin:0;min-width:140px;flex:1 1 140px}
@@ -164,9 +163,9 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 .drawer.open{transform:translateX(0)}
 .dr-head{padding:20px 22px 16px;border-bottom:1px solid var(--line);position:relative}
 .dr-accent{position:absolute;left:0;top:0;bottom:0;width:4px}
-.dr-kind{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;
+.dr-kind{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--muted)}
-.dr-head h3{font-family:"Space Grotesk",sans-serif;font-size:21px;margin:6px 0 8px;letter-spacing:-.01em;line-height:1.15}
+.dr-head h3{font-size:21px;margin:6px 0 8px;letter-spacing:-.01em;line-height:1.15}
 .dr-meta{display:flex;gap:8px;flex-wrap:wrap}
 .dr-meta .pill{font-size:10px}
 .dr-close{position:absolute;top:16px;right:16px;background:var(--raise);border:1px solid var(--line);
@@ -175,7 +174,7 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 .dr-body{padding:18px 22px 40px;overflow-y:auto;flex:1}
 .dr-body p.lede{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 22px}
 .dsec{margin-bottom:22px}
-.dsec h5{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+.dsec h5{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10.5px;letter-spacing:.1em;
   text-transform:uppercase;margin:0 0 10px;display:flex;align-items:center;gap:8px}
 .dsec h5::after{content:"";flex:1;height:1px;background:var(--line)}
 .dsec.threats h5{color:var(--hostile)}
@@ -183,7 +182,7 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 .dsec.tools h5{color:var(--core)}
 .dsec ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
 .dsec li{font-size:13.5px;line-height:1.45;padding-left:18px;position:relative;color:var(--text)}
-.dsec li::before{position:absolute;left:0;top:1px;font-family:"IBM Plex Mono",monospace;font-size:11px}
+.dsec li::before{position:absolute;left:0;top:1px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px}
 .dsec.threats li::before{content:"✕";color:var(--hostile)}
 .dsec.controls li::before{content:"→";color:var(--ok)}
 .dsec.tools li::before{content:"#";color:var(--core)}
@@ -192,10 +191,12 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 
 /* ---------- topology diagram ---------- */
 .topo-section{margin:30px 0 14px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.topo-title{font-family:"Space Grotesk",sans-serif;font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.topo-title{font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
 .topo-sub{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:720px}
-.topo-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted)}
-.topo-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2)}
+.topo-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--muted)}
+.topo-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2);
+  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%);
+  mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%)}
 .topo-svg{width:100%;min-width:960px;height:auto;display:block}
 .topo-node{cursor:default;transition:opacity .15s}
 .topo-node:hover rect{filter:brightness(1.25)}
@@ -207,7 +208,7 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
   opacity:0;transition:opacity .15s;box-shadow:0 6px 24px -6px rgba(0,0,0,.6);line-height:1.4}
 
 footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--faint);
-  font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.7}
+  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;line-height:1.7}
 footer b{color:var(--muted);font-weight:500}
 
 @media(max-width:820px){
@@ -303,19 +304,19 @@ footer b{color:var(--muted);font-weight:500}
 
         <!-- Zone background bands -->
         <rect x="0" y="10" width="1200" height="80" rx="6" fill="rgba(255,107,91,.05)" stroke="rgba(255,107,91,.15)"/>
-        <text x="14" y="34" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">HOSTILE INTERNET</text>
+        <text x="14" y="34" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">HOSTILE INTERNET</text>
         <rect x="0" y="100" width="1200" height="160" rx="6" fill="rgba(242,166,90,.04)" stroke="rgba(242,166,90,.12)"/>
-        <text x="14" y="124" fill="var(--guard)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">PERIMETER / DMZ · CONTROL GATES</text>
+        <text x="14" y="124" fill="var(--guard)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">PERIMETER / DMZ · CONTROL GATES</text>
         <rect x="0" y="270" width="1200" height="120" rx="6" fill="rgba(63,208,201,.04)" stroke="rgba(63,208,201,.12)"/>
-        <text x="14" y="294" fill="var(--transit)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">ROUTING & SWITCHING · L2–L3</text>
+        <text x="14" y="294" fill="var(--transit)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">ROUTING & SWITCHING · L2–L3</text>
         <rect x="0" y="400" width="1200" height="100" rx="6" fill="rgba(110,168,254,.04)" stroke="rgba(110,168,254,.12)"/>
-        <text x="14" y="424" fill="var(--core)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">INTERNAL CORE · SEGMENTATION</text>
+        <text x="14" y="424" fill="var(--core)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">INTERNAL CORE · SEGMENTATION</text>
         <rect x="0" y="510" width="1200" height="100" rx="6" fill="rgba(110,168,254,.03)" stroke="rgba(110,168,254,.10)"/>
-        <text x="14" y="534" fill="var(--core)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">ENDPOINTS & VIRTUALIZATION</text>
+        <text x="14" y="534" fill="var(--core)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">ENDPOINTS & VIRTUALIZATION</text>
         <rect x="0" y="620" width="1200" height="120" rx="6" fill="rgba(233,196,106,.04)" stroke="rgba(233,196,106,.12)"/>
-        <text x="14" y="644" fill="var(--crown)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">DATA CROWN JEWELS · THE OBJECTIVE</text>
+        <text x="14" y="644" fill="var(--crown)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">DATA CROWN JEWELS · THE OBJECTIVE</text>
         <rect x="0" y="750" width="1200" height="100" rx="6" fill="rgba(185,140,255,.03)" stroke="rgba(185,140,255,.10)"/>
-        <text x="14" y="774" fill="var(--detect)" font-family="IBM Plex Mono" font-size="10" letter-spacing=".1em">DETECTION & VISIBILITY · SPANS ALL ZONES</text>
+        <text x="14" y="774" fill="var(--detect)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">DETECTION & VISIBILITY · SPANS ALL ZONES</text>
 
         <!-- Flow lines (main traffic path) -->
         <line x1="600" y1="70" x2="600" y2="118" stroke="var(--hostile)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
@@ -328,12 +329,12 @@ footer b{color:var(--muted);font-weight:500}
         <g class="topo-node" tabindex="0" data-info="Adversary · Recon → Weaponize → Deliver → Exploit → Install → C2 → Actions">
           <rect x="530" y="40" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--hostile)" stroke-width="1.5"/>
           <text x="600" y="58" text-anchor="middle" fill="var(--hostile)" font-size="13" font-weight="600">☣ Adversary</text>
-          <text x="600" y="72" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="9">MITRE ATT&amp;CK</text>
+          <text x="600" y="72" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9">MITRE ATT&amp;CK</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Attacker sends: phishing, exploit attempts, C2 beacons, malware payloads">
-          <text x="380" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">phishing ▸</text>
+          <text x="380" y="64" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9" opacity=".6">phishing ▸</text>
           <line x1="430" y1="60" x2="520" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
-          <text x="770" y="64" fill="var(--hostile)" font-family="IBM Plex Mono" font-size="9" opacity=".6">◂ C2 beacon</text>
+          <text x="770" y="64" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9" opacity=".6">◂ C2 beacon</text>
           <line x1="680" y1="60" x2="760" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
         </g>
 
@@ -342,189 +343,189 @@ footer b{color:var(--muted);font-weight:500}
         <g class="topo-node" tabindex="0" data-info="NGFW — Deep packet inspection, IPS, TLS intercept, DNS filtering, threat feeds">
           <rect x="260" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="340" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🛡 NGFW</text>
-          <text x="340" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Fortinet</text>
-          <text x="340" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DPI / IPS / TLS / DNS filter</text>
+          <text x="340" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Palo Alto · Cisco · Fortinet</text>
+          <text x="340" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">DPI / IPS / TLS / DNS filter</text>
         </g>
         <!-- Web Proxy -->
         <g class="topo-node" tabindex="0" data-info="Web Proxy — URL filtering, DLP/MIME inspection, sandbox analysis">
           <rect x="440" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="515" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🌐 Web Proxy</text>
-          <text x="515" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zscaler ZIA · Umbrella</text>
-          <text x="515" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">URL filter / sandbox / DLP</text>
+          <text x="515" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Zscaler ZIA · Umbrella</text>
+          <text x="515" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">URL filter / sandbox / DLP</text>
         </g>
         <!-- SMTP Proxy -->
         <g class="topo-node" tabindex="0" data-info="SMTP Proxy — Bayesian analysis, SPF/DKIM/DMARC, per-email encryption">
           <rect x="610" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="685" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">✉ SMTP Proxy</text>
-          <text x="685" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Proofpoint · Mimecast</text>
-          <text x="685" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">SPF/DKIM/DMARC / phishing</text>
+          <text x="685" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Proofpoint · Mimecast</text>
+          <text x="685" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">SPF/DKIM/DMARC / phishing</text>
         </g>
         <!-- WAF -->
         <g class="topo-node" tabindex="0" data-info="WAF — Dynamic policy learning, templates, HSTS, CAPTCHA">
           <rect x="780" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="855" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🧱 WAF</text>
-          <text x="855" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">F5 ASM · Imperva · CF</text>
-          <text x="855" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Dynamic learning / templates</text>
+          <text x="855" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">F5 ASM · Imperva · CF</text>
+          <text x="855" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Dynamic learning / templates</text>
         </g>
         <!-- VPN/ZTNA -->
         <g class="topo-node" tabindex="0" data-info="Remote Access / VPN — Full-tunnel, Always-On VPN, ZTNA for cloud apps">
           <rect x="950" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="1030" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔐 VPN / ZTNA</text>
-          <text x="1030" y="170" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">GlobalProtect · ZPA · Appgate</text>
-          <text x="1030" y="182" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Full-tunnel / post-auth check</text>
+          <text x="1030" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">GlobalProtect · ZPA · Appgate</text>
+          <text x="1030" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Full-tunnel / post-auth check</text>
         </g>
 
         <!-- gate label -->
-        <text x="100" y="170" fill="var(--guard)" font-family="IBM Plex Mono" font-size="10">⛓ GATES</text>
-        <text x="100" y="184" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">block: Deliver</text>
-        <text x="100" y="196" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Exploit · C2</text>
+        <text x="100" y="170" fill="var(--guard)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">⛓ GATES</text>
+        <text x="100" y="184" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">block: Deliver</text>
+        <text x="100" y="196" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Exploit · C2</text>
 
         <!-- ===== Row 3: L3 Routing ===== -->
         <g class="topo-node" tabindex="0" data-info="Hardened Router — AutoSecure/STIG, ACLs, routing auth, SNMPv3">
           <rect x="200" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="285" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧭 Hardened Router</text>
-          <text x="285" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco IOS XE · Juniper Junos</text>
-          <text x="285" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">ACL / bogon filter / SNMPv3</text>
+          <text x="285" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Cisco IOS XE · Juniper Junos</text>
+          <text x="285" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">ACL / bogon filter / SNMPv3</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="IPv6 Controls — RA Guard, DHCPv6 snooping, protocol-41 block">
           <rect x="390" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="475" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⑥ IPv6 Controls</text>
-          <text x="475" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">RA Guard · Zeek dns.log</text>
-          <text x="475" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Block tunnel / rogue RA</text>
+          <text x="475" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">RA Guard · Zeek dns.log</text>
+          <text x="475" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Block tunnel / rogue RA</text>
         </g>
 
         <!-- ===== Row 3b: L2 Switching ===== -->
         <g class="topo-node" tabindex="0" data-info="Switch Hardening — DAI, DHCP snooping, Private VLANs, 802.1X">
           <rect x="580" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="665" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🔌 Switch Hardening</text>
-          <text x="665" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco Catalyst · Aruba CX</text>
-          <text x="665" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">DAI / DHCP snooping / PVLAN</text>
+          <text x="665" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Cisco Catalyst · Aruba CX</text>
+          <text x="665" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">DAI / DHCP snooping / PVLAN</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Wireless — WPA3-Enterprise, WIPS, rogue detection">
           <rect x="770" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="850" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📶 Wireless</text>
-          <text x="850" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Aruba · Cisco Meraki</text>
-          <text x="850" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">WPA3-Ent / WIPS / rogue AP</text>
+          <text x="850" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Aruba · Cisco Meraki</text>
+          <text x="850" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">WPA3-Ent / WIPS / rogue AP</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Physical / NAC — 802.1X, MAC filter, disabled-VLAN, badge+biometric">
           <rect x="950" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
           <text x="1030" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🚪 NAC / Physical</text>
-          <text x="1030" y="332" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Cisco ISE · Forescout</text>
-          <text x="1030" y="343" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">802.1X / posture check</text>
+          <text x="1030" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Cisco ISE · Forescout</text>
+          <text x="1030" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">802.1X / posture check</text>
         </g>
 
         <!-- ===== Row 4: Internal Core / Segmentation ===== -->
         <g class="topo-node" tabindex="0" data-info="Segmentation Gateway — NGFW as internal gate, MCAP trust zoning, data-centric rules">
           <rect x="200" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
           <text x="300" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🚧 Segmentation Gateway</text>
-          <text x="300" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Palo Alto · Cisco · Illumio</text>
-          <text x="300" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Tier 1 (DC) ▸ Tier 2 (PII) ▸ Tier 3 (Ext)</text>
+          <text x="300" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Palo Alto · Cisco · Illumio</text>
+          <text x="300" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Tier 1 (DC) ▸ Tier 2 (PII) ▸ Tier 3 (Ext)</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="IPsec Domain Isolation — Windows Firewall IPsec, mutual auth, optional encryption">
           <rect x="430" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="530" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔗 IPsec Domain Isolation</text>
-          <text x="530" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Windows Firewall IPsec</text>
-          <text x="530" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / non-domain blocked</text>
+          <text x="530" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Windows Firewall IPsec</text>
+          <text x="530" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Mutual auth / non-domain blocked</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Cloud Conditional Access — Entra ID CA, Intune, risk-based decisions">
           <rect x="660" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="760" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">☁ Conditional Access</text>
-          <text x="760" y="458" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Entra ID · Okta · Ping Identity</text>
-          <text x="760" y="470" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Risk-based / device compliance</text>
+          <text x="760" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Entra ID · Okta · Ping Identity</text>
+          <text x="760" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Risk-based / device compliance</text>
         </g>
 
         <!-- lateral movement arrows -->
         <line x1="400" y1="452" x2="430" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
         <line x1="630" y1="452" x2="660" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
-        <text x="415" y="448" fill="var(--ok)" font-family="IBM Plex Mono" font-size="7" opacity=".6">← blocks lateral →</text>
+        <text x="415" y="448" fill="var(--ok)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="7" opacity=".6">← blocks lateral →</text>
 
         <!-- ===== Row 5: Endpoints & Virtualization ===== -->
         <g class="topo-node" tabindex="0" data-info="Endpoint Telemetry — Sysmon, auditd, honeytokens, forward to SIEM">
           <rect x="100" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="185" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🖥 Endpoint Telemetry</text>
-          <text x="185" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Defender · CrowdStrike · SentinelOne</text>
-          <text x="185" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Sysmon / auditd / honeytokens</text>
+          <text x="185" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Defender · CrowdStrike · SentinelOne</text>
+          <text x="185" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Sysmon / auditd / honeytokens</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Attack Surface Reduction — Intune ASR rules, block Office macros, LSASS theft">
           <rect x="290" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="375" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⛔ Attack Surface Reduction</text>
-          <text x="375" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Microsoft Intune ASR · Trellix</text>
-          <text x="375" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Block macros / LSASS / USB</text>
+          <text x="375" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Microsoft Intune ASR · Trellix</text>
+          <text x="375" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Block macros / LSASS / USB</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="DLP Agent — Auto file classification, policy enforcement, reason-for-action prompts">
           <rect x="480" y="530" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
           <text x="560" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📄 DLP Agent</text>
-          <text x="560" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Purview DLP · Symantec · Forcepoint</text>
-          <text x="560" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">File classification / exfil block</text>
+          <text x="560" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Purview DLP · Symantec · Forcepoint</text>
+          <text x="560" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">File classification / exfil block</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Hypervisor / VM — vSwitch hardening, lockdown, port mirroring">
           <rect x="660" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
           <text x="745" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧰 Hypervisor / VM</text>
-          <text x="745" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">VMware vSphere · Hyper-V · Nutanix</text>
-          <text x="745" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">vSwitch reject MAC / lockdown</text>
+          <text x="745" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">VMware vSphere · Hyper-V · Nutanix</text>
+          <text x="745" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">vSwitch reject MAC / lockdown</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Containers — AppArmor/SELinux, resource limits, trusted images">
           <rect x="850" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
           <text x="935" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📦 Containers</text>
-          <text x="935" y="562" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Kubernetes · Aqua · Sysdig</text>
-          <text x="935" y="574" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">AppArmor / resource limits</text>
+          <text x="935" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Kubernetes · Aqua · Sysdig</text>
+          <text x="935" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">AppArmor / resource limits</text>
         </g>
 
         <!-- ===== Row 6: Data Crown Jewels ===== -->
         <g class="topo-node" tabindex="0" data-info="Database Security — Native logging, least privilege, anomaly alerts">
           <rect x="250" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="350" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🗄 Database Security</text>
-          <text x="350" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">IBM Guardium · Imperva · Oracle DV</text>
-          <text x="350" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Least privilege / anomaly alert</text>
+          <text x="350" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">IBM Guardium · Imperva · Oracle DV</text>
+          <text x="350" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Least privilege / anomaly alert</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Encryption at Rest — FDE, TPM auto-boot, PIN unlock">
           <rect x="480" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="580" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🔒 Encryption at Rest</text>
-          <text x="580" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">BitLocker · VeraCrypt · AWS KMS</text>
-          <text x="580" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">FDE / TPM / &lt;5% perf impact</text>
+          <text x="580" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">BitLocker · VeraCrypt · AWS KMS</text>
+          <text x="580" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">FDE / TPM / &lt;5% perf impact</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Cloud Data — Conditional access, BYOD protection, MAM policies">
           <rect x="710" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
           <text x="810" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">☁ Cloud Data Store</text>
-          <text x="810" y="687" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">AWS S3 · Azure Blob · GCP</text>
-          <text x="810" y="699" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">CA-gated / BYOD: no data pull</text>
+          <text x="810" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">AWS S3 · Azure Blob · GCP</text>
+          <text x="810" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">CA-gated / BYOD: no data pull</text>
         </g>
 
         <!-- crown jewels label -->
-        <text x="80" y="688" fill="var(--crown)" font-family="IBM Plex Mono" font-size="10">👑 OBJECTIVE</text>
-        <text x="80" y="702" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Actions on</text>
-        <text x="80" y="712" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Objectives</text>
+        <text x="80" y="688" fill="var(--crown)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">👑 OBJECTIVE</text>
+        <text x="80" y="702" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Actions on</text>
+        <text x="80" y="712" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Objectives</text>
 
         <!-- ===== Row 7: Detection Plane (spans all) ===== -->
         <g class="topo-node" tabindex="0" data-info="SIEM — Centralized log aggregation, correlation, alerting, compliance">
           <rect x="60" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="160" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🧠 SIEM</text>
-          <text x="160" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Splunk · Sentinel · QRadar</text>
-          <text x="160" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Correlate all zones / alert engine</text>
+          <text x="160" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Splunk · Sentinel · QRadar</text>
+          <text x="160" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Correlate all zones / alert engine</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Network Flow & IDS — Zeek, Suricata/Snort, NetFlow analysis">
           <rect x="280" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="380" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🔎 IDS / Network Flow</text>
-          <text x="380" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">Zeek · Suricata · ExtraHop</text>
-          <text x="380" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">dns/conn/files / NetFlow</text>
+          <text x="380" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">Zeek · Suricata · ExtraHop</text>
+          <text x="380" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">dns/conn/files / NetFlow</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Honeypots & Tokens — T-Pot, Canarytokens, DCEPT, near-zero false positives">
           <rect x="500" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="600" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🍯 Honeypots & Tokens</text>
-          <text x="600" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">T-Pot · Thinkst Canary · DCEPT</text>
-          <text x="600" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Deception / near-zero FP</text>
+          <text x="600" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">T-Pot · Thinkst Canary · DCEPT</text>
+          <text x="600" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Deception / near-zero FP</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="PKI & mTLS — Root→Intermediate→Sub CA, mutual cert auth, cert lifecycle">
           <rect x="720" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="820" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">📜 PKI & mTLS</text>
-          <text x="820" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DigiCert · Microsoft ADCS · Entrust</text>
-          <text x="820" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">Mutual auth / cert lifecycle</text>
+          <text x="820" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">DigiCert · Microsoft ADCS · Entrust</text>
+          <text x="820" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">Mutual auth / cert lifecycle</text>
         </g>
         <g class="topo-node" tabindex="0" data-info="Zero Trust Model — DoD ZT RA v2.0 (7 pillars), never trust always verify">
           <rect x="940" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
           <text x="1040" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">⊘ Zero Trust Model</text>
-          <text x="1040" y="802" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono" font-size="8.5">DoD ZT RA v2.0 · NIST SP 800-207</text>
-          <text x="1040" y="814" text-anchor="middle" fill="var(--faint)" font-family="IBM Plex Mono" font-size="8">7 pillars / 45 capabilities</text>
+          <text x="1040" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5">DoD ZT RA v2.0 · NIST SP 800-207</text>
+          <text x="1040" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8">7 pillars / 45 capabilities</text>
         </g>
 
         <!-- Vertical detection feed arrows (spanning zones) -->
