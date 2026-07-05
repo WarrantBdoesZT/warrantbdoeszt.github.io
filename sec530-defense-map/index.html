@@ -46,6 +46,10 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
   background:rgba(8,11,20,.82);backdrop-filter:blur(10px)}
 .head-inner{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 0}
 .brand{display:flex;align-items:baseline;gap:12px}
+.brand-nav{display:flex;flex-direction:column;gap:2px}
+.brand-nav .hub-link{color:var(--guard);font-weight:600;font-size:.85rem;text-decoration:none}
+.brand-nav .site-logo{color:var(--text);font-weight:700;font-size:.8rem;text-decoration:none}
+.brand-nav .site-logo span{color:var(--guard)}
 .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
   color:var(--guard);border:1px solid var(--line-strong);padding:4px 8px;border-radius:4px;text-transform:uppercase}
 .brand h1{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:19px;margin:0;letter-spacing:-.01em}
@@ -214,7 +218,10 @@ footer b{color:var(--muted);font-weight:500}
 <header>
   <div class="wrap head-inner">
     <div class="brand">
-      <a href="/" style="color:var(--accent);font-weight:600;font-size:.85rem;text-decoration:none;display:block;margin-bottom:4px">← Hub</a><!-- cache-bust -->
+      <div class="brand-nav">
+        <a href="/" class="hub-link">← Back to Hub</a>
+        <a href="/" class="site-logo">WarrantB<span>doesZT</span></a>
+      </div>
       <span class="tag">SEC530</span>
       <h1>Defensible Architecture <b>Corridor</b></h1>
     </div>

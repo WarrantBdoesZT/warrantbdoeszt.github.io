@@ -180,8 +180,11 @@
             border-bottom: 1px solid var(--border); padding: 12px 24px;
             display: flex; justify-content: space-between; align-items: center;
         }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
         .nav-home { color: var(--accent); font-weight: 600; font-size: .85rem; text-decoration: none; }
         .nav-home:hover { text-decoration: underline; }
+        .nav-logo { font-weight: 700; font-size: 1rem; text-decoration: none; color: var(--text); }
+        .nav-logo span { color: var(--accent); }
         .nav-title { font-weight: 700; font-size: 1rem; }
         .nav-title span { color: var(--accent); }
     </style>
@@ -189,7 +192,10 @@
 <body>
 
 <nav class="nav">
-    <a href="/" class="nav-home">← Hub</a>
+    <div class="nav-left">
+        <a href="/" class="nav-home">← Back to Hub</a>
+        <a href="/" class="nav-logo">WarrantB<span>doesZT</span></a>
+    </div>
     <div class="nav-title">ZT<span>Auditor</span></div>
 </nav>
 

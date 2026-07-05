@@ -24,6 +24,8 @@ a:hover{text-decoration:underline}
 .nav{position:sticky;top:0;z-index:100;background:rgba(10,14,20,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
 .nav-left{display:flex;align-items:center;gap:16px}
 .nav-home{color:var(--accent)!important;font-weight:600;font-size:.85rem}
+.nav-logo{font-weight:700;font-size:1rem;text-decoration:none;color:var(--text)}
+.nav-logo span{color:var(--accent)}
 .nav-title{font-weight:700;font-size:1rem}
 .nav-title span{color:var(--accent)}
 
@@ -239,7 +241,8 @@ footer .ref-list div{font-size:.7rem;color:var(--text-faint);padding:2px 0}
 
 <nav class="nav">
   <div class="nav-left">
-    <a href="/" class="nav-home">← Hub</a>
+    <a href="/" class="nav-home">← Back to Hub</a>
+    <a href="/" class="nav-logo">WarrantB<span>doesZT</span></a>
     <a href="/segmentation-kill-chain/" class="nav-home" style="color:var(--blue);">← Kill Chain</a>
   </div>
   <div class="nav-title">AI <span>Threat Simulator</span></div>
