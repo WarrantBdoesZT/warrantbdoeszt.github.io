@@ -94,65 +94,6 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 .killrail.live .kc{color:var(--hostile)}
 .killrail .kc.broken b{color:var(--ok);text-decoration:line-through;text-decoration-color:rgba(84,217,140,.5)}
 
-/* ---------- corridor ---------- */
-.legend{display:flex;gap:18px;flex-wrap:wrap;margin:26px 0 14px;
-  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;color:var(--muted)}
-.legend span{display:flex;align-items:center;gap:7px}
-.swatch{width:11px;height:11px;border-radius:3px}
-
-.corridor{display:flex;gap:0;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x proximity;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%);
-  mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%)}
-.corridor::-webkit-scrollbar{height:8px}
-.corridor::-webkit-scrollbar-thumb{background:var(--raise);border-radius:8px}
-
-.zone{min-width:236px;flex:1;scroll-snap-align:start;position:relative;padding:0 13px}
-.zone:not(:last-child)::after{content:"";position:absolute;top:46px;right:-1px;bottom:18px;width:1px;
-  background:linear-gradient(var(--line),transparent)}
-.zone-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.zbar{width:4px;height:26px;border-radius:3px}
-.zone-head h3{font-size:14px;font-weight:600;margin:0;letter-spacing:-.01em}
-.zone-sub{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--faint);
-  letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px 12px}
-
-.node{position:relative;background:var(--panel);border:1px solid var(--line);
-  border-radius:9px;padding:12px 12px 11px;margin-bottom:9px;cursor:pointer;
-  transition:transform .14s,border-color .14s,background .14s}
-.node:hover{transform:translateY(-2px);border-color:var(--line-strong);background:var(--raise)}
-.node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
-.node .nkind{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:9.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--faint);display:block;margin-bottom:3px}
-.node .nname{font-weight:600;font-size:13.5px;line-height:1.25;display:flex;gap:7px;align-items:flex-start}
-.node .ic{font-size:14px;line-height:1;margin-top:1px;flex:none}
-.node .ntools{margin-top:7px;display:flex;flex-wrap:wrap;gap:4px}
-.pill{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:9.5px;color:var(--muted);
-  background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:2px 5px}
-.node.gate{border-style:dashed;border-color:var(--guard);background:rgba(242,166,90,.05)}
-.node.gate .nkind{color:var(--guard)}
-.node.gate::before{content:"⛓ GATE";position:absolute;top:-8px;right:9px;
-  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:8px;letter-spacing:.12em;
-  color:var(--guard);background:var(--void);padding:0 5px}
-
-/* attacker-view: nodes that break the chain glow */
-body.attack .node[data-kills]{box-shadow:0 0 0 1px rgba(84,217,140,.0)}
-body.attack .node.blocks{border-color:var(--ok);box-shadow:0 0 16px -4px rgba(84,217,140,.5)}
-body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7px;left:10px;
-  font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:8px;letter-spacing:.1em;color:var(--ok);
-  background:var(--void);padding:0 5px}
-
-/* dimmed by filter */
-.node.dim,.zone.dim .node{opacity:.22;filter:saturate(.3)}
-.zone.dim .zone-head,.zone.dim .zone-sub{opacity:.4}
-
-/* ---------- cross-cutting planes ---------- */
-.planes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 50px}
-.plane{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:16px 17px}
-.plane h4{margin:0 0 3px;font-size:14px;display:flex;align-items:center;gap:8px}
-.plane .psub{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--faint);
-  letter-spacing:.06em;text-transform:uppercase;margin:0 0 13px}
-.plane-grid{display:flex;flex-wrap:wrap;gap:8px}
-.plane .node{margin:0;min-width:140px;flex:1 1 140px}
-
 /* ---------- drawer ---------- */
 .scrim{position:fixed;inset:0;background:rgba(4,6,12,.6);backdrop-filter:blur(2px);
   opacity:0;pointer-events:none;transition:.2s;z-index:50}
@@ -168,6 +109,8 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
   text-transform:uppercase;color:var(--muted)}
 .dr-head h3{font-size:21px;margin:6px 0 8px;letter-spacing:-.01em;line-height:1.15}
 .dr-meta{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:9.5px;color:var(--muted);
+  background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:2px 5px}
 .dr-meta .pill{font-size:10px}
 .dr-close{position:absolute;top:16px;right:16px;background:var(--raise);border:1px solid var(--line);
   color:var(--muted);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:15px;line-height:1}
@@ -190,20 +133,24 @@ body.attack .node.blocks::after{content:"BLOCKS ✓";position:absolute;bottom:-7
 .kc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .kc-tags .pill{border-color:var(--hostile);color:var(--hostile);background:rgba(255,107,91,.06)}
 
-/* ---------- topology diagram ---------- */
-.topo-section{margin:30px 0 14px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+/* ---------- network architecture map ---------- */
+.topo-section{margin:20px 0 14px;padding:24px 0 8px}
 .topo-title{font-size:22px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
-.topo-sub{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:720px}
+.topo-sub{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:760px}
 .topo-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--muted)}
+.topo-legend span{display:flex;align-items:center;gap:7px}
+.swatch{width:11px;height:11px;border-radius:3px;flex-shrink:0}
 .topo-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2);
   -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%);
   mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%)}
-.topo-svg{width:100%;min-width:960px;height:auto;display:block}
-.topo-node{cursor:default;transition:opacity .15s}
+.topo-svg{width:100%;min-width:1600px;height:auto;display:block}
+.topo-node{cursor:pointer;transition:opacity .15s,filter .15s}
 .topo-node:hover rect{filter:brightness(1.25)}
 .topo-node:hover text{filter:brightness(1.15)}
 .topo-node:focus-visible{outline:2px solid var(--core);outline-offset:2px}
 .topo-node:focus-visible rect{filter:brightness(1.25)}
+.topo-node.dim{opacity:.22;filter:saturate(.3)}
+body.attack .topo-node.blocks rect{stroke:var(--ok)!important;stroke-width:2.5!important;filter:drop-shadow(0 0 6px rgba(84,217,140,.6))}
 .topo-tooltip{position:absolute;background:var(--raise);border:1px solid var(--line-strong);border-radius:8px;
   padding:8px 12px;font-size:12px;color:var(--text);max-width:320px;pointer-events:none;z-index:30;
   opacity:0;transition:opacity .15s;box-shadow:0 6px 24px -6px rgba(0,0,0,.6);line-height:1.4}
@@ -212,10 +159,6 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--faint);
   font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:11px;line-height:1.7}
 footer b{color:var(--muted);font-weight:500}
 
-@media(max-width:820px){
-  .planes{grid-template-columns:1fr}
-  .corridor{padding-bottom:14px}
-}
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto}
 }
@@ -254,7 +197,7 @@ footer b{color:var(--muted);font-weight:500}
       <strong>SANS SEC530</strong> — Defensible Architecture Corridor &nbsp;·&nbsp; Maps to <strong>DoD Zero Trust Reference Architecture v2.0</strong> (7 pillars, 45 capabilities)
     </div>
     <h2>Layered tooling turns a flat network into a <em>corridor of controls</em> the adversary can't walk through unchallenged.</h2>
-    <p>Every box below is a real control, asset, or gate from the SEC530 outline — clustered by trust zone from the hostile internet on the left to the data crown jewels on the right. Click any node for the threats it answers, how it's hardened, vendor examples, and which DoD ZT capabilities it maps to. Flip <b>Attacker View</b> to watch a kill chain hit each gate.</p>
+    <p>Every node in the network map below is a real control, asset, or gate from the SEC530 outline — arranged from the hostile internet at the top down to the data crown jewels near the bottom, with the detection and identity planes spanning underneath. Click any node for the threats it answers, how it's hardened, vendor examples, and which DoD ZT capabilities it maps to. Flip <b>Attacker View</b> to watch a kill chain hit each gate.</p>
     <div class="killrail" id="killrail">
       <span class="kc"><b>Recon</b></span><span class="arr kc">›</span>
       <span class="kc"><b>Weaponize</b></span><span class="arr kc">›</span>
@@ -267,282 +210,21 @@ footer b{color:var(--muted);font-weight:500}
     <p style="font-size:.72rem;color:var(--muted);margin-top:8px">This rail follows the classic 7-stage Lockheed Martin Cyber Kill Chain. Prefer the MITRE ATT&CK Enterprise model? See it in the <a href="/segmentation-kill-chain/">Segmentation Kill Chain</a> mapper.</p>
   </section>
 
-  <div class="legend">
-    <span><i class="swatch" style="background:var(--hostile)"></i> Untrusted edge</span>
-    <span><i class="swatch" style="background:var(--guard)"></i> Control gate</span>
-    <span><i class="swatch" style="background:var(--transit)"></i> Network transit (L1–L3)</span>
-    <span><i class="swatch" style="background:var(--core)"></i> Trusted core / cloud</span>
-    <span><i class="swatch" style="background:var(--crown)"></i> Data crown jewels</span>
-  </div>
-
-  <div class="corridor" id="corridor"></div>
-
-  <!-- ============ NETWORK TOPOLOGY DIAGRAM ============ -->
+  <!-- ============ NETWORK ARCHITECTURE MAP ============ -->
   <div class="topo-section">
     <h2 class="topo-title">📡 Network Architecture — Tool Placement Map</h2>
-    <p class="topo-sub">Where each SEC530 control sits in a defensible enterprise. Follow the traffic flow from hostile internet (top) through every gate down to the data crown jewels (bottom). Hover any node for details.</p>
+    <p class="topo-sub">Where each SEC530 control sits in a defensible enterprise. Follow the traffic flow from hostile internet (top) through every gate down to the data crown jewels (bottom), with detection and identity running underneath. Click any node for full details — threats, hardening, tooling, vendors, and DoD ZT capability mapping. Hover for a quick summary.</p>
     <div class="topo-legend">
       <span><i class="swatch" style="background:var(--hostile)"></i> Threat</span>
       <span><i class="swatch" style="background:var(--guard)"></i> Perimeter Gate</span>
       <span><i class="swatch" style="background:var(--transit)"></i> L2/L3 Transit</span>
-      <span><i class="swatch" style="background:var(--core)"></i> Core/Endpoint</span>
+      <span><i class="swatch" style="background:var(--core)"></i> Core/Endpoint/Cloud</span>
       <span><i class="swatch" style="background:var(--crown)"></i> Crown Jewels</span>
-      <span><i class="swatch" style="background:var(--detect)"></i> Detection Plane</span>
+      <span><i class="swatch" style="background:var(--detect)"></i> Detection & Identity</span>
     </div>
     <div class="topo-wrap">
-      <svg viewBox="0 0 1200 860" class="topo-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-            <polygon points="0 0, 7 3.5, 0 7" fill="rgba(125,145,185,.4)"/>
-          </marker>
-          <marker id="arrow-red" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-            <polygon points="0 0, 7 3.5, 0 7" fill="var(--hostile)"/>
-          </marker>
-          <marker id="arrow-ok" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
-            <polygon points="0 0, 7 3.5, 0 7" fill="var(--ok)"/>
-          </marker>
-        </defs>
-
-        <!-- Zone background bands -->
-        <rect x="0" y="10" width="1200" height="80" rx="6" fill="rgba(255,107,91,.05)" stroke="rgba(255,107,91,.15)"/>
-        <text x="14" y="34" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">HOSTILE INTERNET</text>
-        <rect x="0" y="100" width="1200" height="160" rx="6" fill="rgba(242,166,90,.04)" stroke="rgba(242,166,90,.12)"/>
-        <text x="14" y="124" fill="var(--guard)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">PERIMETER / DMZ · CONTROL GATES</text>
-        <rect x="0" y="270" width="1200" height="120" rx="6" fill="rgba(63,208,201,.04)" stroke="rgba(63,208,201,.12)"/>
-        <text x="14" y="294" fill="var(--transit)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">ROUTING & SWITCHING · L2–L3</text>
-        <rect x="0" y="400" width="1200" height="100" rx="6" fill="rgba(110,168,254,.04)" stroke="rgba(110,168,254,.12)"/>
-        <text x="14" y="424" fill="var(--core)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">INTERNAL CORE · SEGMENTATION</text>
-        <rect x="0" y="510" width="1200" height="100" rx="6" fill="rgba(110,168,254,.03)" stroke="rgba(110,168,254,.10)"/>
-        <text x="14" y="534" fill="var(--core)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">ENDPOINTS & VIRTUALIZATION</text>
-        <rect x="0" y="620" width="1200" height="120" rx="6" fill="rgba(233,196,106,.04)" stroke="rgba(233,196,106,.12)"/>
-        <text x="14" y="644" fill="var(--crown)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">DATA CROWN JEWELS · THE OBJECTIVE</text>
-        <rect x="0" y="750" width="1200" height="100" rx="6" fill="rgba(185,140,255,.03)" stroke="rgba(185,140,255,.10)"/>
-        <text x="14" y="774" fill="var(--detect)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10" letter-spacing=".1em">DETECTION & VISIBILITY · SPANS ALL ZONES</text>
-
-        <!-- Flow lines (main traffic path) -->
-        <line x1="600" y1="70" x2="600" y2="118" stroke="var(--hostile)" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-red)"/>
-        <line x1="600" y1="220" x2="600" y2="270" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <line x1="600" y1="360" x2="600" y2="400" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <line x1="600" y1="460" x2="600" y2="510" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
-        <line x1="600" y1="580" x2="600" y2="620" stroke="rgba(125,145,185,.25)" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-        <!-- ===== Row 1: Hostile Internet ===== -->
-        <g class="topo-node" tabindex="0" data-info="Adversary · Recon → Weaponize → Deliver → Exploit → Install → C2 → Actions">
-          <rect x="530" y="40" width="140" height="40" rx="8" fill="var(--panel)" stroke="var(--hostile)" stroke-width="1.5"/>
-          <text x="600" y="58" text-anchor="middle" fill="var(--hostile)" font-size="13" font-weight="600">☣ Adversary</text>
-          <text x="600" y="72" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9">MITRE ATT&amp;CK</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Attacker sends: phishing, exploit attempts, C2 beacons, malware payloads">
-          <text x="380" y="64" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9" opacity=".6">phishing ▸</text>
-          <line x1="430" y1="60" x2="520" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
-          <text x="770" y="64" fill="var(--hostile)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9" opacity=".6">◂ C2 beacon</text>
-          <line x1="680" y1="60" x2="760" y2="60" stroke="var(--hostile)" stroke-width="1" stroke-dasharray="3,3" opacity=".4" marker-end="url(#arrow-red)"/>
-        </g>
-
-        <!-- ===== Row 2: Perimeter Gates ===== -->
-        <!-- NGFW -->
-        <g class="topo-node" tabindex="0" data-info="NGFW — Deep packet inspection, IPS, TLS intercept, DNS filtering, threat feeds">
-          <rect x="260" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="340" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🛡 NGFW</text>
-          <text x="340" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Palo Alto · Cisco · Fortinet</text>
-          <text x="340" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">DPI / IPS / TLS / DNS filter</text>
-        </g>
-        <!-- Web Proxy -->
-        <g class="topo-node" tabindex="0" data-info="Web Proxy — URL filtering, DLP/MIME inspection, sandbox analysis">
-          <rect x="440" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="515" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🌐 Web Proxy</text>
-          <text x="515" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Zscaler ZIA · Umbrella</text>
-          <text x="515" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">URL filter / sandbox / DLP</text>
-        </g>
-        <!-- SMTP Proxy -->
-        <g class="topo-node" tabindex="0" data-info="SMTP Proxy — Bayesian analysis, SPF/DKIM/DMARC, per-email encryption">
-          <rect x="610" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="685" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">✉ SMTP Proxy</text>
-          <text x="685" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Proofpoint · Mimecast</text>
-          <text x="685" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">SPF/DKIM/DMARC / phishing</text>
-        </g>
-        <!-- WAF -->
-        <g class="topo-node" tabindex="0" data-info="WAF — Dynamic policy learning, templates, HSTS, CAPTCHA">
-          <rect x="780" y="135" width="150" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="855" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🧱 WAF</text>
-          <text x="855" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">F5 ASM · Imperva · CF</text>
-          <text x="855" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Dynamic learning / templates</text>
-        </g>
-        <!-- VPN/ZTNA -->
-        <g class="topo-node" tabindex="0" data-info="Remote Access / VPN — Full-tunnel, Always-On VPN, ZTNA for cloud apps">
-          <rect x="950" y="135" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="1030" y="155" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔐 VPN / ZTNA</text>
-          <text x="1030" y="170" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">GlobalProtect · ZPA · Appgate</text>
-          <text x="1030" y="182" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Full-tunnel / post-auth check</text>
-        </g>
-
-        <!-- gate label -->
-        <text x="100" y="170" fill="var(--guard)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">⛓ GATES</text>
-        <text x="100" y="184" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">block: Deliver</text>
-        <text x="100" y="196" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Exploit · C2</text>
-
-        <!-- ===== Row 3: L3 Routing ===== -->
-        <g class="topo-node" tabindex="0" data-info="Hardened Router — AutoSecure/STIG, ACLs, routing auth, SNMPv3">
-          <rect x="200" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
-          <text x="285" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧭 Hardened Router</text>
-          <text x="285" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Cisco IOS XE · Juniper Junos</text>
-          <text x="285" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">ACL / bogon filter / SNMPv3</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="IPv6 Controls — RA Guard, DHCPv6 snooping, protocol-41 block">
-          <rect x="390" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
-          <text x="475" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⑥ IPv6 Controls</text>
-          <text x="475" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">RA Guard · Zeek dns.log</text>
-          <text x="475" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Block tunnel / rogue RA</text>
-        </g>
-
-        <!-- ===== Row 3b: L2 Switching ===== -->
-        <g class="topo-node" tabindex="0" data-info="Switch Hardening — DAI, DHCP snooping, Private VLANs, 802.1X">
-          <rect x="580" y="300" width="170" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
-          <text x="665" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🔌 Switch Hardening</text>
-          <text x="665" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Cisco Catalyst · Aruba CX</text>
-          <text x="665" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">DAI / DHCP snooping / PVLAN</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Wireless — WPA3-Enterprise, WIPS, rogue detection">
-          <rect x="770" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
-          <text x="850" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📶 Wireless</text>
-          <text x="850" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Aruba · Cisco Meraki</text>
-          <text x="850" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">WPA3-Ent / WIPS / rogue AP</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Physical / NAC — 802.1X, MAC filter, disabled-VLAN, badge+biometric">
-          <rect x="950" y="300" width="160" height="50" rx="8" fill="var(--panel)" stroke="var(--transit)" stroke-width="1.2"/>
-          <text x="1030" y="318" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🚪 NAC / Physical</text>
-          <text x="1030" y="332" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Cisco ISE · Forescout</text>
-          <text x="1030" y="343" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">802.1X / posture check</text>
-        </g>
-
-        <!-- ===== Row 4: Internal Core / Segmentation ===== -->
-        <g class="topo-node" tabindex="0" data-info="Segmentation Gateway — NGFW as internal gate, MCAP trust zoning, data-centric rules">
-          <rect x="200" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--guard)" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="300" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🚧 Segmentation Gateway</text>
-          <text x="300" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Palo Alto · Cisco · Illumio</text>
-          <text x="300" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Tier 1 (DC) ▸ Tier 2 (PII) ▸ Tier 3 (Ext)</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="IPsec Domain Isolation — Windows Firewall IPsec, mutual auth, optional encryption">
-          <rect x="430" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
-          <text x="530" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">🔗 IPsec Domain Isolation</text>
-          <text x="530" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Windows Firewall IPsec</text>
-          <text x="530" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Mutual auth / non-domain blocked</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Cloud Conditional Access — Entra ID CA, Intune, risk-based decisions">
-          <rect x="660" y="425" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
-          <text x="760" y="443" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">☁ Conditional Access</text>
-          <text x="760" y="458" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Entra ID · Okta · Ping Identity</text>
-          <text x="760" y="470" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Risk-based / device compliance</text>
-        </g>
-
-        <!-- lateral movement arrows -->
-        <line x1="400" y1="452" x2="430" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
-        <line x1="630" y1="452" x2="660" y2="452" stroke="var(--ok)" stroke-width="1" stroke-dasharray="3,3" opacity=".5" marker-end="url(#arrow-ok)"/>
-        <text x="415" y="448" fill="var(--ok)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="8.5" opacity=".6">← blocks lateral →</text>
-
-        <!-- ===== Row 5: Endpoints & Virtualization ===== -->
-        <g class="topo-node" tabindex="0" data-info="Endpoint Telemetry — Sysmon, auditd, honeytokens, forward to SIEM">
-          <rect x="100" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
-          <text x="185" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🖥 Endpoint Telemetry</text>
-          <text x="185" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Defender · CrowdStrike · SentinelOne</text>
-          <text x="185" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Sysmon / auditd / honeytokens</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Attack Surface Reduction — Intune ASR rules, block Office macros, LSASS theft">
-          <rect x="290" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
-          <text x="375" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">⛔ Attack Surface Reduction</text>
-          <text x="375" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Microsoft Intune ASR · Trellix</text>
-          <text x="375" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Block macros / LSASS / USB</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="DLP Agent — Auto file classification, policy enforcement, reason-for-action prompts">
-          <rect x="480" y="530" width="160" height="55" rx="8" fill="var(--panel)" stroke="var(--core)" stroke-width="1.2"/>
-          <text x="560" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📄 DLP Agent</text>
-          <text x="560" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Purview DLP · Symantec · Forcepoint</text>
-          <text x="560" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">File classification / exfil block</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Hypervisor / VM — vSwitch hardening, lockdown, port mirroring">
-          <rect x="660" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
-          <text x="745" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">🧰 Hypervisor / VM</text>
-          <text x="745" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">VMware vSphere · Hyper-V · Nutanix</text>
-          <text x="745" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">vSwitch reject MAC / lockdown</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Containers — AppArmor/SELinux, resource limits, trusted images">
-          <rect x="850" y="530" width="170" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1"/>
-          <text x="935" y="548" text-anchor="middle" fill="var(--text)" font-size="11.5" font-weight="600">📦 Containers</text>
-          <text x="935" y="562" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Kubernetes · Aqua · Sysdig</text>
-          <text x="935" y="574" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">AppArmor / resource limits</text>
-        </g>
-
-        <!-- ===== Row 6: Data Crown Jewels ===== -->
-        <g class="topo-node" tabindex="0" data-info="Database Security — Native logging, least privilege, anomaly alerts">
-          <rect x="250" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
-          <text x="350" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🗄 Database Security</text>
-          <text x="350" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">IBM Guardium · Imperva · Oracle DV</text>
-          <text x="350" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Least privilege / anomaly alert</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Encryption at Rest — FDE, TPM auto-boot, PIN unlock">
-          <rect x="480" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
-          <text x="580" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">🔒 Encryption at Rest</text>
-          <text x="580" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">BitLocker · VeraCrypt · AWS KMS</text>
-          <text x="580" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">FDE / TPM / &lt;5% perf impact</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Cloud Data — Conditional access, BYOD protection, MAM policies">
-          <rect x="710" y="655" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--crown)" stroke-width="1.5"/>
-          <text x="810" y="673" text-anchor="middle" fill="var(--crown)" font-size="12" font-weight="600">☁ Cloud Data Store</text>
-          <text x="810" y="687" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">AWS S3 · Azure Blob · GCP</text>
-          <text x="810" y="699" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">CA-gated / BYOD: no data pull</text>
-        </g>
-
-        <!-- crown jewels label -->
-        <text x="80" y="688" fill="var(--crown)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">👑 OBJECTIVE</text>
-        <text x="80" y="702" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Actions on</text>
-        <text x="80" y="712" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Objectives</text>
-
-        <!-- ===== Row 7: Detection Plane (spans all) ===== -->
-        <g class="topo-node" tabindex="0" data-info="SIEM — Centralized log aggregation, correlation, alerting, compliance">
-          <rect x="60" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
-          <text x="160" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🧠 SIEM</text>
-          <text x="160" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Splunk · Sentinel · QRadar</text>
-          <text x="160" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Correlate all zones / alert engine</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Network Flow & IDS — Zeek, Suricata/Snort, NetFlow analysis">
-          <rect x="280" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
-          <text x="380" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🔎 IDS / Network Flow</text>
-          <text x="380" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">Zeek · Suricata · ExtraHop</text>
-          <text x="380" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">dns/conn/files / NetFlow</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Honeypots & Tokens — T-Pot, Canarytokens, DCEPT, near-zero false positives">
-          <rect x="500" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
-          <text x="600" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">🍯 Honeypots & Tokens</text>
-          <text x="600" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">T-Pot · Thinkst Canary · DCEPT</text>
-          <text x="600" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Deception / near-zero FP</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="PKI & mTLS — Root→Intermediate→Sub CA, mutual cert auth, cert lifecycle">
-          <rect x="720" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
-          <text x="820" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">📜 PKI & mTLS</text>
-          <text x="820" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">DigiCert · Microsoft ADCS · Entrust</text>
-          <text x="820" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">Mutual auth / cert lifecycle</text>
-        </g>
-        <g class="topo-node" tabindex="0" data-info="Zero Trust Model — DoD ZT RA v2.0 (7 pillars), never trust always verify">
-          <rect x="940" y="770" width="200" height="55" rx="8" fill="var(--panel)" stroke="var(--detect)" stroke-width="1.2"/>
-          <text x="1040" y="788" text-anchor="middle" fill="var(--detect)" font-size="12" font-weight="600">⊘ Zero Trust Model</text>
-          <text x="1040" y="802" text-anchor="middle" fill="var(--muted)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="10">DoD ZT RA v2.0 · NIST SP 800-207</text>
-          <text x="1040" y="814" text-anchor="middle" fill="var(--faint)" font-family="Cascadia Code, Fira Code, Consolas, monospace" font-size="9.5">7 pillars / 45 capabilities</text>
-        </g>
-
-        <!-- Vertical detection feed arrows (spanning zones) -->
-        <line x1="160" y1="760" x2="160" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
-        <line x1="380" y1="760" x2="380" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
-        <line x1="600" y1="760" x2="600" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
-        <line x1="820" y1="760" x2="820" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
-        <line x1="1040" y1="760" x2="1040" y2="750" stroke="var(--detect)" stroke-width="1" opacity=".3"/>
-
-      </svg>
+      <svg id="topoSvg" class="topo-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
-  </div>
-
-  <div class="planes">
-    <div class="plane" id="plane-detect"></div>
-    <div class="plane" id="plane-identity"></div>
   </div>
 </div>
 
@@ -698,6 +380,27 @@ const ZONES = [
     ]
   },
   {
+    id:"cloud", name:"Cloud / Hybrid", trust:"core", sub:"530.4/.5 · extend the model",
+    nodes:[
+      {kind:"Gate",gate:true,name:"Conditional Access",ic:"☁",day:5,
+        lede:"The cloud's policy gate. Context — user, device, location, risk — decides every request, the heart of treating everything as internet-accessible.",
+        tools:["Entra ID Conditional Access","Intune MAM (BYOD) + MDM","Mobile threat-defense risk signals"],
+        threats:["BYOD mobile malware (keylog/screen-scrape/TLS spoof)","Token theft & cloud pivot","Unmanaged-device data pull"],
+        controls:["Risk-based real-time access decisions","BYOD: no data pull, disable drive mapping, MFA","Compliance-gated WiFi/VPN access"],
+        kills:["Deliver","Actions"],
+        vendors:["Microsoft Entra ID","Okta","Ping Identity"],
+        dodcaps:["1.2 Conditional Access","1.7 Least Privilege","1.8 Continuous Auth"]},
+      {kind:"Asset",name:"Entra ID Sync Defense",ic:"🪪",day:5,
+        lede:"A documented attack chain: rogue cert + L2 spoofing hijacks on-prem→cloud sync. Layered defense raises the attacker's cost.",
+        tools:["PAM for AD Connect server","Cert-template restriction & monitoring","L2 hardening (DAI/DHCP snooping)"],
+        threats:["Fake TLS cert for login domain","Rogue DHCP / ARP / IPv6 RA during sync","Credential capture & cloud pivot"],
+        controls:["Endpoint security + secure workstations","Network segregation & monitoring","Restrict server-auth cert templates","Monitor enrollment activity"],
+        kills:["Exploit","C2"],
+        vendors:["Microsoft Entra Connect","Microsoft Defender for Identity"],
+        dodcaps:["1.5 Identity Federation","1.9 Integrated ICAM"]},
+    ]
+  },
+  {
     id:"endpoints", name:"Endpoints", trust:"core", sub:"530.4/.5 · last mile",
     nodes:[
       {kind:"Asset",name:"Endpoint Telemetry",ic:"🖥",day:5,
@@ -768,27 +471,6 @@ const ZONES = [
         dodcaps:["4.5 Data Encryption & Rights Mgmt"]},
     ]
   },
-  {
-    id:"cloud", name:"Cloud / Hybrid", trust:"core", sub:"530.4/.5 · extend the model",
-    nodes:[
-      {kind:"Gate",gate:true,name:"Conditional Access",ic:"☁",day:5,
-        lede:"The cloud's policy gate. Context — user, device, location, risk — decides every request, the heart of treating everything as internet-accessible.",
-        tools:["Entra ID Conditional Access","Intune MAM (BYOD) + MDM","Mobile threat-defense risk signals"],
-        threats:["BYOD mobile malware (keylog/screen-scrape/TLS spoof)","Token theft & cloud pivot","Unmanaged-device data pull"],
-        controls:["Risk-based real-time access decisions","BYOD: no data pull, disable drive mapping, MFA","Compliance-gated WiFi/VPN access"],
-        kills:["Deliver","Actions"],
-        vendors:["Microsoft Entra ID","Okta","Ping Identity"],
-        dodcaps:["1.2 Conditional Access","1.7 Least Privilege","1.8 Continuous Auth"]},
-      {kind:"Asset",name:"Entra ID Sync Defense",ic:"🪪",day:5,
-        lede:"A documented attack chain: rogue cert + L2 spoofing hijacks on-prem→cloud sync. Layered defense raises the attacker's cost.",
-        tools:["PAM for AD Connect server","Cert-template restriction & monitoring","L2 hardening (DAI/DHCP snooping)"],
-        threats:["Fake TLS cert for login domain","Rogue DHCP / ARP / IPv6 RA during sync","Credential capture & cloud pivot"],
-        controls:["Endpoint security + secure workstations","Network segregation & monitoring","Restrict server-auth cert templates","Monitor enrollment activity"],
-        kills:["Exploit","C2"],
-        vendors:["Microsoft Entra Connect","Microsoft Defender for Identity"],
-        dodcaps:["1.5 Identity Federation","1.9 Integrated ICAM"]},
-    ]
-  },
 ];
 
 const PLANES = [
@@ -856,42 +538,6 @@ const PLANES = [
 
 const TRUSTVAR={hostile:"--hostile",guard:"--guard",transit:"--transit",core:"--core",crown:"--crown"};
 
-/* ============ RENDER ============ */
-const corridor=document.getElementById('corridor');
-ZONES.forEach(z=>{
-  const col=document.createElement('div');
-  col.className='zone';col.dataset.zone=z.id;
-  const c=`var(${TRUSTVAR[z.trust]})`;
-  col.innerHTML=`<div class="zone-head"><span class="zbar" style="background:${c}"></span><h3>${z.name}</h3></div>
-    <div class="zone-sub">${z.sub}</div>`;
-  z.nodes.forEach((n,i)=>col.appendChild(makeNode(n,z,i)));
-  corridor.appendChild(col);
-});
-
-PLANES.forEach(p=>{
-  const el=document.getElementById(p.id);
-  el.style.borderColor='var(--line)';
-  el.innerHTML=`<h4><span style="color:${p.color}">${p.ic}</span> ${p.name}</h4><div class="psub">${p.sub}</div><div class="plane-grid"></div>`;
-  const grid=el.querySelector('.plane-grid');
-  p.nodes.forEach((n,i)=>grid.appendChild(makeNode(n,{name:p.name,trust:'core'},i,p.color)));
-});
-
-function makeNode(n,z,i,accentOverride){
-  const el=document.createElement('div');
-  el.className='node'+(n.gate?' gate':'');
-  el.tabIndex=0;el.dataset.day=n.day;
-  if(n.kills&&n.kills.length)el.dataset.kills=n.kills.join(',');
-  const tools=(n.tools||[]).slice(0,3).map(t=>`<span class="pill">${t.split(' ').slice(0,3).join(' ')}</span>`).join('');
-  el.innerHTML=`<span class="nkind">${n.kind} · 530.${n.day}</span>
-    <span class="nname"><span class="ic">${n.ic}</span>${n.name}</span>
-    <div class="ntools">${tools}</div>`;
-  const accent=accentOverride||`var(${TRUSTVAR[z.trust]})`;
-  el._data={n,z,accent};
-  el.addEventListener('click',()=>openDrawer(el._data));
-  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(el._data)}});
-  return el;
-}
-
 /* ============ DRAWER ============ */
 const scrim=document.getElementById('scrim'),drawer=document.getElementById('drawer');
 function sec(cls,title,items){
@@ -925,6 +571,153 @@ scrim.addEventListener('click',closeDrawer);
 document.getElementById('dr-close').addEventListener('click',closeDrawer);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
 
+/* ============ NETWORK ARCHITECTURE MAP — built directly from ZONES/PLANES ============ */
+const ROW_ORDER = [
+  {type:'zone', id:'edge'}, {type:'zone', id:'perimeter'}, {type:'zone', id:'l3'},
+  {type:'zone', id:'l2'}, {type:'zone', id:'core'}, {type:'zone', id:'cloud'},
+  {type:'zone', id:'endpoints'}, {type:'zone', id:'datacenter'}, {type:'zone', id:'data'},
+  {type:'plane', id:'plane-detect'}, {type:'plane', id:'plane-identity'},
+];
+
+const SVGNS='http://www.w3.org/2000/svg';
+function svgEl(tag,attrs,text){
+  const el=document.createElementNS(SVGNS,tag);
+  Object.entries(attrs||{}).forEach(([k,v])=>el.setAttribute(k,v));
+  if(text!=null)el.textContent=text;
+  return el;
+}
+
+function renderTopology(){
+  const svg=document.getElementById('topoSvg');
+  svg.innerHTML='';
+
+  const defs=svgEl('defs',{});
+  const mk=(id,fill)=>{
+    const m=svgEl('marker',{id,markerWidth:7,markerHeight:7,refX:6,refY:3.5,orient:'auto'});
+    m.appendChild(svgEl('polygon',{points:'0 0, 7 3.5, 0 7', fill}));
+    return m;
+  };
+  defs.appendChild(mk('arrow','rgba(125,145,185,.4)'));
+  defs.appendChild(mk('arrow-red','var(--hostile)'));
+  defs.appendChild(mk('arrow-ok','var(--ok)'));
+  svg.appendChild(defs);
+
+  const rows = ROW_ORDER.map(r=>{
+    const src = r.type==='zone' ? ZONES.find(z=>z.id===r.id) : PLANES.find(p=>p.id===r.id);
+    const colorVar = r.type==='zone' ? `var(${TRUSTVAR[src.trust]})` : src.color;
+    return {src, type:r.type, colorVar, nodes:src.nodes};
+  });
+
+  const CANVAS_W=1600;
+  const MAX_COLS=Math.max(...rows.map(r=>r.nodes.length));
+  const MARGIN_X=50, COL_GAP=24;
+  const usableW=CANVAS_W-2*MARGIN_X;
+  const colW=(usableW-(MAX_COLS-1)*COL_GAP)/MAX_COLS;
+  const NODE_H=66, LABEL_H=26, ROW_PAD_BOTTOM=14, ROW_GAP=20;
+  const rowH=LABEL_H+NODE_H+ROW_PAD_BOTTOM;
+  let y=24;
+
+  rows.forEach((row,ri)=>{
+    if(ri>0){
+      svg.appendChild(svgEl('line',{x1:CANVAS_W/2,y1:y-ROW_GAP,x2:CANVAS_W/2,y2:y,
+        stroke:'rgba(125,145,185,.35)','stroke-width':1.5,'marker-end':'url(#arrow)'}));
+    }
+
+    svg.appendChild(svgEl('rect',{x:0,y,width:CANVAS_W,height:rowH,rx:6,
+      fill:row.colorVar,'fill-opacity':.045,stroke:row.colorVar,'stroke-opacity':.16,'stroke-width':1}));
+    svg.appendChild(svgEl('text',{x:16,y:y+17,fill:row.colorVar,
+      'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':10,'letter-spacing':'.1em'},
+      row.src.name.toUpperCase()));
+
+    const n=row.nodes.length;
+    const contentW=n*colW+(n-1)*COL_GAP;
+    const startX=MARGIN_X+(usableW-contentW)/2;
+    const nodeY=y+LABEL_H;
+
+    row.nodes.forEach((node,ni)=>{
+      const x=startX+ni*(colW+COL_GAP);
+      const g=svgEl('g',{class:'topo-node',tabindex:'0','data-day':node.day});
+      if(node.kills&&node.kills.length) g.setAttribute('data-kills',node.kills.join(','));
+
+      const strokeColor = node.gate ? 'var(--guard)' : row.colorVar;
+      const rectAttrs={x,y:nodeY,width:colW,height:NODE_H,rx:8,fill:'var(--panel)',
+        stroke:strokeColor,'stroke-width':node.gate?1.5:1.2};
+      if(node.gate) rectAttrs['stroke-dasharray']='4,2';
+      g.appendChild(svgEl('rect',rectAttrs));
+
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+23,'text-anchor':'middle',fill:'var(--text)','font-size':13,'font-weight':600},
+        `${node.ic} ${node.name}`));
+      const vendorsTxt=(node.vendors||[]).slice(0,2).join(' · ');
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+39,'text-anchor':'middle',fill:'var(--muted)',
+        'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':10}, vendorsTxt));
+      const toolTxt=(node.tools||[])[0]||'';
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+53,'text-anchor':'middle',fill:'var(--faint)',
+        'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':9.5},
+        toolTxt.length>40?toolTxt.slice(0,38)+'…':toolTxt));
+
+      const zForDrawer = row.type==='zone' ? row.src : {name:row.src.name, trust:'core'};
+      const accent = row.type==='zone' ? `var(${TRUSTVAR[row.src.trust]})` : row.src.color;
+      const openIt=()=>openDrawer({n:node,z:zForDrawer,accent});
+      g.addEventListener('click',openIt);
+      g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openIt();}});
+      g.dataset.info=node.lede;
+
+      svg.appendChild(g);
+    });
+
+    y+=rowH+ROW_GAP;
+  });
+
+  svg.setAttribute('viewBox',`0 0 ${CANVAS_W} ${y+8}`);
+  wireTopologyTooltips();
+}
+
+/* ============ TOPOLOGY TOOLTIPS ============ */
+let topoWrap, tooltip;
+function wireTopologyTooltips(){
+  topoWrap = topoWrap || document.querySelector('.topo-wrap');
+  if(!tooltip){
+    tooltip = document.createElement('div');
+    tooltip.className = 'topo-tooltip';
+    topoWrap.appendChild(tooltip);
+  }
+  document.querySelectorAll('.topo-node').forEach(node => {
+    const info = node.dataset.info;
+    if(!info) return;
+    node.addEventListener('mouseenter', () => {
+      tooltip.textContent = info;
+      tooltip.style.opacity = '1';
+    });
+    node.addEventListener('mousemove', (e) => {
+      const rect = topoWrap.getBoundingClientRect();
+      let x = e.clientX - rect.left + 12;
+      let y = e.clientY - rect.top + 12;
+      if(x + 320 > rect.width) x = e.clientX - rect.left - 332;
+      if(y + 60 > rect.height) y = e.clientY - rect.top - 50;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    });
+    node.addEventListener('mouseleave', () => {
+      tooltip.style.opacity = '0';
+    });
+    node.addEventListener('focus', () => {
+      const rect = node.getBoundingClientRect();
+      const wrapRect = topoWrap.getBoundingClientRect();
+      let x = rect.left - wrapRect.left;
+      let y = rect.bottom - wrapRect.top + 10;
+      if(x + 320 > wrapRect.width) x = wrapRect.width - 330;
+      if(y + 60 > wrapRect.height) y = rect.top - wrapRect.top - 60;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+      tooltip.textContent = info;
+      tooltip.style.opacity = '1';
+    });
+    node.addEventListener('blur', () => {
+      tooltip.style.opacity = '0';
+    });
+  });
+}
+
 /* ============ DAY FILTER ============ */
 function selectDayChip(chip){
   document.querySelectorAll('.chip[data-day]').forEach(c=>{
@@ -934,7 +727,7 @@ function selectDayChip(chip){
   chip.classList.add('on');
   chip.setAttribute('aria-pressed','true');
   const d=chip.dataset.day;
-  document.querySelectorAll('.node').forEach(node=>{
+  document.querySelectorAll('.topo-node[data-day]').forEach(node=>{
     const show=(d==='0'||node.dataset.day===d);
     node.classList.toggle('dim',!show);
   });
@@ -959,7 +752,7 @@ atk.addEventListener('click',()=>{
 });
 function stopSequence(){
   if(seq)clearTimeout(seq);
-  document.querySelectorAll('.node.blocks').forEach(n=>n.classList.remove('blocks'));
+  document.querySelectorAll('.topo-node.blocks').forEach(n=>n.classList.remove('blocks'));
   document.querySelectorAll('.killrail .kc').forEach(k=>k.classList.remove('broken'));
 }
 function runSequence(){
@@ -969,7 +762,7 @@ function runSequence(){
     if(!attacking)return;
     const phase=phases[idx];
     // glow every node that blocks this phase
-    const blockers=[...document.querySelectorAll('.node[data-kills]')].filter(n=>n.dataset.kills.split(',').includes(phase));
+    const blockers=[...document.querySelectorAll('.topo-node[data-kills]')].filter(n=>n.dataset.kills.split(',').includes(phase));
     blockers.forEach(n=>n.classList.add('blocks'));
     // only mark the rail phase broken if something actually blocks it
     if(blockers.length){
@@ -983,47 +776,9 @@ function runSequence(){
   step();
 }
 
-/* ============ TOPOLOGY TOOLTIPS ============ */
-const topoWrap = document.querySelector('.topo-wrap');
-const tooltip = document.createElement('div');
-tooltip.className = 'topo-tooltip';
-topoWrap.appendChild(tooltip);
-document.querySelectorAll('.topo-node').forEach(node => {
-  const info = node.dataset.info;
-  if(!info) return;
-  node.style.cursor = 'help';
-  node.addEventListener('mouseenter', (e) => {
-    tooltip.textContent = info;
-    tooltip.style.opacity = '1';
-  });
-  node.addEventListener('mousemove', (e) => {
-    const rect = topoWrap.getBoundingClientRect();
-    let x = e.clientX - rect.left + 12;
-    let y = e.clientY - rect.top + 12;
-    if(x + 320 > rect.width) x = e.clientX - rect.left - 332;
-    if(y + 60 > rect.height) y = e.clientY - rect.top - 50;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  });
-  node.addEventListener('mouseleave', () => {
-    tooltip.style.opacity = '0';
-  });
-  node.addEventListener('focus', () => {
-    const rect = node.getBoundingClientRect();
-    const wrapRect = topoWrap.getBoundingClientRect();
-    let x = rect.left - wrapRect.left;
-    let y = rect.bottom - wrapRect.top + 10;
-    if(x + 320 > wrapRect.width) x = wrapRect.width - 330;
-    if(y + 60 > wrapRect.height) y = rect.top - wrapRect.top - 60;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-    tooltip.textContent = info;
-    tooltip.style.opacity = '1';
-  });
-  node.addEventListener('blur', () => {
-    tooltip.style.opacity = '0';
-  });
-});
+/* ============ INIT ============ */
+renderTopology();
 </script>
+
 </body>
 </html>
