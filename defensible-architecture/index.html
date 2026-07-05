@@ -140,10 +140,8 @@ header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;
 .topo-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-family:'Cascadia Code','Fira Code',Consolas,monospace;font-size:10px;color:var(--muted)}
 .topo-legend span{display:flex;align-items:center;gap:7px}
 .swatch{width:11px;height:11px;border-radius:3px;flex-shrink:0}
-.topo-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2);
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%);
-  mask-image:linear-gradient(to right,#000 calc(100% - 48px),transparent 100%)}
-.topo-svg{width:100%;min-width:1600px;height:auto;display:block}
+.topo-wrap{border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--panel-2)}
+.topo-svg{width:100%;height:auto;display:block}
 .topo-node{cursor:pointer;transition:opacity .15s,filter .15s}
 .topo-node:hover rect{filter:brightness(1.25)}
 .topo-node:hover text{filter:brightness(1.15)}
@@ -586,6 +584,10 @@ function svgEl(tag,attrs,text){
   if(text!=null)el.textContent=text;
   return el;
 }
+function truncateText(str,max){
+  if(!str) return '';
+  return str.length>max ? str.slice(0,max-1)+'…' : str;
+}
 
 function renderTopology(){
   const svg=document.getElementById('topoSvg');
@@ -608,12 +610,12 @@ function renderTopology(){
     return {src, type:r.type, colorVar, nodes:src.nodes};
   });
 
-  const CANVAS_W=1600;
+  const CANVAS_W=1200;
   const MAX_COLS=Math.max(...rows.map(r=>r.nodes.length));
-  const MARGIN_X=50, COL_GAP=24;
+  const MARGIN_X=40, COL_GAP=20;
   const usableW=CANVAS_W-2*MARGIN_X;
   const colW=(usableW-(MAX_COLS-1)*COL_GAP)/MAX_COLS;
-  const NODE_H=66, LABEL_H=26, ROW_PAD_BOTTOM=14, ROW_GAP=20;
+  const NODE_H=170, LABEL_H=26, ROW_PAD_BOTTOM=14, ROW_GAP=20;
   const rowH=LABEL_H+NODE_H+ROW_PAD_BOTTOM;
   let y=24;
 
@@ -645,15 +647,15 @@ function renderTopology(){
       if(node.gate) rectAttrs['stroke-dasharray']='4,2';
       g.appendChild(svgEl('rect',rectAttrs));
 
-      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+23,'text-anchor':'middle',fill:'var(--text)','font-size':13,'font-weight':600},
-        `${node.ic} ${node.name}`));
-      const vendorsTxt=(node.vendors||[]).slice(0,2).join(' · ');
-      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+39,'text-anchor':'middle',fill:'var(--muted)',
+      const nameTxt=truncateText(`${node.ic} ${node.name}`,28);
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+70,'text-anchor':'middle',fill:'var(--text)','font-size':13,'font-weight':600},
+        nameTxt));
+      const vendorsTxt=truncateText((node.vendors||[]).slice(0,2).join(' · '),32);
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+98,'text-anchor':'middle',fill:'var(--muted)',
         'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':10}, vendorsTxt));
-      const toolTxt=(node.tools||[])[0]||'';
-      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+53,'text-anchor':'middle',fill:'var(--faint)',
-        'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':9.5},
-        toolTxt.length>40?toolTxt.slice(0,38)+'…':toolTxt));
+      const toolTxt=truncateText((node.tools||[])[0]||'',32);
+      g.appendChild(svgEl('text',{x:x+colW/2,y:nodeY+122,'text-anchor':'middle',fill:'var(--faint)',
+        'font-family':"'Cascadia Code','Fira Code',Consolas,monospace",'font-size':9.5}, toolTxt));
 
       const zForDrawer = row.type==='zone' ? row.src : {name:row.src.name, trust:'core'};
       const accent = row.type==='zone' ? `var(${TRUSTVAR[row.src.trust]})` : row.src.color;
