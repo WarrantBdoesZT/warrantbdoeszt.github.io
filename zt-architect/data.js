@@ -961,21 +961,33 @@ const ZT_DATA = {
     {
       "id": "appgate",
       "name": "Appgate",
-      "product": "Appgate SDP",
+      "product": "AppGate ZTNA",
       "category": "SDP / ZTNA",
       "icon": "🚪",
       "roles": [
         "PE",
-        "PEP"
+        "PEP",
+        "PIP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
-        "5.4"
+        "1.2",
+        "1.7",
+        "1.8",
+        "2.3",
+        "2.4",
+        "3.4",
+        "5.1",
+        "5.3",
+        "5.4",
+        "6.1",
+        "7.1",
+        "7.6"
       ],
       "nist_1800_35": true,
       "builds": "E2B3, E2B4, E2B5, E2B6",
-      "description": "SDP provider in Enterprise 2 builds. Identity-aware, per-application access without network exposure.",
-      "zt_role": "PDP for SDP access decisions. PEP via client connectors mediating application access."
+      "description": "Direct-routed ZTNA for all users, devices and workloads. Identity-aware, per-application access with cloaking, device posture checks, and AI-driven application discovery for least-privilege enforcement.",
+      "zt_role": "PDP for SDP access decisions with risk-informed dynamic policies. PEP via client connectors mediating application access. PIP providing device posture and identity attributes."
     },
     {
       "id": "illumio",
@@ -2630,6 +2642,38 @@ const ZT_DATA = {
       "builds": "N/A",
       "description": "Modern PAM with distributed quantum-resistant password vault, JIT access, session recording, and MFA at every layer. Covers IT, OT, and cloud privileged accounts with no single point of failure.",
       "zt_role": "PEP for privileged session brokering, recording, and credential vaulting. PDP for just-in-time privileged access decisions with time-limited, least-privilege elevation."
+    },
+    {
+      "id": "tanium",
+      "name": "Tanium",
+      "product": "Tanium Platform (Asset, Patch, Threat Response, Compliance, Client Management)",
+      "category": "Endpoint Security & Management",
+      "icon": "🖥️",
+      "roles": [
+        "PEP",
+        "PIP"
+      ],
+      "pillar": "Device",
+      "capabilities": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.5",
+        "2.6",
+        "2.7",
+        "3.1",
+        "3.5",
+        "6.2",
+        "6.5",
+        "7.1",
+        "7.2",
+        "7.3",
+        "7.5"
+      ],
+      "nist_1800_35": false,
+      "builds": "N/A",
+      "description": "Real-time endpoint management and security platform providing unified visibility, patch management, threat detection, and automated response across millions of endpoints.",
+      "zt_role": "PEP enforcing device compliance, patch, and configuration policies at the endpoint. PIP providing real-time device posture, asset inventory, and telemetry to policy engines."
     }
   ],
   "capabilities_simple": {
