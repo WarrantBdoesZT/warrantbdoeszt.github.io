@@ -78,6 +78,35 @@
             transform: translateY(-2px);
         }
 
+        .hero .cta-row {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .hero .cta-row .cta {
+            margin-top: 0;
+        }
+
+        .hero .cta.secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .hero .cta.secondary:hover {
+            background: rgba(0, 217, 163, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .hero .cta-note {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
         .container {
             max-width: 880px;
             margin: 0 auto;
@@ -255,7 +284,11 @@
     <div class="shield">🔍</div>
     <h1>ZTAuditor</h1>
     <p>Identifies network segmentation gaps and lateral movement paths attackers could exploit across your environment.</p>
-    <a href="https://github.com/WarrantBdoesZT/ZeroTrustAuditor" class="cta">View on GitHub</a>
+    <div class="cta-row">
+        <a href="/ztauditor/ZeroTrustAuditor-win-x64.zip" class="cta">⬇ Download for Windows</a>
+        <a href="https://github.com/WarrantBdoesZT/ZeroTrustAuditor" class="cta secondary">View on GitHub</a>
+    </div>
+    <p class="cta-note">v2.0 · win-x64 · ~34 MB · self-contained, no .NET runtime required</p>
 </div>
 
 <div class="container">
