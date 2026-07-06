@@ -76,6 +76,18 @@
             font-size: .82rem; font-family: inherit; cursor: pointer;
         }
         .sort-select:focus { outline: none; border-color: var(--accent-dim); }
+        .role-filter-row { display: flex; gap: 8px; margin-bottom: 16px; }
+        .role-chip {
+            flex: 1; padding: 7px 0; text-align: center; font-size: .74rem; font-weight: 700;
+            letter-spacing: .3px; border-radius: 8px; border: 1px solid var(--line);
+            cursor: pointer; user-select: none; color: var(--muted); background: var(--panel-2);
+            transition: all .15s;
+        }
+        .role-chip:hover { border-color: var(--line-strong); }
+        .role-chip:focus-visible { outline: 2px solid var(--accent-dim); outline-offset: 1px; }
+        .role-chip.pe.active { background: rgba(242,166,90,.18); border-color: var(--pe); color: var(--pe); }
+        .role-chip.pep.active { background: rgba(63,208,201,.15); border-color: var(--pep); color: var(--pep); }
+        .role-chip.pip.active { background: rgba(185,140,255,.15); border-color: var(--pip); color: var(--pip); }
         .vendor-list { display: flex; flex-direction: column; gap: 8px; max-height: 600px; overflow-y: auto; }
         .vendor-item {
             display: flex; align-items: center; gap: 12px; padding: 12px;
@@ -290,6 +302,11 @@
                     <option value="nist">NIST SP 1800-35 First</option>
                 </select>
             </div>
+            <div class="role-filter-row" id="roleFilterRow">
+                <div class="role-chip pe" data-role="PE" role="button" tabindex="0" aria-pressed="false">PDP</div>
+                <div class="role-chip pep" data-role="PEP" role="button" tabindex="0" aria-pressed="false">PEP</div>
+                <div class="role-chip pip" data-role="PIP" role="button" tabindex="0" aria-pressed="false">PIP</div>
+            </div>
             <div class="vendor-list" id="vendorList"></div>
         </div>
 
@@ -323,6 +340,7 @@
 <script src="data.js"></script>
 <script>
 const selectedVendors = new Set();
+const activeRoleFilters = new Set();
 let currentSort = 'name-asc';
 
 const PILLAR_ORDER = ['User','Device','Application & Workload','Data','Network/Environment','Automation & Orchestration','Visibility & Analytics'];
@@ -362,6 +380,7 @@ function sortVendors(vendors) {
 function renderVendorList(filter = '') {
     const list = document.getElementById('vendorList');
     const filtered = ZT_DATA.vendors.filter(v => {
+        if (activeRoleFilters.size > 0 && !v.roles.some(r => activeRoleFilters.has(r))) return false;
         if (!filter) return true;
         const q = filter.toLowerCase();
         return v.name.toLowerCase().includes(q) ||
@@ -567,6 +586,30 @@ document.getElementById('vendorSearch').addEventListener('input', (e) => {
 document.getElementById('vendorSort').addEventListener('change', (e) => {
     currentSort = e.target.value;
     renderVendorList(document.getElementById('vendorSearch').value);
+});
+
+// ===== ROLE FILTER (PDP / PEP / PIP) =====
+function toggleRoleFilter(role) {
+    if (activeRoleFilters.has(role)) activeRoleFilters.delete(role);
+    else activeRoleFilters.add(role);
+
+    document.querySelectorAll('.role-chip').forEach(chip => {
+        const active = activeRoleFilters.has(chip.dataset.role);
+        chip.classList.toggle('active', active);
+        chip.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    renderVendorList(document.getElementById('vendorSearch').value);
+}
+
+document.querySelectorAll('.role-chip').forEach(chip => {
+    chip.addEventListener('click', () => toggleRoleFilter(chip.dataset.role));
+    chip.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleRoleFilter(chip.dataset.role);
+        }
+    });
 });
 
 // ===== INIT =====
