@@ -646,12 +646,14 @@ const ZT_DATA = {
       "capabilities": [
         "2.1",
         "2.2",
-        "2.3"
+        "2.3",
+        "5.3",
+        "5.4"
       ],
       "nist_1800_35": true,
       "builds": "E3B2, E3B3, E3B4",
-      "description": "Co-PDP in 3 Enterprise 3 builds — endpoint compliance and NAC. Agentless device discovery, classification, and control.",
-      "zt_role": "PDP for compliance decisions. PIP for endpoint visibility. PEP via eyeControl enforcement."
+      "description": "Co-PDP in 3 Enterprise 3 builds — endpoint compliance and NAC. Agentless device discovery, classification, and control. eyeSegment drives macro/micro network segmentation from device posture.",
+      "zt_role": "PDP for compliance decisions. PIP for endpoint visibility. PEP via eyeControl VLAN/ACL assignment and eyeSegment enforcement."
     },
     {
       "id": "maas360",
@@ -970,18 +972,23 @@ const ZT_DATA = {
       "category": "NAC / Network Segmentation",
       "icon": "🔵",
       "roles": [
-        "PEP",
-        "PE"
+        "PIP",
+        "PE",
+        "PEP"
       ],
       "pillar": "Network/Environment",
       "capabilities": [
+        "2.1",
+        "2.2",
+        "2.3",
         "5.2",
-        "5.3"
+        "5.3",
+        "5.4"
       ],
       "nist_1800_35": true,
       "builds": "E2B1",
-      "description": "Cisco ISE for TrustSec-based macro/micro segmentation and network access control. Secure Firewall for enforcement.",
-      "zt_role": "PDP for network access decisions (ISE). PEP for TrustSec SGACL enforcement on switches."
+      "description": "Cisco ISE for endpoint profiling, NAC, and TrustSec-based macro/micro segmentation. Secure Firewall for enforcement.",
+      "zt_role": "PDP for network access decisions (ISE). PIP for endpoint profiling and device visibility. PEP for TrustSec SGACL enforcement on switches."
     },
     {
       "id": "appgate",
