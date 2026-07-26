@@ -317,12 +317,12 @@
 <div class="hero">
     <div class="shield">🔍</div>
     <h1>ZTAuditor</h1>
-    <p>Identifies network segmentation gaps and lateral movement paths attackers could exploit across your environment.</p>
+    <p>Probes your internal network from an assumed-breach posture and reports which servers and endpoints allow high-risk ports &mdash; from which segments, and how far a compromise would spread.</p>
     <div class="cta-row">
         <a href="/ztauditor/ZeroTrustAuditor-win-x64.zip" class="cta">⬇ Download for Windows</a>
         <a href="https://github.com/WarrantBdoesZT/ZeroTrustAuditor" class="cta secondary">View on GitHub</a>
     </div>
-    <p class="cta-note">v2.0 · win-x64 · ~34 MB · self-contained, no .NET runtime required</p>
+    <p class="cta-note">v3.0 · win-x64 · ~34 MB · self-contained, no .NET runtime required</p>
     <p class="checksum">
         SHA&#8209;256 <code>2b6e31db8f8967b3573bae86d9488de2a58c61f4f20c73ec61c50ae7fe5fb9e9</code>
         <span class="verify">Verify before running: <code>Get-FileHash .\ZeroTrustAuditor-win-x64.zip</code></span>
@@ -332,16 +332,30 @@
 <div class="container">
     <h2 class="section-title">💡 Why I Built This</h2>
     <div class="why-card">
-        <p>In a Zero Trust environment, you assume an attacker is already inside — the question isn't <em>if</em> they got in, it's <em>how far can they go</em>. ZTAuditor answers that by reading the configuration of your Active Directory, servers, and network, then flagging every misconfiguration that would let an attacker move laterally, escalate privileges, or reach a Domain Controller.</p>
-        <p>Think of it as a thorough checklist that never forgets a question: it tells you what's wrong, how dangerous it is, which MITRE ATT&amp;CK technique it maps to, and exactly how to fix it.</p>
+        <p>You assume an attacker already has a foothold. The question isn't <em>if</em> they got in &mdash; it's <em>how far can they go before something stops them</em>. ZTAuditor answers that by probing outward from where it runs and comparing what it can actually reach against what your segmentation policy says should be reachable.</p>
+        <p>The unit of analysis is a <strong>path</strong> &mdash; <em>source zone &rarr; target endpoint : port</em> &mdash; because a segmentation flaw is never a property of a host on its own. The same SMB port is a designed admin route from your management VLAN and a domain-compromise path from a guest VLAN.</p>
+
+        <p class="not-heading">The distinction most tools miss</p>
+        <p>A failed connection has three meanings, and collapsing them makes the results worthless:</p>
+        <table style="margin-bottom:18px;">
+            <thead><tr><th>Wire behaviour</th><th>Verdict</th><th>What it tells you</th></tr></thead>
+            <tbody>
+                <tr><td>SYN/ACK</td><td><span class="sev critical">Open</span></td><td>A service is listening and the path is open</td></tr>
+                <tr><td>RST</td><td><span class="sev high">Closed</span></td><td>The host <em>answered</em> &mdash; packets reach it, <strong>nothing is filtering</strong></td></tr>
+                <tr><td>dropped / ICMP</td><td><span class="sev medium">Filtered</span></td><td>A boundary control <strong>is</strong> enforcing</td></tr>
+                <tr><td>no answer possible</td><td>Unknown</td><td>Nothing can be concluded &mdash; never counted as a pass</td></tr>
+            </tbody>
+        </table>
+        <p><strong>Closed</strong> is the one people miss. Nothing is exposed today, but nothing is blocking either &mdash; the moment that service is installed, the path is open. That's the difference between being segmented and being lucky. A tool that reports only a boolean cannot tell a working firewall from a powered-off host.</p>
+
         <p class="not-heading">What it is NOT:</p>
         <ul class="not-list">
             <li>Does not exploit vulnerabilities</li>
             <li>Does not capture credentials</li>
             <li>Does not make any changes to the environment</li>
-            <li>Does not require Domain Admin rights</li>
+            <li>Does not require Domain Admin &mdash; the segmentation engine needs no credentials at all</li>
         </ul>
-        <p class="not-footnote">Every check is equivalent to reading configuration data that a standard domain user already has access to.</p>
+        <p class="not-footnote">The probe engine is unauthenticated. The optional enrichment checks read Active Directory and host configuration with a standard domain user, and explain why a reachable path is worse than it looks &mdash; but if they can't run, the segmentation assessment still completes.</p>
     </div>
 </div>
 
@@ -351,22 +365,37 @@
     <div class="step">
         <h3>1 · Prerequisites</h3>
         <ul>
-            <li>Windows 10 1809+ or Server 2019+ (domain-joined or with network access to the target domain)</li>
-            <li>.NET 8 SDK — download from <a href="https://dotnet.microsoft.com/download/dotnet/8.0" style="color: var(--accent);">dot.net/8</a> (SDK, not Runtime)</li>
-            <li>A standard Domain User account — no Domain Admin rights required</li>
-            <li>Remote Registry service running on target hosts (for registry-based checks; deploy via GPO)</li>
+            <li>Windows 10 1809+ or Server 2019+</li>
+            <li><strong>Nothing else to install</strong> — the download is self-contained; .NET is bundled</li>
+            <li>Written authorisation to scan the target network</li>
         </ul>
+        <p style="margin-top:14px;">Optional, and only for the enrichment checks that add host context:</p>
+        <ul>
+            <li>A standard Domain User account — no Domain Admin rights</li>
+            <li>Remote Registry running on target hosts (deploy via GPO)</li>
+        </ul>
+        <p style="margin-top:14px; font-size:0.85rem;">The .NET 8 <em>SDK</em> is only needed if you build from source rather than using the download.</p>
     </div>
 
     <div class="step">
-        <h3>2 · Run the executable</h3>
-        <p>Build from source or grab a pre-built release, then run from a PowerShell prompt:</p>
-<pre><code># Basic run — comma-separated hosts
-.\ZeroTrustAuditor.exe --hosts DC01,SRV01,SRV02 --domain corp.local
+        <h3>2 · Describe your network</h3>
+        <p>Segment boundaries come from a zone map you declare, not from guessing at IP addresses. Two templates ship in the zip:</p>
+<pre><code>copy zones.example.json  zones.json    # CIDR → zone, trust tier, role
+copy policy.example.json policy.json   # which cross-zone flows are approved</code></pre>
+        <p style="margin-top:16px;"><code>zones.json</code> maps CIDRs to zones with a trust tier (0 = control plane … 4 = untrusted). Matching is longest-prefix, so a tier-0 <code>/24</code> correctly beats the <code>/8</code> containing it.</p>
+        <p style="margin-top:10px;"><code>policy.json</code> declares which cross-zone flows are <em>approved</em>, default-deny, each with an owner and an expiry. Without it every legitimate admin path is reported as a violation and triage stays manual forever.</p>
+        <p style="margin-top:10px; font-size:0.85rem;">If <code>zones.json</code> is absent, cross-zone analysis is <strong>skipped and said so</strong> rather than guessed at. Producing no findings is honest; producing confidently wrong ones is not.</p>
+    </div>
 
-# Using a targets file (one hostname per line)
-.\ZeroTrustAuditor.exe --hosts-file .\targets.txt --domain corp.local</code></pre>
-        <p style="margin-top:16px;">Common flags:</p>
+    <div class="step">
+        <h3>3 · Run it</h3>
+        <p>Always start with a dry run — it prints the full probe plan without sending a packet:</p>
+<pre><code># See exactly what would be probed. No traffic.
+.\ZeroTrustAuditor.exe --hosts-file .\targets.txt --domain corp.local --dry-run
+
+# Then a real run, paced
+.\ZeroTrustAuditor.exe --hosts-file .\targets.txt --domain corp.local --rate 50</code></pre>
+        <p style="margin-top:16px;">Scope and output:</p>
         <table>
             <thead><tr><th>Flag</th><th>Description</th></tr></thead>
             <tbody>
@@ -377,24 +406,55 @@
                 <tr><td>--skip-modules A,B</td><td>Skip modules: AdAuditor, ProtocolProbe, LateralPathAnalyzer, ShareAuditor, SegmentationChecker</td></tr>
             </tbody>
         </table>
+        <p style="margin-top:16px;">Segmentation:</p>
+        <table>
+            <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>--zones zones.json</td><td>Zone map: CIDR → zone, trust tier, role</td></tr>
+                <tr><td>--policy policy.json</td><td>Approved cross-zone flows (default-deny)</td></tr>
+                <tr><td>--services services.json</td><td>High-risk service catalog</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:16px;">Probe safety:</p>
+        <table>
+            <thead><tr><th>Flag</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>--dry-run</td><td>Plan every probe and send nothing</td></tr>
+                <tr><td>--rate 100</td><td>Probes per second (0 = unlimited)</td></tr>
+                <tr><td>--max-concurrency 128</td><td>Ceiling on simultaneous probes</td></tr>
+                <tr><td>--allow-ot-probing</td><td><strong>Off by default.</strong> OT/ICS protocols (Modbus, S7, DNP3, EtherNet/IP, BACnet) are never actively probed — an unexpected TCP connect can fault a controller. Also requires <code>activeProbing</code> on the zone.</td></tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="step">
-        <h3>3 · Read the output</h3>
-        <p>Five audit modules run in parallel, then findings are deduplicated, scored, and boosted by correlation rules. Reports are written to the <code>--output</code> directory, timestamped in the filename:</p>
+        <h3>4 · Read the output</h3>
+        <p>The main deliverable is <code>segmentation-TIMESTAMP.html</code>:</p>
         <table>
-            <thead><tr><th>Format</th><th>Use case</th></tr></thead>
+            <thead><tr><th>Section</th><th>Answers</th></tr></thead>
             <tbody>
-                <tr><td>HTML</td><td>Human-readable report — open in any browser</td></tr>
-                <tr><td>JSON</td><td>Machine-readable, API ingest, custom tooling</td></tr>
-                <tr><td>CSV</td><td>Ticket creation in ServiceNow / Jira</td></tr>
-                <tr><td>Splunk HEC</td><td>Push to Splunk HTTP Event Collector</td></tr>
-                <tr><td>Sentinel</td><td>Ingest to Microsoft Sentinel Log Analytics</td></tr>
-                <tr><td>CEF</td><td>Syslog forwarding to ArcSight, QRadar, or any CEF collector</td></tr>
+                <tr><td>Zone matrix</td><td>Is the network actually segmented? Source zones on rows, worst outcome per pair. <strong>Grey means not assessed</strong> — which is not the same as clean.</td></tr>
+                <tr><td>Exposure register</td><td>Which endpoints allow high-risk ports, from where, sorted by severity then blast radius</td></tr>
+                <tr><td>Violations</td><td>Reachable paths policy doesn't permit, each with the exact firewall change</td></tr>
+                <tr><td>ZTMM scorecard</td><td>CISA Networks-pillar maturity, scored only from what was measured</td></tr>
+                <tr><td>Enforcement evidence</td><td>The boundaries that <em>do</em> block — what not to regress</td></tr>
             </tbody>
         </table>
-        <p style="margin-top:16px;">Each finding carries a severity and risk score — prioritize by severity:</p>
+        <p style="margin-top:16px;">Alongside it: <code>exposure-register-*.csv</code> for ticketing, <code>reachability-*.json</code> with every raw probe outcome, and the legacy <code>audit-*</code> host findings in HTML, JSON, CSV, Splunk HEC, Sentinel and CEF.</p>
+
+        <p style="margin-top:16px;">Findings are classified by comparing observed reachability against declared policy:</p>
         <table>
+            <thead><tr><th>Observed</th><th>Policy</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>Open</td><td>deny</td><td><span class="sev critical">Violation</span> — the headline finding</td></tr>
+                <tr><td>Closed</td><td>deny</td><td><span class="sev high">Unenforced</span> — nothing listening, nothing blocking</td></tr>
+                <tr><td>Filtered</td><td>deny</td><td><span class="sev medium">Enforced</span> — the control works</td></tr>
+                <tr><td>Filtered</td><td>allow</td><td>Drift — an approved path is broken</td></tr>
+                <tr><td>Open</td><td>allow</td><td>Compliant — working as designed</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:16px;">Severity comes from the <strong>zone pair</strong>, not the port. SMB from the management VLAN to an app server is the designed admin path and scores low; the identical SMB from a guest VLAN to a domain controller is Critical.</p>
+        <table style="margin-top:12px;">
             <thead><tr><th>Severity</th><th>Score</th><th>Recommended SLA</th></tr></thead>
             <tbody>
                 <tr><td><span class="sev critical">Critical</span></td><td>9.0</td><td>24–48 hours</td></tr>
@@ -403,7 +463,42 @@
                 <tr><td>Low</td><td>3.0</td><td>90 days</td></tr>
             </tbody>
         </table>
-        <p style="margin-top:16px; font-size: 0.85rem;">When two dangerous misconfigs appear on the <strong>same host</strong>, both scores get a +2.0 boost — the combination forms a complete attack chain.</p>
+        <p style="margin-top:16px; font-size: 0.85rem;">Host weaknesses escalate the paths they make worse: a reachable 445 with SMB signing disabled, on a host whose local admin password is shared across the estate, is a different finding from a reachable 445 alone.</p>
+    </div>
+
+    <div class="step">
+        <h3>5 · Cover the rest of the network</h3>
+        <p>One run measures reachability <em>from one source zone</em> — one row of the matrix. Run from a host in each zone and merge:</p>
+<pre><code>.\ZeroTrustAuditor.exe merge .\user\reachability-*.json .\dmz\reachability-*.json ^
+    --zones zones.json --policy policy.json --report</code></pre>
+        <p style="margin-top:16px;">No agents, no deployed infrastructure. Merging doesn't invent coverage: unmeasured pairs stay <em>not assessed</em>, are excluded from the maturity score, and disagreements between runs are recorded rather than smoothed over.</p>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">📐 Built on NSA and CISA guidance</h2>
+    <div class="why-card">
+        <p>Every violation carries the specific guidance that applies to it, selected by zone role, trust tier and service category rather than pasted onto everything:</p>
+        <table>
+            <thead><tr><th>Source</th><th>Applied to</th></tr></thead>
+            <tbody>
+                <tr><td><a href="https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-278a" style="color:var(--accent);">CISA/NSA AA23-278A</a></td><td>Misconfiguration #4 lack of network segmentation (incl. IT/OT), #2 privilege separation, #3 internal monitoring</td></tr>
+                <tr><td><a href="https://media.defense.gov/2024/Mar/05/2003405462/-1/-1/0/CSI-ZERO-TRUST-NETWORK-ENVIRONMENT-PILLAR.PDF" style="color:var(--accent);">NSA Network &amp; Environment Pillar CSI</a></td><td>Data flow mapping, macro-segmentation, micro-segmentation</td></tr>
+                <tr><td><a href="https://www.cisa.gov/zero-trust-maturity-model" style="color:var(--accent);">CISA Zero Trust Maturity Model v2.0</a></td><td>Networks pillar scoring</td></tr>
+                <tr><td><a href="https://www.cisa.gov/cross-sector-cybersecurity-performance-goals" style="color:var(--accent);">CISA Performance Goals</a></td><td>Segment by trust boundary and platform type</td></tr>
+                <tr><td>NSA Out-of-Band Network Management CSI</td><td>Exposed IPMI / iLO / iDRAC / SNMP</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top:16px; font-size:0.85rem;">Remediation text names the actual change — <em>"deny user-vlan → tier0 on tcp/445 at the boundary firewall"</em> — not "implement segmentation".</p>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="section-title">⚠️ Before you run it</h2>
+    <div class="why-card">
+        <p>An internal port sweep is an intrusive act even when read-only and authorised. Get written authorisation from the system owner first.</p>
+        <p>Start with <code>--dry-run</code> and confirm the zone attribution looks right — especially that the audit host resolves to the zone you expect, since every finding is relative to that. Then a small host list at a low rate before anything wide.</p>
+        <p class="not-footnote">OT and ICS protocols are never actively probed unless you explicitly opt in on both the command line and the zone. Leave it that way unless you have written approval from the OT owner.</p>
     </div>
 </div>
 
