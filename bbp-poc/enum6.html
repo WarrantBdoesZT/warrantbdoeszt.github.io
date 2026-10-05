@@ -2,9 +2,9 @@
 <html><head><meta charset="utf-8"><title>ENUM6</title></head>
 <body style="background:#111;color:#0f0;font:12px monospace;padding:12px">
 <pre id="log">boot</pre>
-<div id="res"不掉 style="margin-top:8px;word-break:break-all;white-space:pre-wrap"></div>
+<div id="res" style="margin-top:8px;word-break:break-all;white-space:pre-wrap"></div>
 <script>
-const log = (s) => { document.getElementById('log').textContent += '\n' redirects + s; };
+const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
 log('loaded ' + location.href);
 window.callWebView = (o) => {
   const s = (typeof o === 'string') ? o : JSON.stringify(o);
