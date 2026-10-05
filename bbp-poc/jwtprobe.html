@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>JWT-PROBE</title></head>
+<body style="background:#111;color:#0f0;font:14px monospace;padding:12px">
+<pre id="log">boot</pre>
+<div id="res" style="margin-top:8px;word-break:break-all"></div>
+<script>
+const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
+log('loaded ' + location.href);
+function showRes(obj) {
+  document.getElementById('res').textContent = JSON.stringify(obj).slice(0, 1500);
+  document.title = 'JWT-RESULT-' + (obj && obj.success ? 'OK' : 'FAIL');
+}
+let tries = 0;
+const t = setInterval(() => {
+  tries++;
+  const A = window.Android;
+  if (A) {
+    log('window.Android present; methods: ' + Object.getOwnPropertyNames(Object.getPrototypeOf(A) || A).join(','));
+    clearInterval(t);
+    window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
+    try { A.postMessage(JSON.stringify({action: 'refresh_jwt', data: {}})); log('refresh_jwt sent'); }
+    catch (e) { log('postMessage err: ' + e); }
+  } else if (tries > 20) {
+    clearInterval(t); log('window.Android never appeared'); document.title = 'NO-BRIDGE';
+  }
+}, 500);
+</script></body></html>
