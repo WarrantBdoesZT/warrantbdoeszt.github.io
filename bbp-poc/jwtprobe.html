@@ -8,17 +8,19 @@ const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
 log('loaded ' + location.href);
 function showRes(obj) {
   document.getElementById('res').textContent = JSON.stringify(obj).slice(0, 1200);
-  document.title = 'JWT-RESULT-' + (obj && obj.success ? 'OK' : 'FAIL');
 }
-window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
-// fire instantly, no wait — page may only live seconds
+window.callWebView = (o) => { log('callWebView fired'); showRes(o); document.title = 'JWT-RESULT'; };
 (function fire() {
   const A = window.Android;
-  if (!A) { log('no window.Android at load'); setTimeout(fire, 150); return; }
-  log('window.Android: ' + Object.getOwnPropertyNames(Object.getPrototypeOf(A) || A).join(','));
+  if (!A) { setTimeout(fire, 100); return; }
+  log('Android: ' + Object.getOwnPropertyNames(Object.getPrototypeOf(A) || A).join(','));
   try {
-    A.postMessage(JSON.stringify({action: 'refresh_jwt', data: {}}));
-    log('refresh_jwt SENT t=' + Date.now() % 100000);
-  } catch (e) { log('postMessage err: ' + e); }
+    A.postMessage(JSON.stringify({name: 'refresh_jwt', data: {}}));
+    log('sent {name: refresh_jwt}');
+  } catch (e) { log('err1: ' + e); }
+  setTimeout(() => {
+    try { A.postMessage(JSON.stringify({action: 'refresh_jwt', data: {}})); log('sent {action: refresh_jwt}'); }
+    catch (e) { log('err2: ' + e); }
+  }, 3000);
 })();
 </script></body></html>
