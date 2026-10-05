@@ -7,21 +7,18 @@
 const log = (s) => { document.getElementById('log').textContent += '\n' + s; };
 log('loaded ' + location.href);
 function showRes(obj) {
-  document.getElementById('res').textContent = JSON.stringify(obj).slice(0, 1500);
+  document.getElementById('res').textContent = JSON.stringify(obj).slice(0, 1200);
   document.title = 'JWT-RESULT-' + (obj && obj.success ? 'OK' : 'FAIL');
 }
-let tries = 0;
-const t = setInterval(() => {
-  tries++;
+window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
+// fire instantly, no wait — page may only live seconds
+(function fire() {
   const A = window.Android;
-  if (A) {
-    log('window.Android present; methods: ' + Object.getOwnPropertyNames(Object.getPrototypeOf(A) || A).join(','));
-    clearInterval(t);
-    window.callWebView = (o) => { log('callWebView fired'); showRes(o); };
-    try { A.postMessage(JSON.stringify({action: 'refresh_jwt', data: {}})); log('refresh_jwt sent'); }
-    catch (e) { log('postMessage err: ' + e); }
-  } else if (tries > 20) {
-    clearInterval(t); log('window.Android never appeared'); document.title = 'NO-BRIDGE';
-  }
-}, 500);
+  if (!A) { log('no window.Android at load'); setTimeout(fire, 150); return; }
+  log('window.Android: ' + Object.getOwnPropertyNames(Object.getPrototypeOf(A) || A).join(','));
+  try {
+    A.postMessage(JSON.stringify({action: 'refresh_jwt', data: {}}));
+    log('refresh_jwt SENT t=' + Date.now() % 100000);
+  } catch (e) { log('postMessage err: ' + e); }
+})();
 </script></body></html>
